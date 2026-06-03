@@ -516,20 +516,33 @@ elif seccion == "Rendimiento Académico":
         "multiplica significativamente el riesgo de bajo rendimiento acumulado.", "exito"
     ), unsafe_allow_html=True)
 
+    df_scatter = df.dropna(subset=["PROMEDIO_CARRERA"]).copy()
+    df_scatter["Grupo"] = df_scatter["rendimiento_bajo"].map(
+        {0: "Rendimiento normal", 1: "Bajo rendimiento"})
+
     fig = px.scatter(
-        df.dropna(subset=["PROMEDIO_CARRERA"]),
-        x="prom_sem1", y="PROMEDIO_CARRERA",
-        color=df.dropna(subset=["PROMEDIO_CARRERA"])["rendimiento_bajo"].map(
-            {0: "Rendimiento normal", 1: "Bajo rendimiento"}),
+        df_scatter, x="prom_sem1", y="PROMEDIO_CARRERA",
+        color="Grupo",
         color_discrete_map={"Rendimiento normal": AZUL, "Bajo rendimiento": ROJO},
-        opacity=0.75, size_max=10,
+        opacity=0.75,
         labels={"prom_sem1": "Promedio 1er semestre",
                 "PROMEDIO_CARRERA": "Promedio acumulado carrera"},
-        trendline="ols"
     )
+    # Línea de tendencia manual con numpy (sin statsmodels)
+    x_vals = df_scatter["prom_sem1"].values
+    y_vals = df_scatter["PROMEDIO_CARRERA"].values
+    coef   = np.polyfit(x_vals, y_vals, 1)
+    x_line = np.linspace(x_vals.min(), x_vals.max(), 50)
+    y_line = np.polyval(coef, x_line)
+    fig.add_trace(go.Scatter(
+        x=x_line, y=y_line, mode="lines",
+        line=dict(color=GRIS, dash="dot", width=2),
+        name=f"Tendencia (r={np.corrcoef(x_vals, y_vals)[0,1]:.2f})",
+        showlegend=True
+    ))
     fig.add_vline(x=3.0, line_dash="dash", line_color=GRIS, opacity=0.5)
     fig.add_hline(y=3.0, line_dash="dash", line_color=GRIS, opacity=0.5)
-    fig.update_layout(height=380, margin=dict(t=20, b=40, l=40, r=20))
+    fig.update_layout(height=400, margin=dict(t=20, b=40, l=40, r=20))
     st.plotly_chart(fig, use_container_width=True)
 
 
@@ -1015,26 +1028,32 @@ elif seccion == "Predictor Interactivo":
                 for a in alertas: st.markdown(f"- {a}")
 
             else:
-                st.markdown(f"""
-                <div class="pred-resultado pred-normal">
-                    <strong>PERFIL DE RENDIMIENTO NORMAL</strong><br><br>
-                    El perfil del estudiante es compatible con el de estudiantes que
-                    <strong>superaron el umbral de 3.0</strong> de promedio acumulado
-                    en cohortes anteriores.<br><br>
-                    Probabilidad de bajo rendimiento: <strong>{probabilidad:.1%}</strong>
-                </div>""", unsafe_allow_html=True)
+                st.markdown(
+                    f'<div class="pred-resultado pred-normal">'
+                    f'<strong>PERFIL DE RENDIMIENTO NORMAL</strong><br><br>'
+                    f'El perfil del estudiante es compatible con el de estudiantes que '
+                    f'<strong>superaron el umbral de 3.0</strong> de promedio acumulado '
+                    f'en cohortes anteriores.<br><br>'
+                    f'Probabilidad de bajo rendimiento: <strong>{probabilidad:.1%}</strong>'
+                    f'</div>',
+                    unsafe_allow_html=True)
 
                 st.markdown("**Factores protectores identificados:**")
                 protectores = []
-                if prom_sem1_input >= 3.5: protectores.append(f"Buen promedio en el primer semestre ({prom_sem1_input:.1f})")
-                if (icfes_mat + icfes_nat) >= 130: protectores.append(f"Sólido puntaje Saber 11 en ciencias ({icfes_mat + icfes_nat}/200)")
-                if max(nivel_p, nivel_m) >= 7: protectores.append("Capital educativo familiar universitario")
-                if not protectores: protectores.append("El perfil combina múltiples factores de protección.")
-                for p in protectores: st.markdown(f"- {p}")
+                if prom_sem1_input >= 3.5:
+                    protectores.append(f"Buen promedio en el primer semestre ({prom_sem1_input:.1f})")
+                if (icfes_mat + icfes_nat) >= 130:
+                    protectores.append(f"Solido puntaje Saber 11 en ciencias ({icfes_mat + icfes_nat}/200)")
+                if max(nivel_p, nivel_m) >= 7:
+                    protectores.append("Capital educativo familiar universitario")
+                if not protectores:
+                    protectores.append("El perfil combina multiples factores de proteccion.")
+                for p in protectores:
+                    st.markdown(f"- {p}")
 
         st.markdown(insight(
-            "<strong>Aviso importante:</strong> Esta predicción es una herramienta de apoyo para "
-            "la intervención temprana — <em>no una sentencia académica</em>. Se basa en patrones de "
-            "94 estudiantes de 2 cohortes. Úsese junto con seguimiento personalizado y consejería académica.",
+            "<strong>Aviso importante:</strong> Esta prediccion es una herramienta de apoyo para "
+            "la intervencion temprana, no una sentencia academica. Se basa en patrones de "
+            "94 estudiantes de 2 cohortes. Usese junto con seguimiento personalizado y consejeria academica.",
             "alerta"
         ), unsafe_allow_html=True)
