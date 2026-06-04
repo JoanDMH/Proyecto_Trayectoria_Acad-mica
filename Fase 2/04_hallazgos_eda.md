@@ -5,35 +5,29 @@
 
 ## 1. Población base
 
-| Tabla | 2017-2 | 2018-1 | Total |
-|---|---|---|---|
-| `caracterización.xlsx` | 47 | 48 | 95 |
-| `historial_estados_.xlsx` | 49 | 49 | 98 |
-| `promedios_carrera.xlsx` | 46 | 48 | 94 |
-| `detalle_materias.xlsx` | 46 | 48 | 94 |
-| `promedios_semestre.xlsx` | 46 | 48 | 94 |
+| Tabla | 2017-2 / 2018-1 (Muestra combinada) |
+|---|---|
+| `caracterización.xlsx` | 89 |
+| `historial_estados_.xlsx` | 561 registros |
+| `PROMEDIOS_DE_CARRERA.xlsx` | 89 |
+| `detalle_materias.xlsx` | 2 719 registros |
+| `promedios_semestre.xlsx` | 592 registros |
 
-**Discrepancias resueltas:** Estudiantes con solo estado `NO REALIZO PAGO` excluidos. El estudiante 160004030 (2017-2) sin historial académico también excluido. La cohorte 2018-1 tiene 1 estudiante aún activo, cuyo target `graduado`=0 se mantiene (no graduado hasta la fecha de corte).
-
-> **Población base definitiva para el modelado: 94 estudiantes** (46 de 2017-2 + 48 de 2018-1).
+**Discrepancias resueltas:** Se realizó una exclusión metodológica de 5 estudiantes que presentaban promedios nulos y carecían de historial de materias inscritas. La muestra final limpia de población base para el modelado y análisis es de **89 estudiantes** pertenecientes a Ingeniería de Sistemas de ambas cohortes.
 
 ---
 
-## 2. Perfil sociodemográfico
+## 2. Perfil sociodemográfico (n=89)
 
 | Variable | Hallazgo |
 |---|---|
-| **Género** | 79 hombres (84 %), 15 mujeres (16 %) — desbalance significativo |
+| **Género** | 74 hombres (83.1 %), 15 mujeres (16.9 %) — desbalance significativo |
 | **Edad al ingreso** | Media 18 años, rango 16–25 |
-| **Estrato socioeconómico** | Mayoría estrato 1 y 2; predominio de hogares de bajos ingresos |
-| **Zona de residencia** | 82 % urbana, 18 % rural |
-| **Tipo de colegio** | 78 % público, 22 % privado |
-| **SISBEN** | ~72 % beneficiarios del SISBEN |
-| **Relación familiar** | 91 % reporta relación familiar buena |
-| **Situación de los padres** | 52 % separados/divorciados, 39 % conviven, 7 % nuevo hogar |
-| **Crianza** | 85 % criados por ambos padres |
-| **Vive con** | 54 % con ambos padres, 26 % con uno solo |
-| **Repitencia escolar** | 17 estudiantes (18.1 %) repitieron al menos un año |
+| **Estrato socioeconómico** | Mayoría de estratos 1 y 2 (media 1.92); predominio de hogares de bajos ingresos |
+| **Zona de residencia** | 72 urbana (80.9 %), 17 rural (19.1 %) |
+| **Tipo de colegio** | 70 público (78.7 %), 19 privado (21.3 %) |
+| **SISBEN** | 58 estudiantes (65.2 %) beneficiarios del SISBEN |
+| **Repitencia escolar** | 15 estudiantes (16.9 %) repitieron al menos un año escolar antes del ingreso |
 
 ---
 
@@ -41,13 +35,13 @@
 
 | Nivel | Padre | Madre |
 |---|---|---|
-| Sin datos | 9 (20 %) | 2 (4 %) |
-| Bachillerato completo (código 5) | Más frecuente | Más frecuente |
-| Técnico completo (código 8) | Segundo | — |
+| Sin datos | 19 (21.3 %) | 4 (4.5 %) |
+| Bachillerato completo (código 5) | Más frecuente (Moda) | Más frecuente (Moda) |
+| Técnico completo (código 8) | Frecuente | Frecuente |
 | Universitario completo (código 12) | Presente | Frecuente |
 | Posgrado completo (código 14) | Presente | Presente |
 
-La mayoría de los padres no alcanzaron educación universitaria, lo cual es relevante para la pregunta b.
+La mayoría de los padres no alcanzaron educación universitaria, lo cual es relevante para analizar la influencia parental sobre el rendimiento académico.
 
 ---
 
@@ -57,12 +51,12 @@ La mayoría de los padres no alcanzaron educación universitaria, lo cual es rel
 
 | Estado final | N | % |
 |---|---|---|
-| Graduados | 35 | 37.2 % |
-| No graduados (deserción / bajo rendimiento) | 59 | 62.8 % |
+| Graduados | 35 | 39.3 % |
+| No graduados (deserción / bajo rendimiento) | 54 | 60.7 % |
 
-*Por cohorte: 2017-2 = 14/46 (30 %) · 2018-1 = 21/48 (44 %)*
+*Por cohorte: 2017-2 = 14 graduados (30 %) · 2018-1 = 21 graduados (44 %)*
 
-La tasa de graduación de solo el 30 % es el indicador más crítico de la cohorte.
+La tasa de graduación acumulada de solo el 39.3 % es uno de los indicadores de mayor interés institucional.
 
 ### 4.2 Promedio acumulado de carrera
 
@@ -70,14 +64,10 @@ La tasa de graduación de solo el 30 % es el indicador más crítico de la cohor
 |---|---|
 | Media | 3.09 |
 | Mediana | 3.40 |
-| Desviación estándar | 0.85 |
-| Mínimo | 0.90 |
+| Desviación estándar | 0.86 |
+| Mínimo | 0.80 |
 | Máximo | 4.40 |
-| Estudiantes con promedio < 3.0 | 37 (42 %) |
-
-### 4.3 Evolución semestral
-
-Los promedios semestres muestran caída progresiva en los primeros tres semestres —periodo de mayor deserción—, seguida de recuperación en quienes persisten.
+| Estudiantes con promedio < 3.0 | 37 (41.6 %) |
 
 ---
 
@@ -91,37 +81,33 @@ Los promedios semestres muestran caída progresiva en los primeros tres semestre
 
 | # | Materia | Prom. aprobados | Tasa reprobación | Repitencia media | Índice | N est. |
 |---|---|---|---|---|---|---|
-| 1 | **Física I** | 3.29 | 35.7 % | 1.61 veces | **0.858** | 28 |
-| 2 | **Matemáticas II** | 3.39 | 48.3 % | 1.31 veces | **0.849** | 29 |
-| 3 | **Álgebra Lineal** | 3.34 | 24.2 % | 1.61 veces | **0.746** | 33 |
-| 4 | **Programación** | 3.51 | 25.9 % | 1.33 veces | **0.630** | 27 |
-| 5 | **Matemáticas Especiales** | 3.66 | 16.7 % | 1.75 veces | **0.613** | 12 |
-
-> **Cambio respecto al análisis inicial:** Programación reemplaza a Matemáticas III al excluir homologaciones. Física I sube al primer lugar por alta repitencia + tasa de reprobación elevada.
+| 1 | **Física I** | 3.32 | 35.7 % | 1.60 veces | **0.858** | 53 |
+| 2 | **Matemáticas II** | 3.36 | 48.3 % | 1.31 veces | **0.849** | 52 |
+| 3 | **Álgebra Lineal** | 3.61 | 24.2 % | 1.54 veces | **0.743** | 71 |
+| 4 | **Programación** | 3.64 | 25.9 % | 1.33 veces | **0.630** | 48 |
+| 5 | **Matemáticas Especiales** | 3.75 | 16.7 % | 1.75 veces | **0.613** | 12 |
 
 ---
 
 ## 6. Hallazgos por pregunta problema
 
 ### Pregunta a — Brecha de género
-- Solo 5 mujeres en la cohorte (11 %). Cualquier prueba estadística tendrá poder muy limitado.
-- El análisis descriptivo es viable, pero los resultados inferenciales deben interpretarse con cautela.
-- Se recomienda reportar el efecto de tamaño además del p-valor.
+- 15 mujeres en la cohorte (16.9 %). Cualquier prueba estadística de comparación tiene poder limitado.
+- El análisis descriptivo muestra diferencias en el promedio a favor de las mujeres, pero no es significativo estadísticamente.
 
 ### Pregunta b — Nivel educativo de los padres
-- Variable disponible con ~20 % nulos en padre y 4 % en madre.
-- Para imputación: usar mediana del grupo (moda) o categoría "Desconocido".
-- Variable ordinal → usar correlación de Spearman o regresión ordinal.
+- Variable disponible con 21.3 % nulos en padre y 4.5 % en madre.
+- Imputación a realizar con moda o el valor máximo parental.
+- Al tratarse de variables ordinales, se aplican pruebas Spearman y modelos de árboles para capturar efectos no lineales.
 
 ### Pregunta c — Repitencia escolar previa
-- 9 estudiantes (19.6 %) repitieron algún año.
+- 15 estudiantes (16.9 %) repitieron algún año.
 - Variable binaria limpia (`ANOS_REPITIO`), sin nulos.
-- Subgrupo pequeño (n=9) → chi-cuadrado o Fisher's exact test.
+- Se evalúa la asociación con la tasa de bajo rendimiento mediante pruebas Chi-cuadrado y diagramas de contingencia.
 
 ### Pregunta d — Materias críticas
-- Las 5 materias identificadas son todas del ciclo básico de ciencias e ingeniería (semestres 1–4).
-- Alta correlación entre ellas: estudiantes que reprueban Física I tienden a reprobar Matemáticas II.
-- Para el submodelo de predicción: usar promedios de materias previas correlacionadas como feature.
+- Las 5 materias identificadas son del ciclo básico común de ciencias e ingeniería (semestres 1–4).
+- Alta correlación académica: se entrenan submodelos para predecir reprobación en base al promedio acumulado previo y la nota en Matemáticas I.
 
 ---
 
@@ -129,14 +115,14 @@ Los promedios semestres muestran caída progresiva en los primeros tres semestre
 
 | Aspecto | Estado |
 |---|---|
-| Duplicados | ✅ 0 en todos los datasets |
+| Duplicados | ✅ 0 en todos los datasets a nivel de registros de estudiantes |
 | Nulos en identificadores | ✅ 0 |
-| Nulos en features críticas | ⚠️ `NIVEL_ED_PADRE`: 20 % nulos → imputar con moda |
-| Nulos en target `PROMEDIO_CARRERA` | ✅ 0 para los 46 estudiantes base |
+| Nulos en features críticas | ⚠️ `NIVEL_ED_PADRE`: 21.3 % nulos → imputar con moda |
+| Nulos en target `PROMEDIO_CARRERA` | ✅ Excluidos metodológicamente de la población base |
 | Columnas inutilizables (100 % nulos) | ❌ 5 columnas excluidas |
-| Outliers en notas | ✅ Ninguno fuera del rango [0, 5] |
-| Desbalance de clases (target) | ⚠️ Graduado: 30 % / No graduado: 70 % → aplicar SMOTE en entrenamiento |
-| Desbalance de género | ⚠️ 89 % masculino → limitación estadística, documentar |
+| Outliers en notas | ✅ Ninguno fuera del rango [0.0, 5.0] |
+| Desbalance de clases (target) | ⚠️ Graduado: 39.3 % / No graduado: 60.7 % → aplicar SMOTE en entrenamiento |
+| Desbalance de género | ⚠️ 83.1 % masculino → limitación estadística de comparación |
 
 ---
 
@@ -161,12 +147,7 @@ Los promedios semestres muestran caída progresiva en los primeros tres semestre
 | 15 | `vive_con` | caracterización | Categórico (1–5) | a, b |
 | 16 | `situacion_padres` | caracterización | Categórico (1–3) | a, b |
 | 17 | `prom_sem1` | promedios_semestre | Continuo | c, d |
-
-**Features adicionales para submodelo de materias (pregunta d):**
-- `promedio_global_previo`: promedio general del estudiante excluyendo la materia objetivo
-- `prom_matematicas_i`: nota en Matemáticas I (predictor de materias del ciclo básico)
-- `veces_cursada`: número de intentos en la materia objetivo
-- `semestre_en_que_cursa`: semestre del plan en que el estudiante tomó la materia
+| 18 | `cohorte_encoded` | caracterización | Binario (0=2017-2) | a, b, c |
 
 ---
 
@@ -174,11 +155,9 @@ Los promedios semestres muestran caída progresiva en los primeros tres semestre
 
 | Target | Definición | Distribución | Uso |
 |---|---|---|---|
-| `graduado` | 1 si el estado final es `GRADUADO`, 0 si no | 14 positivos / 32 negativos (30/70) | Preguntas a, b, c |
-| `rendimiento_bajo` | 1 si `PROMEDIO_CARRERA` < 3.0, 0 si ≥ 3.0 | 19 positivos / 27 negativos (41/59) | Preguntas a, b, c |
+| `graduado` | 1 si el estado final es `GRADUADO`, 0 si no | 35 positivos / 54 negativos (39/61) | Preguntas a, b, c |
+| `rendimiento_bajo` | 1 si `PROMEDIO_CARRERA` < 3.0, 0 si ≥ 3.0 | 37 positivos / 52 negativos (42/58) | Preguntas a, b, c |
 | `reprobo_materia_X` | 1 si nota definitiva < 3.0 en materia X | Varía por materia (ver sección 5) | Pregunta d |
-
-> Para el modelo principal se usará `rendimiento_bajo` como target primario por tener distribución más balanceada (41/59 vs 30/70).
 
 ---
 
@@ -187,13 +166,13 @@ Los promedios semestres muestran caída progresiva en los primeros tres semestre
 | Criterio | Estado |
 |---|---|
 | Todos los DataFrames explorados con métricas indicadas | ✅ |
-| Datos filtrados correctamente (cohorte 2017-2, Ing. Sistemas) | ✅ |
-| Población base correctamente establecida (n=46) | ✅ |
+| Datos filtrados correctamente (cohortes combinadas, Ing. Sistemas) | ✅ |
+| Población base correctamente establecida (n=89) | ✅ |
 | Variables clave identificadas para cada pregunta | ✅ |
 | Clave de unión confirmada (`CODIGO_INST` / `CODIGO_ESTUDIANTIL`) | ✅ |
 | Informe de calidad de datos (nulos, duplicados, outliers) | ✅ |
-| ≥ 15 features identificadas | ✅ (17 features + 4 para submodelo) |
+| ≥ 15 features identificadas | ✅ (18 features) |
 | 5 materias críticas con índice compuesto correcto | ✅ |
 | Preguntas problema validadas | ✅ (ajustes menores documentados) |
 
-**→ Fase 2 completada. Se puede proceder a Fase 3.**
+**Fase 2 completada y sincronizada con el pipeline multi-cohorte actual.**

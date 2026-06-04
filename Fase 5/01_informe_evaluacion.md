@@ -88,30 +88,17 @@ El objetivo general es predecir el rendimiento académico de un estudiante basá
 
 ## 2. Análisis de errores — modelo principal (`rendimiento_bajo`, CV-5)
 
-### Falsos negativos — estudiantes en riesgo no detectados (n=7)
+### Falsos negativos — estudiantes en riesgo no detectados (n=17)
 
 Son los estudiantes más críticos: el modelo los clasifica como "rendimiento normal" pero tienen bajo promedio real.
 
-| Feature | Perfil FN | Perfil general | Diferencia |
-|---|---|---|---|
-| `prom_sem1` | 3.71 | 3.47 | +0.24 — promedio 1er sem. engañosamente alto |
-| `icfes_total` | 324.4 | 308.8 | +15.6 — Saber 11 superior al promedio |
-| `nivel_edu_max_padres` | 6.4 | 5.6 | Ligeramente mayor |
-| `estrato` | 2.1 | 2.0 | Similar |
+* **Interpretación:** Con la muestra limpia y depurada ($N=89$), el número de Falsos Negativos asciende a 17. Estos estudiantes suelen presentar un desempeño inicial aceptable pero posteriormente decaen, un patrón difícil de capturar usando únicamente variables sociodemográficas y de ingreso.
 
-**Interpretación:** Los falsos negativos son estudiantes con buen desempeño inicial (prom_sem1 alto) y buen puntaje Saber 11 que luego deterioran su rendimiento en semestres posteriores. El modelo no puede anticipar esta caída porque las features de entrada son favorables. Este es el límite inherente de predecir con datos de ingreso.
-
-### Falsos positivos — falsas alarmas (n=11)
+### Falsos positivos — falsas alarmas (n=28)
 
 Estudiantes clasificados como en riesgo que en realidad tienen rendimiento normal.
 
-| Feature | Perfil FP | Perfil general |
-|---|---|---|
-| `prom_sem1` | 3.44 | 3.47 |
-| `icfes_total` | 328.6 | 308.8 |
-| `nivel_edu_max_padres` | 5.7 | 5.6 |
-
-**Interpretación:** Los falsos positivos tienen prom_sem1 ligeramente por debajo del promedio pero buen Saber 11. El modelo los percibe como en riesgo por su primer semestre débil, pero logran recuperarse. En contexto educativo, una falsa alarma resulta en atención preventiva innecesaria — costo bajo comparado con un falso negativo.
+* **Interpretación:** Se registran 28 Falsos Positivos. Aunque representen intervenciones preventivas innecesarias, en el contexto educativo el costo de una falsa alarma es mucho menor que el de omitir a un estudiante en riesgo real (Falso Negativo).
 
 ---
 
@@ -133,28 +120,28 @@ Estudiantes clasificados como en riesgo que en realidad tienen rendimiento norma
 
 2. **El origen socioeconómico importa más para graduarse que para el promedio.** Estrato y nivel educativo de padres predicen graduación con mayor fuerza que el promedio acumulado, sugiriendo que factores externos afectan la persistencia más que el desempeño.
 
-3. **La repitencia escolar es una señal de alerta.** Aunque no estadísticamente significativa por el tamaño muestral, la diferencia descriptiva es grande (52.9 % vs 36.4 % de bajo rendimiento). Debe vigilarse en cohortes más grandes.
+3. **La repitencia escolar es una señal de alerta.** Quienes repitieron tienen tasas descriptivas de bajo rendimiento superiores, por lo que debe vigilarse esta señal a pesar del tamaño de muestra.
 
-4. **Las materias del ciclo básico concentran el riesgo.** Física I y Matemáticas II son las más críticas. El rendimiento en Matemáticas I es predictor útil de reprobación en materias posteriores del mismo ciclo.
+4. **Las materias del ciclo básico concentran el riesgo.** Física I y Matemáticas II son las más críticas. El rendimiento en Matemáticas I es predictor útil de reprobación en materias posteriores.
 
-5. **No se puede concluir sobre brecha de género.** La desproporción 84/16 en el programa limita cualquier inferencia; se requieren más cohortes o programas con mayor representación femenina.
+5. **No se puede concluir sobre brecha de género.** La desproporción de género limita las inferencias estadísticas de comparación directa.
 
 ---
 
 ## 5. Evaluación contra criterios de negocio
 
-El objetivo de negocio no es reducir churn sino **identificar estudiantes en riesgo académico para intervención temprana**. El criterio de éxito definido en Fase 1 fue F1 ≥ 0.65.
+El objetivo de negocio es **identificar estudiantes en riesgo académico para intervención temprana**. El criterio de éxito definido en Fase 1 fue F1 ≥ 0.65 y Recall+ ≥ 0.75.
 
-| Criterio de negocio | Métrica | Resultado | ¿Cumple? |
+| Criterio de negocio | Métrica | Resultado Real (n=89) | ¿Cumple? |
 |---|---|---|---|
-| Detectar estudiantes en riesgo (rendimiento bajo) | Recall+ CV5 | 0.811 | ✅ |
-| Modelo confiable (no predice al azar) | AUC CV5 | 0.821 | ✅ |
-| Desempeño mínimo aceptable | F1-mac CV5 ≥ 0.65 | 0.803 | ✅ |
-| Predecir graduación | AUC CV5 ≥ 0.70 | 0.758 | ✅ |
-| Predecir reprobación en materias críticas | AUC CV5 ≥ 0.70 | 0.735–0.975 | ✅ |
-| Responder las 4 preguntas problema | Evidencia cuantitativa | Ver §1 | ✅ |
+| Detectar estudiantes en riesgo (rendimiento bajo) | Recall+ CV5 | **0.539** | ❌ No cumple |
+| Modelo confiable (no predice al azar) | AUC CV5 | **0.485** | ❌ No cumple |
+| Desempeño mínimo aceptable | F1-mac CV5 ≥ 0.65 | **0.491** | ❌ No cumple |
+| Predecir graduación | AUC CV5 ≥ 0.70 | **0.669** | ❌ No cumple (cerca) |
+| Predecir reprobación en materias críticas | AUC CV5 | **0.735–0.975** | ✅ Sí cumple |
 
-**Todos los criterios de negocio se cumplen.**
+> [!WARNING]
+> **Impacto de la Depuración del Target:** Tras excluir a los 5 estudiantes "fantasma" y eliminar la imputación artificial del promedio semestral a `3.5`, se eliminó una **fuga de datos (data leakage) severa** que inflaba artificialmente las métricas originales. El rendimiento real del clasificador base en la muestra limpia disminuyó significativamente, demostrando que con los datos sociodemográficos y académicos de ingreso actuales, el modelo tiene un poder predictivo muy cercano a la clasificación aleatoria para el promedio acumulado de carrera.
 
 ---
 
@@ -176,14 +163,12 @@ La validación cruzada estratificada garantiza que cada fold mantiene la proporc
 
 | Target | Métrica | Media | Std | Interpretación |
 |---|---|---|---|---|
-| rendimiento_bajo | Recall+ | 0.811 | ~0.09 | Variabilidad moderada, esperable con n pequeño |
-| rendimiento_bajo | F1-macro | 0.803 | ~0.07 | Estable |
-| rendimiento_bajo | MCC | 0.609 | ~0.12 | Algunos folds más difíciles |
-| graduado | Recall+ | 0.714 | ~0.15 | Mayor variabilidad por menor n positivos |
-| graduado | F1-macro | 0.706 | ~0.10 | Aceptable |
-| graduado | MCC | 0.417 | ~0.14 | Sensible al fold — dataset límite |
-
-> La mayor variabilidad en `graduado` es esperada: solo 35 positivos distribuidos en 5 folds (~7 por fold).
+| rendimiento_bajo | Recall+ | **0.539** | 0.259 | Alta variabilidad por tamaño de muestra reducido |
+| rendimiento_bajo | F1-macro | **0.491** | 0.168 | Desempeño bajo, cercano al azar |
+| rendimiento_bajo | MCC | **0.011** | 0.354 | Correlación nula con el target real |
+| graduado | Recall+ | **0.600** | 0.120 | Estabilidad moderada |
+| graduado | F1-macro | **0.659** | 0.116 | Aceptable |
+| graduado | MCC | **0.333** | 0.223 | Correlación positiva moderada |
 
 ---
 
@@ -193,14 +178,12 @@ XGBoost es un modelo basado en árboles de decisión; **no asume linealidad, nor
 
 | Supuesto | ¿Se cumple? | Evidencia |
 |---|---|---|
-| **Independencia de observaciones** | ✅ | Cada fila es un estudiante diferente; no hay medidas repetidas en el dataset de nivel-estudiante |
-| **Ausencia de data leakage** | ✅ | `PROMEDIO_CARRERA` no es feature; split anterior a SMOTE; CV aplicado sobre datos originales |
-| **Representatividad del train set** | ⚠️ | Solo 2 cohortes de un programa. El modelo puede no generalizar a programas con perfil diferente |
-| **Estabilidad temporal** | ⚠️ | `cohorte_encoded` captura diferencias entre cohortes — si las condiciones cambian en futuras cohortes, el modelo necesitará reentrenamiento |
-| **Suficiencia muestral** | ⚠️ | n=94 es pequeño para XGBoost. Las estimaciones tienen alta varianza; se mitiga con CV-5 |
-| **Desbalance de clases tratado** | ✅ | SMOTE aplicado sobre train únicamente cuando ratio < 0.60 |
-
-> Para modelos lineales (regresión logística) se requeriría verificar adicionalmente: normalidad de residuos, ausencia de multicolinealidad (VIF) y linealidad logit. Estos supuestos **no aplican** a XGBoost.
+| **Independencia de observaciones** | ✅ | Cada fila es un estudiante diferente. |
+| **Ausencia de data leakage** | ✅ | `PROMEDIO_CARRERA` no es feature; split anterior a SMOTE; CV aplicado sobre datos originales. |
+| **Representatividad del train set** | ⚠️ | Solo 2 cohortes de un programa. El modelo puede no generalizar a otros programas. |
+| **Estabilidad temporal** | ⚠️ | `cohorte_encoded` captura diferencias entre cohortes — si las condiciones cambian, el modelo requerirá reentrenamiento. |
+| **Suficiencia muestral** | ❌ No cumple | $N=89$ es una muestra sumamente pequeña para entrenar algoritmos boosting como XGBoost. |
+| **Desbalance de clases tratado** | ✅ | SMOTE aplicado únicamente en el set de entrenamiento de cada split. |
 
 ---
 
@@ -208,14 +191,12 @@ XGBoost es un modelo basado en árboles de decisión; **no asume linealidad, nor
 
 **¿Pasa el modelo a producción/despliegue?**
 
-> ✅ **SÍ — Con condiciones**
+> ⚠️ **SÍ — Con reservas y exclusivamente con fines experimentales y descriptivos**
 
 **Justificación:**
-- Todos los criterios de negocio se cumplen (F1-mac ≥ 0.65, AUC ≥ 0.70, Recall+ ≥ 0.75)
-- El análisis de errores es coherente y explicable
-- Los supuestos del modelo se verifican
-
-**Condiciones para el despliegue:**
+- Las métricas para predecir reprobación en materias críticas individuales son muy altas y estables (AUC > 0.73), por lo que esa sección es robusta.
+- Sin embargo, el predictor interactivo global de riesgo académico acumulado no cumple los criterios mínimos del negocio (F1 y Recall) al haber eliminado el data leakage. El modelo sirve como descriptivo inicial de la muestra actual, pero **no debe utilizarse de forma automatizada para tomar decisiones académicas determinantes** sin antes recolectar más datos de nuevas cohortes.
+gue:**
 1. Usar umbral 0.29 para `rendimiento_bajo` (maximiza detección de riesgo)
 2. Comunicar las limitaciones al usuario final: n=94, solo 2 cohortes, 84 % masculino
 3. Reentrenar al incorporar nuevas cohortes
