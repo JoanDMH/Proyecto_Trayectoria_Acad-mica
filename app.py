@@ -178,7 +178,7 @@ with st.sidebar:
     ])
     st.markdown("---")
     st.markdown("**Metodología:** CRISP-DM")
-    st.markdown("**Modelo:** XGBoost · Umbral 0.29")
+    st.markdown("**Modelo Principal:** Random Forest · Umbral 0.29")
     st.markdown(f"**n =** {len(df)} estudiantes")
     st.markdown("---")
     st.markdown("**Desarrollado por:**")
@@ -282,13 +282,13 @@ if seccion == "Inicio":
 
         st.markdown(insight(
             "<strong>Dato clave:</strong> El promedio del primer semestre es el predictor más poderoso "
-            "(19.9% de importancia), seguido por el puntaje Saber 11 y el nivel socioeconómico.", "exito"
+            "(37.8% de importancia en el modelo principal), seguido por el puntaje Saber 11 y el nivel socioeconómico.", "exito"
         ), unsafe_allow_html=True)
 
     st.markdown("---")
     st.markdown("""
     <div style="text-align:center; color:#7F8C8D; font-size:0.82rem; padding:12px;">
-        Metodología CRISP-DM · Modelo XGBoost · Validación cruzada estratificada k=5 ·
+        Metodología CRISP-DM · Modelo Principal: Random Forest · Validación cruzada estratificada k=5 ·
         Umbral optimizado 0.29 · <em>Datos suministrados por la Oficina de Sistemas — Unillanos</em>
     </div>
     """, unsafe_allow_html=True)
@@ -512,7 +512,7 @@ elif seccion == "Rendimiento Académico":
     st.markdown("#### ¿Predice el primer semestre el resultado final?")
     st.markdown(insight(
         "<strong>Hallazgo central:</strong> El promedio del primer semestre es la variable más predictiva "
-        "del rendimiento final (importancia 19.9% en XGBoost). Un primer semestre por debajo de 3.0 "
+        "del rendimiento final (importancia 37.8% en Random Forest). Un primer semestre por debajo de 3.0 "
         "multiplica significativamente el riesgo de bajo rendimiento acumulado.", "exito"
     ), unsafe_allow_html=True)
 
@@ -552,7 +552,7 @@ elif seccion == "Rendimiento Académico":
 elif seccion == "Factores Predictivos":
 
     st.markdown('<div class="section-header">¿Qué factores importan?</div>', unsafe_allow_html=True)
-    st.markdown('<div class="section-subtitle">Resultados de las cuatro preguntas problema del estudio y la importancia de variables según el modelo XGBoost.</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-subtitle">Resultados de las cuatro preguntas problema del estudio y la importancia de variables según los modelos predictivos del proyecto.</div>', unsafe_allow_html=True)
 
     # Tabs para cada pregunta
     tab_a, tab_b, tab_c, tab_imp = st.tabs([
@@ -568,7 +568,7 @@ elif seccion == "Factores Predictivos":
         with col1:
             st.markdown("#### Promedio acumulado por género")
             fig = go.Figure()
-            for genero, nombre, color in [("M", "Hombres (n=79)", AZUL), ("F", "Mujeres (n=15)", NARANJA)]:
+            for genero, nombre, color in [("M", "Hombres (n=74)", AZUL), ("F", "Mujeres (n=15)", NARANJA)]:
                 datos = df[df["SEXO"] == genero]["PROMEDIO_CARRERA"].dropna()
                 fig.add_trace(go.Box(
                     y=datos, name=nombre, marker_color=color,
@@ -636,8 +636,8 @@ elif seccion == "Factores Predictivos":
                         <span class="stat-badge stat-ns">No sign.</span></p>
                 </div>""", unsafe_allow_html=True)
             st.markdown(insight(
-                "La correlación lineal es no significativa, pero el modelo XGBoost "
-                "asigna importancia del <strong>4–5%</strong> a las variables de educación parental, "
+                "La correlación lineal es no significativa, pero el modelo Random Forest "
+                "asigna importancia del <strong>4–6%</strong> a las variables de educación parental, "
                 "sugiriendo un efecto no lineal que la correlación de Spearman no captura.", "alerta"
             ), unsafe_allow_html=True)
 
@@ -646,7 +646,7 @@ elif seccion == "Factores Predictivos":
         col1, col2 = st.columns([2, 1])
         with col1:
             st.markdown("#### Tasas comparativas según repitencia escolar previa")
-            grupos = ["Repitió (n=17)", "No repitió (n=77)"]
+            grupos = ["Repitió (n=15)", "No repitió (n=74)"]
             metricas_rep = {
                 "Bajo rendimiento": [
                     df[df["repitio_escolar"]==1]["rendimiento_bajo"].mean()*100,
@@ -691,8 +691,8 @@ elif seccion == "Factores Predictivos":
             """, unsafe_allow_html=True)
             st.markdown(insight(
                 "<strong>Señal real, muestra insuficiente.</strong> "
-                "La diferencia de 16pp en bajo rendimiento y 24pp en graduación "
-                "es relevante. Con n=17 en el grupo que repitió, la prueba no "
+                "La diferencia en la tasa de graduación es sustancial e indica que esta variable "
+                "es relevante. Con n=15 en el grupo que repitió, la prueba no "
                 "tiene poder estadístico para confirmarla.", "alerta"
             ), unsafe_allow_html=True)
 
@@ -702,31 +702,30 @@ elif seccion == "Factores Predictivos":
         imp_rb = res.get("imp_rb", {})
         imp_gr = res.get("imp_gr", {})
 
-        for col, imp, titulo, color in [
-            (col1, imp_rb, "Rendimiento bajo", AZUL),
-            (col2, imp_gr, "Graduación", NARANJA)
+        for col, imp, titulo, alg, color in [
+            (col1, imp_rb, "Rendimiento bajo", "Random Forest", AZUL),
+            (col2, imp_gr, "Graduación", "XGBoost", NARANJA)
         ]:
             with col:
-                st.markdown(f"#### Modelo: {titulo}")
+                st.markdown(f"#### Modelo: {titulo} ({alg})")
                 if imp:
                     df_imp = pd.Series(imp).sort_values(ascending=True).tail(12).reset_index()
                     df_imp.columns = ["Feature", "Importancia"]
                     fig = px.bar(df_imp, x="Importancia", y="Feature", orientation="h",
                                  color="Importancia",
-                                 color_continuous_scale=px.colors.sequential.Blues,
+                                 color_continuous_scale=px.colors.sequential.Blues if alg=="Random Forest" else px.colors.sequential.Oranges,
                                  text=df_imp["Importancia"].apply(lambda x: f"{x:.3f}"))
                     fig.update_traces(textposition="outside")
                     fig.update_layout(height=400, margin=dict(t=20, b=20, l=20, r=40),
                                       coloraxis_showscale=False,
-                                      xaxis_title="Importancia (XGBoost)",
+                                      xaxis_title=f"Importancia ({alg})",
                                       yaxis_title="")
                     st.plotly_chart(fig, use_container_width=True)
 
         st.markdown(insight(
-            "<strong>prom_sem1</strong> es el predictor más importante en ambos modelos (~20%). "
-            "El <strong>estrato</strong> es el más importante para predecir graduación (11.1%), "
-            "lo que indica que los factores socioeconómicos influyen más en la <em>persistencia</em> "
-            "que en el <em>desempeño</em>."
+            "<strong>prom_sem1</strong> es el predictor más decisivo en ambos modelos (37.8% en Rendimiento Bajo y 15.3% en Graduación). "
+            "Para la graduación, la preparación previa medida por el <strong>icfes_total</strong> (13.6%) y el efecto de la <strong>cohorte_encoded</strong> (10.0%) "
+            "son los factores de mayor peso después del primer semestre, superando a las variables socioeconómicas individuales."
         ), unsafe_allow_html=True)
 
 
