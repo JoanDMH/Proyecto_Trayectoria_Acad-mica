@@ -136,13 +136,13 @@ La tasa de graduación acumulada de solo el 39.3 % es uno de los indicadores de 
 | 4 | `nivel_edu_max_padres` | derivada | Ordinal | b |
 | 5 | `repitio_escolar` | caracterización | Binario | c |
 | 6 | `estrato` | caracterización | Ordinal (1–6) | a, b, c |
-| 7 | `puntaje_icfes_total` | caracterización | Continuo | d |
-| 8 | `puntaje_icfes_mat` (PMATN) | caracterización | Continuo | d |
-| 9 | `puntaje_icfes_lec` (PCRIN) | caracterización | Continuo | d |
-| 10 | `puntaje_icfes_nat` (PNATN) | caracterización | Continuo | d |
+| 7 | `icfes_total` | caracterización | Continuo | d |
+| 8 | `icfes_mat` (PMATN) | caracterización | Continuo | d |
+| 9 | `icfes_lec` (PCRIN) | caracterización | Continuo | d |
+| 10 | `icfes_nat` (PNATN) | caracterización | Continuo | d |
 | 11 | `tipo_plantel` | caracterización | Binario (0=público) | c |
-| 12 | `zona_residencia` | caracterización | Binario (0=urbana) | b |
-| 13 | `ingresos_hogar` | caracterización | Continuo (log) | b |
+| 12 | `zona_rural` | caracterización | Binario (1=rural) | b |
+| 13 | `log_ingresos` | caracterización | Continuo (log) | b |
 | 14 | `sisben_nivel` | caracterización | Ordinal | b |
 | 15 | `vive_con` | caracterización | Categórico (1–5) | a, b |
 | 16 | `situacion_padres` | caracterización | Categórico (1–3) | a, b |

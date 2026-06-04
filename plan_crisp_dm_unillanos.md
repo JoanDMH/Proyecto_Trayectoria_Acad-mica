@@ -1,5 +1,5 @@
 # Plan CRISP-DM: Sistema Predictivo de Rendimiento Académico
-## Universidad de los Llanos — Cohorte 2017-2 | Ingeniería de Sistemas
+## Universidad de los Llanos — Cohortes 2017-2 y 2018-1 | Ingeniería de Sistemas
 
 > **Nota para el agente de código:** Este documento es la hoja de ruta completa del proyecto. Cada fase debe ejecutarse en orden. Al finalizar cada fase, el agente debe verificar explícitamente los criterios de éxito antes de avanzar a la siguiente.
 
@@ -48,7 +48,7 @@ proyecto_rendimiento_academico/
 
 - **Cliente:** Universidad de los Llanos
 - **Proyecto marco:** Estudio longitudinal de trayectoria estudiantil — Facultad de Ciencias Básicas e Ingeniería (dimensiones STEM)
-- **Alcance:** Cohorte **2017-2**, programa **Ingeniería de Sistemas**
+- **Alcance:** Cohortes **2017-2 y 2018-1**, programa **Ingeniería de Sistemas**
 - **Objetivo general:** Construir un modelo predictivo del rendimiento académico que permita anticipar el desempeño de un estudiante específico basándose en perfiles similares históricos
 
 ### 1.2 Objetivos del negocio → Objetivos de minería de datos
@@ -65,7 +65,7 @@ proyecto_rendimiento_academico/
 > Las preguntas pueden ajustarse en la Fase 2 si el análisis exploratorio revela patrones más relevantes.
 
 **a. Brecha de género**
-- ¿Existe diferencia estadísticamente significativa en el promedio acumulado entre hombres y mujeres de la cohorte 2017-2?
+- ¿Existe diferencia estadísticamente significativa en el promedio acumulado entre hombres y mujeres de las cohortes 2017-2 y 2018-1?
 - ¿Es el género un predictor útil del rendimiento académico cuando se controlan otras variables socioeconómicas?
 
 **b. Nivel educativo de los padres**
@@ -81,7 +81,7 @@ proyecto_rendimiento_academico/
 ### 1.4 Criterio de éxito de la fase
 
 - [x] Preguntas formuladas con componente de inferencia, predicción o clasificación
-- [x] Alcance delimitado (cohorte 2017-2, programa Ingeniería de Sistemas)
+- [x] Alcance delimitado (cohortes 2017-2 y 2018-1, programa Ingeniería de Sistemas)
 - [x] Fuentes de datos identificadas
 
 ---

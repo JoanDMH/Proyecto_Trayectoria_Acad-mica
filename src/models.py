@@ -1,7 +1,7 @@
 """
 models.py
 Fase 4 CRISP-DM — Modelado
-Universidad de los Llanos · Cohorte 2017-2 · Ingeniería de Sistemas
+Universidad de los Llanos · Cohortes 2017-2 y 2018-1 · Ingeniería de Sistemas
 
 Entrena Árbol de Decisión, Random Forest y XGBoost.
 Selecciona el mejor por F1-weighted y lo guarda.

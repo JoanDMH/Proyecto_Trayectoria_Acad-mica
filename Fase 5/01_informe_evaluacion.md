@@ -73,15 +73,17 @@ El objetivo general es predecir el rendimiento académico de un estudiante basá
 | Programación | 48 | **15 %** | 3.64 | 1.21 | 0.630 |
 | Matemáticas Especiales | 32 | **16 %** | 3.65 | 1.15 | 0.580 |
 
-**Desempeño de los modelos de predicción por materia (Random Forest, F1-weighted CV-5):**
+**Desempeño de los modelos de predicción por materia (Random Forest, F1-weighted in-sample*):**
 
-| Materia | F1-w CV5 | Calidad |
+| Materia | F1-w (in-sample)* | Calidad |
 |---|---|---|
 | Álgebra Lineal | **0.971** | ✅ Excelente |
 | Matemáticas Especiales | **0.964** | ✅ Excelente |
 | Física I | **0.962** | ✅ Excelente |
 | Programación | **0.870** | ✅ Excelente |
 | Matemáticas II | **0.784** | ✅ Bueno |
+
+\* Nota: Debido al bajo volumen muestral por materia (N entre 12 y 71), las métricas se evalúan in-sample tras la optimización de hiperparámetros.
 
 **Conclusión:** Sí es posible predecir reprobación en las materias críticas usando el promedio global previo, el número de veces cursada y la nota en Matemáticas I. Álgebra Lineal y Física I tienen los mejores modelos (AUC > 0.90). Matemáticas II es la más difícil de predecir (AUC 0.735) pese a tener la mayor tasa de reprobación (44 %), posiblemente porque sus factores de riesgo son más complejos.
 

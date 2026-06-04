@@ -123,13 +123,15 @@ Para `graduado` se mantuvo el umbral 0.50, el cual ofrece un excelente balance p
 
 ## 8. Modelos por materia crítica (pregunta d)
 
-| Materia | F1-w CV5 | N est. | Calidad |
+| Materia | F1-w (in-sample)* | N est. | Calidad |
 |---|---|---|---|
 | Álgebra Lineal | 0.971 | 71 | ✅ Excelente |
 | Física I | 0.962 | 53 | ✅ Excelente |
 | Matemáticas Especiales | 0.964 | 32 | ✅ Excelente |
 | Programación | 0.870 | 48 | ✅ Muy bueno |
 | Matemáticas II | 0.784 | 52 | ✅ Bueno |
+
+\* Nota: Debido al bajo volumen de muestras por materia, se presenta el F1-weighted sobre el entrenamiento (in-sample) tras la optimización de hiperparámetros.
 
 ---
 

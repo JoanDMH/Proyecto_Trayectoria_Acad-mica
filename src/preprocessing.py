@@ -1,11 +1,11 @@
 """
 preprocessing.py
 Fase 3 CRISP-DM — Preparación de datos
-Universidad de los Llanos · Cohorte 2017-2 · Ingeniería de Sistemas
+Universidad de los Llanos · Cohortes 2017-2 y 2018-1 · Ingeniería de Sistemas
 
 Correcciones aplicadas post-Fase 2:
-- Población base: 46 estudiantes (cruce car ∩ historial)
-- 17 features seleccionadas
+- Población base: 89 estudiantes (cruce car ∩ historial)
+- 18 features seleccionadas
 - OBSERVACION: excluye O (Homologada), I (Intercambio), C (Cancelada), E (En curso)
 - Promedio materias: solo notas >= 3.0, última nota por estudiante-materia
 - Materias críticas corregidas con índice compuesto

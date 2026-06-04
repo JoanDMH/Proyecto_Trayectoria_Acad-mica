@@ -82,13 +82,15 @@
 
 ## 3. Modelos por materia crítica — Random Forest, umbral 0.50
 
-| Materia | N | Tasa rep. | F1-w CV5 | Calidad |
+| Materia | N | Tasa rep. | F1-w (in-sample)* | Calidad |
 |---|---|---|---|---|
 | Álgebra Lineal | 71 | 28 % | **0.971** | ✅ Excelente |
 | Matemáticas Especiales | 32 | 16 % | **0.964** | ✅ Excelente |
 | Física I | 53 | 26 % | **0.962** | ✅ Excelente |
 | Programación | 48 | 15 % | **0.870** | ✅ Excelente |
 | Matemáticas II | 52 | 44 % | **0.784** | ✅ Bueno |
+
+\* Nota: Debido al bajo volumen muestral por materia (N entre 12 y 71), las métricas se evalúan in-sample tras la optimización de hiperparámetros.
 
 ---
 

@@ -7,9 +7,9 @@
 
 | Paso | Descripción | Archivo |
 |---|---|---|
-| Carga y filtrado | Selección de cohorte 2017-2, Ing. de Sistemas | `preprocessing.py` |
-| Definición de población base | Cruce de caracterización ∩ historial → 46 estudiantes | `preprocessing.py` |
-| Selección de features | 17 variables de entrada | `preprocessing.py` |
+| Carga y filtrado | Selección de cohortes 2017-2 y 2018-1, Ing. de Sistemas | `preprocessing.py` |
+| Definición de población base | Cruce de caracterización ∩ historial → 89 estudiantes | `preprocessing.py` |
+| Selección de features | 18 variables de entrada | `preprocessing.py` |
 | Transformaciones | Encoding, imputación, normalización, derivación | `preprocessing.py` |
 | Construcción de targets | 2 variables objetivo binarias | `preprocessing.py` |
 | División train/test | 80 % / 20 % estratificada | `train_test_split.json` |
@@ -32,8 +32,8 @@
 
 | Variable original | Variable generada | Transformación | Nulos | Impuatción |
 |---|---|---|---|---|
-| `NIVEL_ED_PADRE` (códigos DANE 1–14, sin 6) | `nivel_edu_padre` | Mapeo ordinal 0–12 | 8 (17.4 %) | fillna(0) = Analfabeta/Desconocido |
-| `NIVEL_ED_MADRE` (códigos DANE 1–14, sin 6) | `nivel_edu_madre` | Mapeo ordinal 0–12 | 1 (2.2 %) | fillna(0) |
+| `NIVEL_ED_PADRE` (códigos DANE 1–14, sin 6) | `nivel_edu_padre` | Mapeo ordinal 0–12 | 19 (21.3 %) | fillna(0) = Analfabeta/Desconocido |
+| `NIVEL_ED_MADRE` (códigos DANE 1–14, sin 6) | `nivel_edu_madre` | Mapeo ordinal 0–12 | 4 (4.5 %) | fillna(0) |
 | `NIVEL_ED_PADRE/MADRE` | `nivel_edu_max_padres` | max(padre, madre) | 0 | — (derivada) |
 | `ESTRATO_ACTUAL` (1–6) | `estrato` | Sin cambio (ya ordinal) | 0 | — |
 | `URBANA_SISBEN` / `RURAL_SISBEN` + `SISBEN` | `sisben_nivel` | Regla: sin SISBEN→0, con SISBEN→nivel (1–4 urbano, 1–6 rural) | 0 | — |
@@ -51,7 +51,7 @@
 | `PCIUN` (Soc. y Ciudadanas) | `icfes_soc` | Sin cambio | 1 | Mediana (63.0) |
 | `PNATN` (Ciencias Naturales) | `icfes_nat` | Sin cambio | 1 | Mediana (64.0) |
 | Suma de 5 componentes | `icfes_total` | Suma aritmética | 0 | — (derivada) |
-| `PROMEDIO_SEMESTRE` período 2017-2 | `prom_sem1` | Sin cambio | 0 | Mediana (3.7) si falta |
+| `PROMEDIO_SEMESTRE` períodos 2017-2 y 2018-1 | `prom_sem1` | Sin cambio | 0 | Mediana (3.6) si falta |
 
 > **Justificación log1p en ingresos:** La distribución original está fuertemente sesgada a la derecha (media 14.4M, máximo 62.7M, moda ~8.3M). La transformación logarítmica reduce la asimetría y evita que valores extremos dominen el modelo.
 
@@ -64,7 +64,7 @@
 | `VIVE_CON` (1–5) | `vive_con` | Numérico entero | 1 | fillna(1) = Con ambos padres |
 | `SITUACION_PADRES` (1–3) | `situacion_padres` | Numérico entero | 2 | fillna(1) = Separados |
 
-> **Justificación sin One-Hot Encoding:** Con solo 46 registros, OHE inflaría la dimensionalidad innecesariamente. Los árboles de decisión (y sus variantes) pueden manejar variables categóricas codificadas como enteros sin pérdida de información relevante.
+> **Justificación sin One-Hot Encoding:** Con solo 89 registros, OHE inflaría la dimensionalidad innecesariamente. Los árboles de decisión (y sus variantes) pueden manejar variables categóricas codificadas como enteros sin pérdida de información relevante.
 
 ---
 
@@ -72,8 +72,8 @@
 
 | Target | Definición | Positivos | Negativos | Desbalance |
 |---|---|---|---|---|
-| `rendimiento_bajo` | `PROMEDIO_CARRERA` < 3.0 | 18 (39 %) | 28 (61 %) | Moderado |
-| `graduado` | Último estado = `GRADUADO` | 14 (30 %) | 32 (70 %) | Significativo |
+| `rendimiento_bajo` | `PROMEDIO_CARRERA` < 3.0 | 37 (41.6 %) | 52 (58.4 %) | Moderado |
+| `graduado` | Último estado = `GRADUADO` | 35 (39.3 %) | 54 (60.7 %) | Moderado |
 
 **Manejo del desbalance:** Se aplica SMOTE (Synthetic Minority Oversampling Technique) únicamente sobre el conjunto de entrenamiento cuando la proporción minoritaria es < 55 %. Nunca se aplica sobre el test set para evitar data leakage.
 
@@ -105,10 +105,10 @@ Adicionalmente, por cada estudiante-materia se toma **únicamente la última not
 | Semilla aleatoria | 42 |
 | Proporción test | 20 % |
 | Variable de estratificación | `rendimiento_bajo` |
-| **N train** | **75 estudiantes** |
-| **N test** | **19 estudiantes** |
-| Distribución target train | 40 % rendimiento bajo |
-| Distribución target test | 37 % rendimiento bajo |
+| **N train** | **71 estudiantes** |
+| **N test** | **18 estudiantes** |
+| Distribución target train | 40.8 % rendimiento bajo |
+| Distribución target test | 44.4 % rendimiento bajo |
 
 La estratificación garantiza que ambas particiones tengan proporciones similares de la clase positiva.
 
@@ -127,5 +127,5 @@ La validación cruzada (StratifiedKFold, k=5) se aplica **solo sobre el train se
 | Tipos de datos correctos | ✅ Todos numéricos (int/float) |
 | Sin data leakage | ✅ `PROMEDIO_CARRERA` solo en target, no en features |
 | Número de features | ✅ 18 (≥ 15 requeridas, incluye `cohorte_encoded`) |
-| Población base correcta | ✅ 94 estudiantes (2017-2 + 2018-1) |
+| Población base correcta | ✅ 89 estudiantes (2017-2 y 2018-1, tras depuración) |
 | Targets definidos | ✅ `rendimiento_bajo` y `graduado` |

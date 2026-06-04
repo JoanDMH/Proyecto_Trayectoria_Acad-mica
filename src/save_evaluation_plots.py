@@ -79,7 +79,7 @@ def get_cv_probs(target, umbral):
     y = df[target].values
     X_tr, y_tr = X[idx_train], y[idx_train]
     counts = np.bincount(y_tr)
-    if counts.min() / counts.max() < 0.6 and counts.min() >= 3:
+    if counts.min() / counts.max() < 0.4 and counts.min() >= 3:
         sm = SMOTE(random_state=SEED, k_neighbors=min(3, counts.min()-1))
         X_tr, y_tr = sm.fit_resample(X_tr, y_tr)
     
@@ -219,7 +219,7 @@ def cv_folds(target, umbral):
         # Aplicamos SMOTE si es desbalanceado
         X_fold_tr, y_fold_tr = X[tr_i], y[tr_i]
         counts = np.bincount(y_fold_tr)
-        if counts.min() / counts.max() < 0.6 and counts.min() >= 3:
+        if counts.min() / counts.max() < 0.4 and counts.min() >= 3:
             sm = SMOTE(random_state=SEED, k_neighbors=min(2, counts.min()-1))
             X_fold_tr, y_fold_tr = sm.fit_resample(X_fold_tr, y_fold_tr)
             

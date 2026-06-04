@@ -782,14 +782,11 @@ elif seccion == "Materias Críticas":
     colores_mat = [ROJO, "#E67E22", "#F39C12", "#27AE60", "#2980B9"]
 
     for i, (col_name, campo) in enumerate([
-        ("Tasa reprobación", "Tasa reprobación"),
-        ("Rep. media",        "Rep. media"),
-        ("N estudiantes",     "N estudiantes")
+        ("Tasa reprobación", "tasa_rep"),
+        ("Rep. media",        "rep_media"),
+        ("N estudiantes",     "N")
     ], 1):
-        vals = [MATERIAS_CRITICAS[m][list(MATERIAS_CRITICAS[m].keys())[
-            ["indice", "tasa_rep", "rep_media", "N"].index(
-                ["indice","tasa_rep","rep_media","N"][i-1 if i<=3 else 2])
-        ]] for m in materias_orden]
+        vals = [MATERIAS_CRITICAS[m][campo] for m in materias_orden]
 
         for j, (m, v, c) in enumerate(zip(materias_orden, vals, colores_mat)):
             fig.add_trace(go.Bar(
@@ -835,6 +832,8 @@ elif seccion == "Materias Críticas":
         "es la más difícil de predecir (AUC 0.735), sugiriendo que sus factores de riesgo "
         "son más complejos o dependientes de eventos dentro del semestre."
     ), unsafe_allow_html=True)
+
+    st.markdown("<p style='font-size:0.75rem; color:#7F8C8D; text-align:center; margin-top:12px;'>Nota metodológica: Las métricas de desempeño de estos modelos específicos por materia representan la evaluación sobre la muestra de entrenamiento (in-sample) debido al volumen de datos. Matemáticas Especiales no se modela predictivamente por tamaño muestral insuficiente (N=12).</p>", unsafe_allow_html=True)
 
 
 # ══════════════════════════════════════════════════════════════════════════════
