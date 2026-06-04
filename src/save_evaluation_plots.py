@@ -26,6 +26,7 @@ from sklearn.metrics import (
     precision_score, matthews_corrcoef, accuracy_score, roc_auc_score
 )
 from xgboost import XGBClassifier
+from sklearn.ensemble import RandomForestClassifier
 from imblearn.over_sampling import SMOTE
 
 # Configuración
@@ -83,12 +84,15 @@ def get_cv_probs(target, umbral):
         sm = SMOTE(random_state=SEED, k_neighbors=min(3, counts.min()-1))
         X_tr, y_tr = sm.fit_resample(X_tr, y_tr)
     
-    m = XGBClassifier(
-        n_estimators=100, max_depth=3, learning_rate=0.1,
-        subsample=0.8, colsample_bytree=0.8,
-        use_label_encoder=False, eval_metric='logloss',
-        verbosity=0, random_state=SEED
-    )
+    if target == 'rendimiento_bajo':
+        m = RandomForestClassifier(n_estimators=100, max_depth=4, min_samples_leaf=2, random_state=SEED)
+    else:
+        m = XGBClassifier(
+            n_estimators=100, max_depth=3, learning_rate=0.1,
+            subsample=0.8, colsample_bytree=0.8,
+            use_label_encoder=False, eval_metric='logloss',
+            verbosity=0, random_state=SEED
+        )
     m.fit(X_tr, y_tr)
     prob_cv = cross_val_predict(m, X, y, cv=CV, method='predict_proba')[:, 1]
     return y, prob_cv, (prob_cv >= umbral).astype(int), m
@@ -223,12 +227,15 @@ def cv_folds(target, umbral):
             sm = SMOTE(random_state=SEED, k_neighbors=min(2, counts.min()-1))
             X_fold_tr, y_fold_tr = sm.fit_resample(X_fold_tr, y_fold_tr)
             
-        m = XGBClassifier(
-            n_estimators=100, max_depth=3, learning_rate=0.1,
-            subsample=0.8, colsample_bytree=0.8,
-            use_label_encoder=False, eval_metric='logloss',
-            verbosity=0, random_state=SEED
-        )
+        if target == 'rendimiento_bajo':
+            m = RandomForestClassifier(n_estimators=100, max_depth=4, min_samples_leaf=2, random_state=SEED)
+        else:
+            m = XGBClassifier(
+                n_estimators=100, max_depth=3, learning_rate=0.1,
+                subsample=0.8, colsample_bytree=0.8,
+                use_label_encoder=False, eval_metric='logloss',
+                verbosity=0, random_state=SEED
+            )
         m.fit(X_fold_tr, y_fold_tr)
         prob_i = m.predict_proba(X[te_i])[:, 1]
         yp_i   = (prob_i >= umbral).astype(int)
