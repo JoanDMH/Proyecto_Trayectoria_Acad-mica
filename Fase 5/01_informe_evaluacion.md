@@ -18,7 +18,7 @@ El objetivo general es predecir el rendimiento académico de un estudiante basá
 | Mediana promedio mujeres | 3.70 (n=15) |
 | Tasa rendimiento bajo — hombres | 40.5 % |
 | Tasa rendimiento bajo — mujeres | 33.3 % |
-| Importancia `sexo` en modelo | **0.000** (no usada por XGBoost) |
+| Importancia `sexo` en modelo | **0.007** (importancia mínima en Random Forest) |
 
 **Conclusión:** No se detecta brecha estadísticamente significativa. Las mujeres tienen mediana ligeramente superior (3.70 vs 3.30) y menor tasa de bajo rendimiento (33 % vs 40 %), pero la diferencia no alcanza significancia con p=0.251. El modelo descarta `sexo` como predictor útil. **Limitación crítica:** solo 15 mujeres en la muestra — el poder estadístico es insuficiente (~25 %) para detectar diferencias reales si existen.
 
@@ -177,7 +177,7 @@ La validación cruzada estratificada garantiza que cada fold mantiene la proporc
 
 ## 8. Revisión de supuestos
 
-XGBoost es un modelo basado en árboles de decisión; **no asume linealidad, normalidad ni homocedasticidad**. Los supuestos relevantes son:
+El modelo principal (Random Forest) y el secundario (XGBoost) son ensambles basados en árboles de decisión; **no asumen linealidad, normalidad ni homocedasticidad**. Los supuestos relevantes son:
 
 | Supuesto | ¿Se cumple? | Evidencia |
 |---|---|---|
@@ -185,7 +185,7 @@ XGBoost es un modelo basado en árboles de decisión; **no asume linealidad, nor
 | **Ausencia de data leakage** | ✅ | `PROMEDIO_CARRERA` no es feature; split anterior a SMOTE; CV aplicado sobre datos originales. |
 | **Representatividad del train set** | ⚠️ | Solo 2 cohortes de un programa. El modelo puede no generalizar a otros programas. |
 | **Estabilidad temporal** | ⚠️ | `cohorte_encoded` captura diferencias entre cohortes — si las condiciones cambian, el modelo requerirá reentrenamiento. |
-| **Suficiencia muestral** | ❌ No cumple | $N=89$ es una muestra sumamente pequeña para entrenar algoritmos boosting como XGBoost. |
+| **Suficiencia muestral** | ❌ No cumple | $N=89$ es una muestra sumamente pequeña para entrenar algoritmos de ensamble (Random Forest y XGBoost), lo que limita su capacidad de generalización. |
 | **Desbalance de clases tratado** | ✅ | SMOTE evaluado y descartado justificadamente por balance natural de clases (~40/60) y bajo tamaño muestral. |
 
 ---
