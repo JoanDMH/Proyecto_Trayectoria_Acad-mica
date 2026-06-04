@@ -52,12 +52,12 @@ El objetivo general es predecir el rendimiento académico de un estudiante basá
 |---|---|
 | Chi-cuadrado (rend. bajo) | χ²=1.603, p=0.205 → no significativo |
 | Tasa rend. bajo — repitió | **52.9 %** (n=17) |
-| Tasa rend. bajo — no repitió | **36.4 %** (n=77) |
+| Tasa rend. bajo — no repitió | **36.4 %** (n=72) |
 | Tasa graduación — repitió | 17.6 % |
 | Tasa graduación — no repitió | 41.6 % |
-| Importancia `repitio_escolar` en modelo | **0.062** (7ª más importante) |
+| Importancia `repitio_escolar` en modelo | **0.079** (5ª más importante en `graduado`) |
 
-**Conclusión:** La prueba chi-cuadrado no alcanza significancia (p=0.205), pero la diferencia descriptiva es sustancial: quienes repitieron tienen una tasa de bajo rendimiento 16 puntos superior (52.9 % vs 36.4 %) y una tasa de graduación menos de la mitad (17.6 % vs 41.6 %). El modelo asigna a `repitio_escolar` la 7ª mayor importancia entre 18 variables. Con n=17 en el grupo que repitió, el test no tiene poder suficiente para detectar esta diferencia. **La señal existe pero la muestra no es suficiente para confirmarla estadísticamente.**
+**Conclusión:** La prueba chi-cuadrado no alcanza significancia (p=0.205), pero la diferencia descriptiva es sustancial: quienes repitieron tienen una tasa de bajo rendimiento 16 puntos superior (52.9 % vs 36.4 %) y una tasa de graduación menos de la mitad (17.6 % vs 41.6 %). El modelo asigna a `repitio_escolar` la 5ª mayor importancia entre 18 variables para la graduación. Con n=17 en el grupo que repitió, el test no tiene poder suficiente para detectar esta diferencia. **La señal existe pero la muestra no es suficiente para confirmarla estadísticamente.**
 
 ---
 
@@ -107,11 +107,11 @@ Estudiantes clasificados como en riesgo que en realidad tienen rendimiento norma
 
 | Hallazgo del EDA | Confirmado por el modelo |
 |---|---|
-| `prom_sem1` es el mejor predictor del resultado final | ✅ Variable más importante (19.9 %) |
+| `prom_sem1` es el mejor predictor del resultado final | ✅ Variable más importante (37.8 %) |
 | Nivel educativo padres tiene efecto no lineal | ✅ Importancia moderada en modelo, no en correlación |
-| Repitencia escolar asociada a mayor riesgo descriptivamente | ✅ 7ª variable más importante (6.2 %) |
-| El estrato es un factor relevante para graduación | ✅ Variable más importante en modelo `graduado` (11.1 %) |
-| `cohorte_encoded` captura diferencias reales entre cohortes | ✅ 3ª variable para graduación (10.2 %) |
+| Repitencia escolar asociada a mayor riesgo descriptivamente | ✅ 5ª variable más importante para graduación (7.9 %) |
+| Los ingresos y el estrato son un factor relevante para graduación | ✅ Importancia moderada en modelo `graduado` (`log_ingresos`: 8.0 %) |
+| `cohorte_encoded` captura diferencias reales entre cohortes | ✅ 3ª variable para graduación (10.0 %) |
 
 ---
 
@@ -197,9 +197,10 @@ XGBoost es un modelo basado en árboles de decisión; **no asume linealidad, nor
 **Justificación:**
 - Las métricas para predecir reprobación en materias críticas individuales son muy altas y estables (AUC > 0.73), por lo que esa sección es robusta.
 - Sin embargo, el predictor interactivo global de riesgo académico acumulado no cumple los criterios mínimos del negocio (F1 y Recall) al haber eliminado el data leakage. El modelo sirve como descriptivo inicial de la muestra actual, pero **no debe utilizarse de forma automatizada para tomar decisiones académicas determinantes** sin antes recolectar más datos de nuevas cohortes.
-gue:**
+
+**Se recomiendan las siguientes condiciones de despliegue:**
 1. Usar umbral 0.29 para `rendimiento_bajo` (maximiza detección de riesgo)
-2. Comunicar las limitaciones al usuario final: n=94, solo 2 cohortes, 84 % masculino
+2. Comunicar las limitaciones al usuario final: n=89, solo 2 cohortes, 83.1 % masculino
 3. Reentrenar al incorporar nuevas cohortes
 4. No usar para toma de decisiones definitivas — solo como herramienta de alerta temprana
 
