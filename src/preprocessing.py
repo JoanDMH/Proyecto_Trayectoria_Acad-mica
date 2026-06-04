@@ -18,7 +18,7 @@ import numpy as np
 
 # ── Configuración ────────────────────────────────────────────────────────────
 PROG     = 'INGENIERIA DE SISTEMAS'
-COH      = '2017-2'
+COHORTES = ['2017-2', '2018-1']
 DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'Datos')
 
 # Mapeo NIVEL_ED (códigos DANE, sin código 6)
@@ -70,7 +70,7 @@ OBS_VALIDAS = {'N', 'H', 'F', 'R', 'TG'}
 # ── Carga y filtrado ─────────────────────────────────────────────────────────
 
 def cargar_datos():
-    """Carga los 5 datasets y filtra por cohorte/programa."""
+    """Carga los 5 datasets y filtra por cohortes/programa, excluyendo nulos de promedio acumulado."""
     df_car = pd.read_excel(os.path.join(DATA_DIR, 'caracterización.xlsx'))
     df_mat = pd.read_excel(os.path.join(DATA_DIR, 'detalle_materias.xlsx'))
     df_he  = pd.read_excel(os.path.join(DATA_DIR, 'historial_estados_.xlsx'))
@@ -79,24 +79,28 @@ def cargar_datos():
 
     ing_car = df_car[
         (df_car['PROGRAMA'].str.strip().str.upper() == PROG) &
-        (df_car['PERIODO_INGRESO'].astype(str).str.strip() == COH)
+        (df_car['PERIODO_INGRESO'].astype(str).str.strip().isin(COHORTES))
     ].copy().reset_index(drop=True)
 
     for df in [df_mat, df_he, df_pc, df_ps]:
         df['PROGRAMA'] = df['PROGRAMA'].str.strip().str.upper()
         df['COHORTE']  = df['COHORTE'].astype(str).str.strip()
 
-    ing_mat = df_mat[(df_mat['PROGRAMA'] == PROG) & (df_mat['COHORTE'] == COH)].copy().reset_index(drop=True)
-    ing_he  = df_he [(df_he ['PROGRAMA'] == PROG) & (df_he ['COHORTE'] == COH)].copy().reset_index(drop=True)
-    ing_pc  = df_pc [(df_pc ['PROGRAMA'] == PROG) & (df_pc ['COHORTE'] == COH)].copy().reset_index(drop=True)
-    ing_ps  = df_ps [(df_ps ['PROGRAMA'] == PROG) & (df_ps ['COHORTE'] == COH)].copy().reset_index(drop=True)
+    ing_mat = df_mat[(df_mat['PROGRAMA'] == PROG) & (df_mat['COHORTE'].isin(COHORTES))].copy().reset_index(drop=True)
+    ing_he  = df_he [(df_he ['PROGRAMA'] == PROG) & (df_he ['COHORTE'].isin(COHORTES))].copy().reset_index(drop=True)
+    ing_pc  = df_pc [(df_pc ['PROGRAMA'] == PROG) & (df_pc ['COHORTE'].isin(COHORTES))].copy().reset_index(drop=True)
+    ing_ps  = df_ps [(df_ps ['PROGRAMA'] == PROG) & (df_ps ['COHORTE'].isin(COHORTES))].copy().reset_index(drop=True)
 
-    # Población base: estudiantes presentes en caracterización E historial
+    # Población base inicial: estudiantes presentes en caracterización E historial
     cod_car = set(ing_car['CODIGO_ESTUDIANTIL'].astype(str))
     cod_he  = set(ing_he['CODIGO_INST'].astype(str))
-    poblacion_base = cod_car & cod_he   # 46 estudiantes
+    poblacion_base = cod_car & cod_he
 
-    # Filtrar todas las tablas a la población base
+    # Exclusión metodológica: Estudiantes con promedio acumulado nulo (NaN) en PROMEDIOS_DE_CARRERA.xlsx
+    estudiantes_con_promedio = set(ing_pc[ing_pc['PROMEDIO_CARRERA'].notna()]['CODIGO_INST'].astype(str))
+    poblacion_base = poblacion_base & estudiantes_con_promedio
+
+    # Filtrar todas las tablas a la población base depurada (89 estudiantes)
     ing_car = ing_car[ing_car['CODIGO_ESTUDIANTIL'].astype(str).isin(poblacion_base)].copy()
     ing_mat = ing_mat[ing_mat['CODIGO_INST'].astype(str).isin(poblacion_base)].copy()
     ing_he  = ing_he [ing_he ['CODIGO_INST'].astype(str).isin(poblacion_base)].copy()
@@ -110,7 +114,7 @@ def cargar_datos():
 
 def construir_features_estudiante(ing_car, ing_he, ing_pc, ing_ps):
     """
-    Construye el dataset nivel-estudiante con 17 features y targets.
+    Construye el dataset nivel-estudiante con 18 features y targets.
     Retorna (df_master, feature_cols).
     """
     df = ing_car[[
@@ -122,6 +126,10 @@ def construir_features_estudiante(ing_car, ing_he, ing_pc, ing_ps):
         'PMATN', 'PINGN', 'PCRIN', 'PCIUN', 'PNATN',
         'VIVE_CON', 'SITUACION_PADRES',
     ]].copy().rename(columns={'CODIGO_ESTUDIANTIL': 'CODIGO_INST'})
+
+    # Cohorte
+    df['COHORTE'] = ing_car['PERIODO_INGRESO'].astype(str).str.strip().values
+    df['cohorte_encoded'] = (df['COHORTE'] == '2018-1').astype(int)
 
     # 1. sexo: 1=M, 0=F
     df['sexo'] = (df['SEXO'].str.strip().str.upper() == 'M').astype(int)
@@ -174,13 +182,12 @@ def construir_features_estudiante(ing_car, ing_he, ing_pc, ing_ps):
     # 17. situación de los padres (categórico 1-3)
     df['situacion_padres'] = pd.to_numeric(df['SITUACION_PADRES'], errors='coerce').fillna(1).astype(int)
 
-    # ── Promedio primer semestre ──────────────────────────────────────────────
-    prom_s1 = (
-        ing_ps[ing_ps['PERIODO_INSCRIPCION'].astype(str).str.strip() == '2017-2']
-        [['CODIGO_INST', 'PROMEDIO_SEMESTRE']]
-        .rename(columns={'PROMEDIO_SEMESTRE': 'prom_sem1'})
-    )
-    df = df.merge(prom_s1, on='CODIGO_INST', how='left')
+    # ── Promedio primer semestre (alineado a la cohorte) ──────────────────────
+    # Mapeamos prom_sem1 según la cohorte de ingreso de cada estudiante
+    prom_s1 = ing_ps[['CODIGO_INST', 'PERIODO_INSCRIPCION', 'PROMEDIO_SEMESTRE']].copy()
+    prom_s1.columns = ['CODIGO_INST', 'COHORTE', 'prom_sem1']
+    
+    df = df.merge(prom_s1, on=['CODIGO_INST', 'COHORTE'], how='left')
     df['prom_sem1'] = df['prom_sem1'].fillna(df['prom_sem1'].median())
 
     # ── Promedio acumulado de carrera ─────────────────────────────────────────
@@ -201,16 +208,17 @@ def construir_features_estudiante(ing_car, ing_he, ing_pc, ing_ps):
         'tipo_plantel', 'zona_rural', 'vive_con', 'situacion_padres',
         # Académicas de entrada
         'icfes_total', 'icfes_mat', 'icfes_lec', 'icfes_nat',
+        # Cohorte
+        'cohorte_encoded',
         # Rendimiento primer semestre
         'prom_sem1',
     ]
 
-    info_cols   = ['CODIGO_INST', 'SEXO', 'NIVEL_ED_PADRE', 'NIVEL_ED_MADRE',
-                   'ANOS_REPITIO', 'ESTRATO_ACTUAL']
+    info_cols   = ['CODIGO_INST', 'COHORTE', 'SEXO', 'NIVEL_ED_PADRE', 'NIVEL_ED_MADRE',
+                   'ANOS_REPITIO', 'ESTRATO_ACTUAL', 'TIPO_PLANTEL', 'ZONA_LUGAR_RESIDENCIA']
     target_cols = ['graduado', 'rendimiento_bajo', 'PROMEDIO_CARRERA']
 
     df_out = df[info_cols + feature_cols + target_cols].copy()
-    assert len(df_out) == 46, f"Se esperaban 46 filas, se obtuvieron {len(df_out)}"
     return df_out, feature_cols
 
 
@@ -283,11 +291,9 @@ def pipeline_completo(verbose=True):
     ing_car, ing_mat, ing_he, ing_pc, ing_ps, poblacion = cargar_datos()
     if verbose:
         print(f"  Población base: {len(poblacion)} estudiantes")
-
     if verbose:
-        print("Construyendo features de estudiante (17 features)...")
+        print("Construyendo features de estudiante...")
     df_master, feature_cols = construir_features_estudiante(ing_car, ing_he, ing_pc, ing_ps)
-
     if verbose:
         print("Construyendo features de materias críticas...")
     datasets_materias = construir_features_materias(ing_mat)
@@ -297,16 +303,16 @@ def pipeline_completo(verbose=True):
     df_master.to_csv(os.path.join(src_dir, 'df_master_limpio.csv'), index=False)
 
     if verbose:
-        print(f"\n✓ df_master_limpio.csv guardado: {df_master.shape}")
+        print(f"\n[OK] df_master_limpio.csv guardado: {df_master.shape}")
         print(f"  Features ({len(feature_cols)}): {feature_cols}")
-        print(f"  Targets: graduado={df_master['graduado'].sum()}/46, "
-              f"rendimiento_bajo={df_master['rendimiento_bajo'].sum()}/46")
+        print(f"  Targets: graduado={df_master['graduado'].sum()}/{len(df_master)}, "
+              f"rendimiento_bajo={df_master['rendimiento_bajo'].sum()}/{len(df_master)}")
         print(f"  Materias críticas válidas: {list(datasets_materias.keys())}")
         nulos = df_master[feature_cols].isnull().sum()
         if nulos.any():
-            print(f"  ⚠ Nulos en features: {nulos[nulos>0].to_dict()}")
+            print(f"  [WARNING] Nulos en features: {nulos[nulos>0].to_dict()}")
         else:
-            print("  ✓ Sin nulos en features")
+            print("  [OK] Sin nulos en features")
 
     return df_master, feature_cols, datasets_materias
 

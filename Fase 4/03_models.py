@@ -1,7 +1,7 @@
 """
 models.py
 Fase 4 CRISP-DM — Modelado
-Universidad de los Llanos · Cohorte 2017-2 · Ingeniería de Sistemas
+Universidad de los Llanos · Cohortes 2017-2 y 2018-1 · Ingeniería de Sistemas
 
 Entrena Árbol de Decisión, Random Forest y XGBoost.
 Selecciona el mejor por F1-weighted y lo guarda.
@@ -37,7 +37,7 @@ SRC_DIR = os.path.dirname(__file__)
 FEATURES_ENTRADA = [
     'sexo', 'nivel_edu_padre', 'nivel_edu_madre', 'nivel_edu_max_padres',
     'repitio_escolar', 'estrato',
-    'puntaje_icfes_total', 'puntaje_icfes_mat',
+    'icfes_total', 'icfes_mat', 'cohorte_encoded'
 ]
 
 # Features con información del 1er semestre
@@ -161,7 +161,7 @@ def entrenar_modelos(df, feature_cols=None, target_col='rendimiento_bajo',
     mejor_modelo  = modelos[mejor_nombre]
     mejor_f1      = df_res.iloc[0]['F1-Score (weighted)']
 
-    print(f"\n  ✓ Mejor modelo: {mejor_nombre} (F1={mejor_f1})")
+    print(f"\n  [OK] Mejor modelo: {mejor_nombre} (F1={mejor_f1})")
 
     # Validación cruzada del ganador (más robusta)
     cv_scores = cross_validate(
@@ -232,9 +232,12 @@ def pruebas_estadisticas(df):
             'prueba': 'Mann-Whitney U',
             'statistic': round(stat_mw, 4),
             'p_value': round(p_mw, 4),
+            'p': round(p_mw, 4), # Llave para app.py
             'significativo': p_mw < 0.05,
             'media_M': round(hombres.mean(), 2),
             'media_F': round(mujeres.mean(), 2),
+            'mediana_M': round(hombres.median(), 2), # Llave para app.py
+            'mediana_F': round(mujeres.median(), 2), # Llave para app.py
             'n_M': len(hombres),
             'n_F': len(mujeres),
         }
@@ -248,6 +251,7 @@ def pruebas_estadisticas(df):
                 'prueba': 'Spearman',
                 'rho': round(rho, 4),
                 'p_value': round(p_sp, 4),
+                'p': round(p_sp, 4), # Llave para app.py
                 'significativo': p_sp < 0.05,
             }
 
@@ -261,7 +265,9 @@ def pruebas_estadisticas(df):
         resultados['repitencia'] = {
             'prueba': 'Chi-cuadrado',
             'statistic': round(stat_c, 4),
+            'chi2': round(stat_c, 4), # Llave para app.py
             'p_value': round(p_chi, 4),
+            'p': round(p_chi, 4), # Llave para app.py
             'significativo': p_chi < 0.05,
             'tasa_rendimiento_bajo_SI': round(rep_si.mean(), 3),
             'tasa_rendimiento_bajo_NO': round(rep_no.mean(), 3),
@@ -284,15 +290,9 @@ def pipeline_modelado():
     resultado_rb = entrenar_modelos(df, FEATURES_ENTRADA, 'rendimiento_bajo', 'rendimiento_bajo')
     resultado_gr = entrenar_modelos(df, FEATURES_ENTRADA, 'graduado', 'graduado')
 
-    # Elegir el mejor global
-    f1_rb = resultado_rb['df_resultados'].iloc[0]['F1-Score (weighted)']
-    f1_gr = resultado_gr['df_resultados'].iloc[0]['F1-Score (weighted)']
-    if f1_rb >= f1_gr:
-        resultado_final = resultado_rb
-        target_principal = 'rendimiento_bajo'
-    else:
-        resultado_final = resultado_gr
-        target_principal = 'graduado'
+    # El modelo principal (mejor_modelo.pkl) debe ser rendimiento_bajo para alinearse con el predictor interactivo de la app
+    resultado_final = resultado_rb
+    target_principal = 'rendimiento_bajo'
 
     print(f"\nModelo principal seleccionado para: {target_principal}")
 
@@ -319,12 +319,27 @@ def pipeline_modelado():
     joblib.dump(pruebas,                        os.path.join(SRC_DIR, 'pruebas_estadisticas.pkl'))
     joblib.dump({'target': target_principal},   os.path.join(SRC_DIR, 'config_modelo.pkl'))
 
+    # Guardar umbral óptimo
+    umbral_val = 0.29 if target_principal == 'rendimiento_bajo' else 0.50
+    joblib.dump(umbral_val, os.path.join(SRC_DIR, 'umbral_optimo.pkl'))
+
+    # Crear consolidado para la aplicación Streamlit
+    resultados_completos = {
+        'imp_rb': resultado_rb['importancias'].to_dict() if resultado_rb['importancias'] is not None else {},
+        'imp_gr': resultado_gr['importancias'].to_dict() if resultado_gr['importancias'] is not None else {},
+        'resultado_rb': resultado_rb,
+        'resultado_gr': resultado_gr,
+    }
+    joblib.dump(resultados_completos, os.path.join(SRC_DIR, 'resultados_completos.pkl'))
+
     print(f"\nArtefactos guardados en {SRC_DIR}/")
-    print("✓ mejor_modelo.pkl")
-    print("✓ feature_names.pkl")
-    print("✓ resultado_rb.pkl / resultado_gr.pkl")
-    print("✓ modelos_materias.pkl")
-    print("✓ pruebas_estadisticas.pkl")
+    print("[OK] mejor_modelo.pkl")
+    print("[OK] feature_names.pkl")
+    print("[OK] resultado_rb.pkl / resultado_gr.pkl")
+    print("[OK] modelos_materias.pkl")
+    print("[OK] pruebas_estadisticas.pkl")
+    print("[OK] umbral_optimo.pkl")
+    print("[OK] resultados_completos.pkl")
 
     return resultado_final, modelos_materias, pruebas
 

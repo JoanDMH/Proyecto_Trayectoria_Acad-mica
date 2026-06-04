@@ -367,10 +367,10 @@ elif seccion == "Perfil Estudiantil":
         df_orig["Plantel"] = df["TIPO_PLANTEL"].map({"G": "Público", "P": "Privado"})
         df_orig["Zona"]    = df["ZONA_LUGAR_RESIDENCIA"].map({"U": "Urbana", "R": "Rural"})
         plan_zona = pd.crosstab(df_orig["Plantel"], df_orig["Zona"]).reset_index()
-        fig = px.bar(plan_zona.melt(id_vars="Plantel"), x="Plantel", y="value",
-                     color="variable", barmode="group",
-                     color_discrete_map={"Urbana": AZUL, "Rural": NARANJA},
-                     labels={"variable": "Zona", "value": "Estudiantes"})
+        melted_plan_zona = plan_zona.melt(id_vars="Plantel", var_name="Zona", value_name="Estudiantes")
+        fig = px.bar(melted_plan_zona, x="Plantel", y="Estudiantes",
+                     color="Zona", barmode="group",
+                     color_discrete_map={"Urbana": AZUL, "Rural": NARANJA})
         fig.update_layout(height=300, margin=dict(t=20, b=20, l=20, r=20))
         st.plotly_chart(fig, use_container_width=True)
 
