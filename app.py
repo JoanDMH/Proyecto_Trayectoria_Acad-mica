@@ -484,7 +484,7 @@ elif seccion == "Rendimiento Académico":
                      color_discrete_map={"Graduado": VERDE, "No graduado": ROJO})
         fig.update_traces(textposition="inside", textfont_color="white")
         fig.update_layout(height=320, margin=dict(t=30, b=30, l=30, r=30),
-                          yaxis_title="Estudiantes")
+                          yaxis_title="Estudiantes", xaxis=dict(type='category'))
         st.plotly_chart(fig, use_container_width=True)
         st.markdown(insight(
             "La cohorte 2018-1 tiene una tasa de graduación significativamente mayor: "
