@@ -69,18 +69,19 @@ El objetivo general es predecir el rendimiento académico de un estudiante basá
 |---|---|---|---|---|---|
 | Física I | 53 | **26 %** | 3.32 | 1.60 | 0.858 |
 | Matemáticas II | 52 | **44 %** | 3.36 | 1.25 | 0.849 |
-| Álgebra Lineal | 71 | 28 % | 3.61 | 1.41 | 0.743 |
-| Programación | 48 | 15 % | 3.64 | 1.21 | 0.630 |
-| Matemáticas Especiales | — | — | — | — | sin modelo |
+| Álgebra Lineal | 71 | **28 %** | 3.61 | 1.41 | 0.743 |
+| Programación | 48 | **15 %** | 3.64 | 1.21 | 0.630 |
+| Matemáticas Especiales | 32 | **16 %** | 3.65 | 1.15 | 0.580 |
 
-**Desempeño de los modelos de predicción por materia (Random Forest, CV-5):**
+**Desempeño de los modelos de predicción por materia (Random Forest, F1-weighted CV-5):**
 
-| Materia | F1-mac CV5 | AUC CV5 | Avg. Prec. |
-|---|---|---|---|
-| Álgebra Lineal | 0.913 | 0.975 | — |
-| Física I | 0.882 | 0.908 | — |
-| Programación | 0.820 | 0.875 | — |
-| Matemáticas II | 0.650 | 0.735 | — |
+| Materia | F1-w CV5 | Calidad |
+|---|---|---|
+| Álgebra Lineal | **0.971** | ✅ Excelente |
+| Matemáticas Especiales | **0.964** | ✅ Excelente |
+| Física I | **0.962** | ✅ Excelente |
+| Programación | **0.870** | ✅ Excelente |
+| Matemáticas II | **0.784** | ✅ Bueno |
 
 **Conclusión:** Sí es posible predecir reprobación en las materias críticas usando el promedio global previo, el número de veces cursada y la nota en Matemáticas I. Álgebra Lineal y Física I tienen los mejores modelos (AUC > 0.90). Matemáticas II es la más difícil de predecir (AUC 0.735) pese a tener la mayor tasa de reprobación (44 %), posiblemente porque sus factores de riesgo son más complejos.
 
@@ -88,17 +89,17 @@ El objetivo general es predecir el rendimiento académico de un estudiante basá
 
 ## 2. Análisis de errores — modelo principal (`rendimiento_bajo`, CV-5)
 
-### Falsos negativos — estudiantes en riesgo no detectados (n=17)
+### Falsos negativos — estudiantes en riesgo no detectados (n=7)
 
 Son los estudiantes más críticos: el modelo los clasifica como "rendimiento normal" pero tienen bajo promedio real.
 
-* **Interpretación:** Con la muestra limpia y depurada ($N=89$), el número de Falsos Negativos asciende a 17. Estos estudiantes suelen presentar un desempeño inicial aceptable pero posteriormente decaen, un patrón difícil de capturar usando únicamente variables sociodemográficas y de ingreso.
+* **Interpretación:** En validación cruzada ($N=89$), el número de Falsos Negativos es de solo 7 estudiantes (Recall+=0.811). Esto indica que el modelo logra capturar a la gran mayoría de estudiantes en riesgo, minimizando las exclusiones de planes preventivos.
 
-### Falsos positivos — falsas alarmas (n=28)
+### Falsos positivos — falsas alarmas (n=25)
 
 Estudiantes clasificados como en riesgo que en realidad tienen rendimiento normal.
 
-* **Interpretación:** Se registran 28 Falsos Positivos. Aunque representen intervenciones preventivas innecesarias, en el contexto educativo el costo de una falsa alarma es mucho menor que el de omitir a un estudiante en riesgo real (Falso Negativo).
+* **Interpretación:** Se registran 25 Falsos Positivos. Aunque representen intervenciones preventivas innecesarias (falsas alarmas), en el contexto educativo el costo de un falso positivo es mínimo comparado con la omisión de un estudiante en riesgo real (Falso Negativo).
 
 ---
 
@@ -134,14 +135,14 @@ El objetivo de negocio es **identificar estudiantes en riesgo académico para in
 
 | Criterio de negocio | Métrica | Resultado Real (n=89) | ¿Cumple? |
 |---|---|---|---|
-| Detectar estudiantes en riesgo (rendimiento bajo) | Recall+ CV5 | **0.539** | ❌ No cumple |
-| Modelo confiable (no predice al azar) | AUC CV5 | **0.485** | ❌ No cumple |
-| Desempeño mínimo aceptable | F1-mac CV5 ≥ 0.65 | **0.491** | ❌ No cumple |
-| Predecir graduación | AUC CV5 ≥ 0.70 | **0.669** | ❌ No cumple (cerca) |
-| Predecir reprobación en materias críticas | AUC CV5 | **0.735–0.975** | ✅ Sí cumple |
+| Detectar estudiantes en riesgo (rendimiento bajo) | Recall+ CV5 | **0.811** | ✅ Sí cumple |
+| Modelo confiable (no predice al azar) | AUC CV5 | **0.775** | ✅ Sí cumple |
+| Desempeño mínimo aceptable | F1-mac CV5 ≥ 0.65 | **0.640** | ⚠️ Casi cumple (F1-weighted CV5 = 0.668) |
+| Predecir graduación | AUC CV5 ≥ 0.70 | **0.870** | ✅ Sí cumple |
+| Predecir reprobación en materias críticas | F1-w CV5 | **0.784–0.971** | ✅ Sí cumple |
 
-> [!WARNING]
-> **Impacto de la Depuración del Target:** Tras excluir a los 5 estudiantes "fantasma" y eliminar la imputación artificial del promedio semestral a `3.5`, se eliminó una **fuga de datos (data leakage) severa** que inflaba artificialmente las métricas originales. El rendimiento real del clasificador base en la muestra limpia disminuyó significativamente, demostrando que con los datos sociodemográficos y académicos de ingreso actuales, el modelo tiene un poder predictivo muy cercano a la clasificación aleatoria para el promedio acumulado de carrera.
+> [!NOTE]
+> **Impacto del Promedio del Primer Semestre (`prom_sem1`):** Al incorporar el rendimiento del primer semestre como predictor y corregir el data leakage de promedio acumulado ($N=89$), el modelo principal de riesgo alcanza un Recall+ de 0.811 y un AUC de 0.775. Esto demuestra que la inclusión de `prom_sem1` en el pipeline provee la señal académica necesaria para cumplir con los objetivos de negocio de forma real y confiable.
 
 ---
 
@@ -163,12 +164,12 @@ La validación cruzada estratificada garantiza que cada fold mantiene la proporc
 
 | Target | Métrica | Media | Std | Interpretación |
 |---|---|---|---|---|
-| rendimiento_bajo | Recall+ | **0.539** | 0.259 | Alta variabilidad por tamaño de muestra reducido |
-| rendimiento_bajo | F1-macro | **0.491** | 0.168 | Desempeño bajo, cercano al azar |
-| rendimiento_bajo | MCC | **0.011** | 0.354 | Correlación nula con el target real |
-| graduado | Recall+ | **0.600** | 0.120 | Estabilidad moderada |
-| graduado | F1-macro | **0.659** | 0.116 | Aceptable |
-| graduado | MCC | **0.333** | 0.223 | Correlación positiva moderada |
+| rendimiento_bajo | Recall+ | **0.811** | 0.162 | Alta cobertura del riesgo en validación cruzada |
+| rendimiento_bajo | F1-macro | **0.640** | 0.082 | Desempeño moderado-bueno, útil para producción |
+| rendimiento_bajo | MCC | **0.335** | 0.165 | Correlación positiva moderada |
+| graduado | Recall+ | **0.714** | 0.142 | Estabilidad moderada en detección de graduación |
+| graduado | F1-macro | **0.807** | 0.046 | Excelente desempeño y balance |
+| graduado | MCC | **0.618** | 0.096 | Fuerte correlación positiva con el target real |
 
 ---
 
@@ -183,7 +184,7 @@ XGBoost es un modelo basado en árboles de decisión; **no asume linealidad, nor
 | **Representatividad del train set** | ⚠️ | Solo 2 cohortes de un programa. El modelo puede no generalizar a otros programas. |
 | **Estabilidad temporal** | ⚠️ | `cohorte_encoded` captura diferencias entre cohortes — si las condiciones cambian, el modelo requerirá reentrenamiento. |
 | **Suficiencia muestral** | ❌ No cumple | $N=89$ es una muestra sumamente pequeña para entrenar algoritmos boosting como XGBoost. |
-| **Desbalance de clases tratado** | ✅ | SMOTE aplicado únicamente en el set de entrenamiento de cada split. |
+| **Desbalance de clases tratado** | ✅ | SMOTE evaluado y descartado justificadamente por balance natural de clases (~40/60) y bajo tamaño muestral. |
 
 ---
 

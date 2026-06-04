@@ -282,13 +282,13 @@ def pipeline_modelado():
     """Ejecuta el pipeline completo de modelado y guarda artefactos."""
     from preprocessing import pipeline_completo, construir_features_materias, cargar_datos
 
-    df, _, datasets_materias = pipeline_completo()
+    df, feature_cols, datasets_materias = pipeline_completo()
 
     print("\n\n=== FASE 4: MODELADO ===")
 
     # Modelo principal: rendimiento_bajo
-    resultado_rb = entrenar_modelos(df, FEATURES_ENTRADA, 'rendimiento_bajo', 'rendimiento_bajo')
-    resultado_gr = entrenar_modelos(df, FEATURES_ENTRADA, 'graduado', 'graduado')
+    resultado_rb = entrenar_modelos(df, feature_cols, 'rendimiento_bajo', 'rendimiento_bajo')
+    resultado_gr = entrenar_modelos(df, feature_cols, 'graduado', 'graduado')
 
     # El modelo principal (mejor_modelo.pkl) debe ser rendimiento_bajo para alinearse con el predictor interactivo de la app
     resultado_final = resultado_rb

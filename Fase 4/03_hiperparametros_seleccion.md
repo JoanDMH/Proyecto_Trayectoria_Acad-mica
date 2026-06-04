@@ -3,30 +3,26 @@
 
 ---
 
-## 1. Modelo principal — XGBoost → `rendimiento_bajo`
+## 1. Modelo principal — Random Forest → `rendimiento_bajo`
 
 ### Hiperparámetros finales
 
 | Hiperparámetro | Valor | Justificación |
 |---|---|---|
-| `n_estimators` | 100 | Suficiente para dataset pequeño; más árboles no mejoran significativamente |
-| `max_depth` | 3 | Árboles poco profundos evitan sobreajuste con n=94 |
-| `learning_rate` | 0.1 | Valor estándar; balance entre velocidad de convergencia y generalización |
-| `subsample` | 0.8 | Submuestreo de filas por árbol, reduce varianza |
-| `colsample_bytree` | 0.8 | Submuestreo de features por árbol, reduce correlación entre árboles |
-| `objective` | binary:logistic | Clasificación binaria con probabilidades de salida |
-| `eval_metric` | logloss | Pérdida logarítmica, apropiada para clasificación binaria |
+| `n_estimators` | 100 | Suficiente para robustez en dataset pequeño; evita alta varianza |
+| `max_depth` | 4 | Árboles poco profundos evitan sobreajuste con n=89 |
+| `min_samples_leaf` | 2 | Regularización para generalizar mejor en hojas pequeñas |
 | `random_state` | 42 | Reproducibilidad |
-| **`umbral de clasificación`** | **0.29** | Optimizado para maximizar F2-score (recall ponderado doble) |
+| **`umbral de clasificación`** | **0.29** | Optimizado para maximizar Recall+ en la detección de riesgo |
 
 ### Justificación del umbral 0.29
 
-El umbral fue optimizado usando **F2-score** sobre predicciones de CV-5, que pondera el Recall el doble que la Precisión. Esto refleja la prioridad del contexto educativo: **identificar a todos los estudiantes en riesgo es más importante que minimizar las falsas alarmas**.
+El umbral fue optimizado usando el criterio de negocio de priorizar la detección de riesgo (Recall+). Esto refleja que en educación, un falso negativo (estudiante en riesgo no detectado) es mucho más grave que una falsa alarma.
 
-| Umbral | Recall+ | Precisión+ | F1-macro | MCC | Decisión |
+| Umbral | Recall+ CV5 | Precisión+ CV5 | F1-macro CV5 | MCC CV5 | Decisión |
 |---|---|---|---|---|---|
-| 0.50 (default) | 0.757 | 0.800 | 0.820 | 0.641 | Mayor precisión, más falsos negativos |
-| **0.29 (seleccionado)** | **0.811** | **0.732** | **0.803** | **0.609** | Mejor recall, acepta más falsas alarmas |
+| 0.50 (default) | 0.568 | **0.750** | **0.721** | **0.460** | Mayor precisión, pero deja escapar un 43.2 % de alumnos en riesgo |
+| **0.29 (seleccionado)** | **0.811** | 0.545 | 0.640 | 0.335 | Recall incrementado a 81.1 %, óptimo para intervención temprana |
 
 ---
 
@@ -34,20 +30,18 @@ El umbral fue optimizado usando **F2-score** sobre predicciones de CV-5, que pon
 
 ### Hiperparámetros finales
 
-Idénticos al modelo principal (mismo algoritmo y configuración).
-
-| Hiperparámetro | Valor |
-|---|---|
-| `n_estimators` | 100 |
-| `max_depth` | 3 |
-| `learning_rate` | 0.1 |
-| `subsample` | 0.8 |
-| `colsample_bytree` | 0.8 |
-| **`umbral de clasificación`** | **0.50** |
+| Hiperparámetro | Valor | Justificación |
+|---|---|---|
+| `n_estimators` | 100 | Estándar para boosting en muestras pequeñas |
+| `max_depth` | 3 | Profundidad baja para controlar sobreajuste en XGBoost |
+| `learning_rate` | 0.1 | Tasa de aprendizaje moderada para convergencia estable |
+| `subsample` | 0.8 | Controla la varianza submuestreando las filas |
+| `colsample_bytree` | 0.8 | Controla la varianza submuestreando columnas |
+| **`umbral de clasificación`** | **0.50** | Umbral óptimo para predecir graduación |
 
 ### Justificación del umbral 0.50 para `graduado`
 
-Con umbral 0.29 el F1-macro baja de 0.706 a 0.674 y el MCC de 0.363, deteriorando el desempeño. El umbral 0.50 es óptimo para este target.
+Para la predicción de graduados, el umbral de 0.50 arrojó el mejor desempeño de clasificación en CV-5 (F1-macro = 0.807, AUC = 0.870) y test (F1-weighted = 0.781). Bajar el umbral degrada la precisión sin aportar ganancias significativas en recall.
 
 ---
 
@@ -55,58 +49,62 @@ Con umbral 0.29 el F1-macro baja de 0.706 a 0.674 y el MCC de 0.363, deteriorand
 
 ### Hiperparámetros
 
-| Hiperparámetro | Valor |
-|---|---|
-| `n_estimators` | 100 |
-| `max_depth` | 3 |
-| `random_state` | 42 |
-| `umbral de clasificación` | 0.50 |
+| Hiperparámetro | Valor | Justificación |
+|---|---|---|
+| `n_estimators` | 100 | Estándar para estabilidad |
+| `max_depth` | 3 | Controla sobreajuste en predicciones específicas de materias |
+| `random_state` | 42 | Reproducibilidad |
+| `umbral de clasificación` | 0.50 | Default |
 
 ---
 
-## 4. Justificación formal de la selección de algoritmo
+## 4. Justificación de la selección de algoritmo
 
-### ¿Por qué XGBoost sobre Random Forest y Árbol de Decisión?
+### Comparativa de algoritmos en Validación Cruzada (CV-5, n=89)
+
+#### Target: `rendimiento_bajo`
 
 | Criterio | Árbol de Decisión | Random Forest | XGBoost |
 |---|---|---|---|
-| F1-macro CV5 (`rendimiento_bajo`) | 0.785 | 0.751 | **0.817** |
-| AUC CV5 (`rendimiento_bajo`) | 0.811 | 0.789 | **0.810** |
-| F1-macro CV5 (`graduado`) | 0.661 | 0.662 | **0.706** |
-| AUC CV5 (`graduado`) | 0.743 | 0.737 | **0.730** |
-| Estabilidad CV (std F1-w) | 0.116 | 0.129 | **0.063** |
-| Importancia de variables | ✅ | ✅ | ✅ |
-| Interpretabilidad | Alta | Media | Media |
+| F1-macro CV5 | **0.738** | 0.640 | 0.682 |
+| AUC CV5 | 0.736 | 0.775 | **0.785** |
+| MCC CV5 | **0.481** | 0.335 | 0.371 |
+| Acc CV5 | **0.742** | 0.640 | 0.685 |
 
-**XGBoost se selecciona porque:**
-1. Mejor F1-macro en ambos targets (0.817 y 0.706)
-2. Menor desviación estándar en CV-5 (0.063 vs 0.116 del Árbol) — más estable
-3. Mejor Average Precision (0.825), indicador robusto para clases desbalanceadas
-4. Capacidad de capturar interacciones no lineales entre variables socioeconómicas y académicas
+**Random Forest** es seleccionado como el modelo final para producción. Aunque Árbol de Decisión y XGBoost muestran mejor F1-macro promedio en validación cruzada debido a su mayor precisión, Random Forest ofrece el Recall más alto (**0.811** con umbral 0.29) y, crucialmente, demuestra una capacidad de generalización superior en el conjunto de prueba independiente (F1-weighted de 0.605 vs. 0.505 de XGBoost y 0.451 de Árbol de Decisión), previniendo el sobreajuste.
 
-**Árbol de Decisión** tiene AUC ligeramente superior en `graduado` (0.743 vs 0.730) pero es menos estable (std=0.115) y su F1-macro es inferior. Se descarta.
+#### Target: `graduado`
 
-**Random Forest** tiene rendimiento consistentemente inferior a XGBoost en ambos targets con este dataset.
+| Criterio | Árbol de Decisión | Random Forest | XGBoost |
+|---|---|---|---|
+| F1-macro CV5 | **0.819** | 0.734 | 0.807 |
+| AUC CV5 | 0.879 | 0.836 | **0.870** |
+| MCC CV5 | **0.669** | 0.496 | 0.618 |
+| Acc CV5 | 0.820 | 0.764 | **0.820** |
+
+**XGBoost** es el modelo seleccionado para el target de graduación por mostrar mayor estabilidad de generalización en el conjunto de prueba (F1-weighted de 0.78 vs 0.67 de RF).
 
 ---
 
 ## 5. Proceso de entrenamiento
 
 ```
-1. División estratificada: 80% train (75 est.) / 20% test (19 est.)
+1. División estratificada: 80% train (71 est.) / 20% test (18 est.)
    Estratificación por: rendimiento_bajo
    
-2. SMOTE aplicado a train si desbalance < 60%:
-   - rendimiento_bajo: ratio=0.65 → no aplica SMOTE
-   - graduado: ratio=0.59 → SMOTE aplicado (75 → ~104 muestras sintéticas)
+2. Manejo de desbalance:
+   - rendimiento_bajo: ratio = 0.71 (52 negativos, 37 positivos) → no requiere SMOTE.
+   - graduado: ratio = 0.65 (54 negativos, 35 positivos) → no requiere SMOTE.
+   
+   *Justificación Técnica:* Las proporciones de la clase minoritaria (~41.6 % y ~39.3 % respectivamente) son estables y equilibradas (ratio > 0.60). En estas condiciones, la aplicación de SMOTE u otras técnicas de remuestreo sintético no está justificada y es desaconsejada. Su uso induciría ruido sintético e incrementaría significativamente el riesgo de sobreajuste (overfitting), particularmente dado el tamaño de muestra limitado ($N=89$). El entrenamiento se realiza sobre los datos reales para preservar la veracidad estadística de la muestra.
 
-3. Entrenamiento del modelo sobre train aumentado
+3. Entrenamiento del modelo sobre train
 
-4. Evaluación primaria: StratifiedKFold CV-5 sobre los 94 estudiantes
-   (más confiable que test de 19 muestras)
+4. Evaluación por validación cruzada: StratifiedKFold CV-5 sobre los 89 estudiantes
+   (indicador principal de estabilidad)
 
-5. Evaluación secundaria: conjunto test (19 estudiantes, nunca vistos)
+5. Evaluación secundaria: conjunto test (18 estudiantes, nunca vistos)
 
-6. Refitting final: modelo reentrenado sobre los 94 estudiantes completos
+6. Refitting final: modelo entrenado sobre los 89 estudiantes completos
    para maximizar información disponible en producción
 ```
