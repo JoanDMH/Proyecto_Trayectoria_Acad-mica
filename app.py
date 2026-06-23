@@ -820,13 +820,14 @@ elif seccion == "Materias Críticas":
     st.markdown('<div class="section-subtitle">¿Es posible predecir qué estudiante reprobará una materia crítica?</div>', unsafe_allow_html=True)
 
     mat_resultados = mat_met.to_dict("index") if mat_met is not None else {
-        "ALGEBRA LINEAL":   {"F1-mac": 0.913, "AUC": 0.975, "N": 71, "rep": 0.28},
-        "FISICA I":         {"F1-mac": 0.882, "AUC": 0.908, "N": 53, "rep": 0.36},
-        "PROGRAMACION":     {"F1-mac": 0.820, "AUC": 0.875, "N": 48, "rep": 0.26},
-        "MATEMATICAS II":   {"F1-mac": 0.650, "AUC": 0.735, "N": 52, "rep": 0.48},
+        "MATEMATICAS II":   {"F1-mac": 0.724, "AUC": 0.675, "N": 52, "rep": 0.44},
+        "FISICA I":         {"F1-mac": 0.796, "AUC": 0.912, "N": 53, "rep": 0.26},
+        "ALGEBRA LINEAL":   {"F1-mac": 0.862, "AUC": 0.967, "N": 72, "rep": 0.29},
+        "MATEMATICAS I":    {"F1-mac": 0.982, "AUC": 0.998, "N": 73, "rep": 0.26},
+        "FUNDAMENTOS DE PROGRAMACION": {"F1-mac": 0.892, "AUC": 0.931, "N": 72, "rep": 0.21},
     }
 
-    cols = st.columns(3)
+    cols = st.columns(len(mat_resultados))
     for (mat, vals), col in zip(mat_resultados.items(), cols):
         color_borde = VERDE if vals["AUC"] >= 0.90 else (NARANJA if vals["AUC"] >= 0.75 else ROJO)
         with col:
@@ -841,13 +842,13 @@ elif seccion == "Materias Críticas":
             </div>""", unsafe_allow_html=True)
 
     st.markdown(insight(
-        "<strong>Álgebra Lineal y Física I</strong> son altamente predecibles (AUC > 0.90). "
-        "<strong>Matemáticas II</strong>, la materia con mayor tasa de reprobación (44%), "
-        "es la más difícil de predecir (AUC 0.735), sugiriendo que sus factores de riesgo "
-        "son más complejos o dependientes de eventos dentro del semestre."
+        "En validación cruzada, <strong>Matemáticas II</strong> — la materia más crítica "
+        "(44% de reprobación) — es la más difícil de predecir (AUC 0.68): sus reprobaciones "
+        "dependen de factores dentro del semestre, no solo del rendimiento previo. "
+        "Las demás se predicen bien (AUC 0.91–0.99)."
     ), unsafe_allow_html=True)
 
-    st.markdown("<p style='font-size:0.75rem; color:#7F8C8D; text-align:center; margin-top:12px;'>Nota metodológica: Las métricas de desempeño de estos modelos específicos por materia representan la evaluación sobre la muestra de entrenamiento (in-sample) debido al volumen de datos. Las 5 materias críticas son modelables (todas con ≥10 reprobados); aquí se muestran las 3 ya validadas (Matemáticas II, Física I, Álgebra Lineal). Matemáticas I y Fundamentos de Programación se entrenan al re-ejecutar el pipeline con el nuevo conjunto.</p>", unsafe_allow_html=True)
+    st.markdown("<p style='font-size:0.75rem; color:#7F8C8D; text-align:center; margin-top:12px;'>Nota metodológica: las 5 materias críticas tienen un modelo de reprobación (Random Forest). Las métricas son por validación cruzada (CV-5, out-of-fold): estiman el desempeño sobre estudiantes no vistos en el entrenamiento.</p>", unsafe_allow_html=True)
 
 
 # ══════════════════════════════════════════════════════════════════════════════
