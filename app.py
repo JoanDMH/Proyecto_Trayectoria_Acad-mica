@@ -144,8 +144,7 @@ def cargar_metricas():
     mc = pd.read_csv("src/materias_criticas.csv").sort_values("indice", ascending=False).head(5)
     materias = {
         r["materia"]: {"indice": float(r["indice"]), "tasa_rep": float(r["tasa_reprobacion"]),
-                       "rep_media": float(r["repitencia_media"]), "N": int(r["N"]),
-                       "promedio": float(r["promedio_aprobados"])}
+                       "rep_media": float(r["repitencia_media"]), "N": int(r["N"])}
         for _, r in mc.iterrows()
     }
     return comp_rb, comp_gr, mat_met, materias
