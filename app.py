@@ -820,11 +820,11 @@ elif seccion == "Materias Críticas":
     st.markdown('<div class="section-subtitle">¿Es posible predecir qué estudiante reprobará una materia crítica?</div>', unsafe_allow_html=True)
 
     mat_resultados = mat_met.to_dict("index") if mat_met is not None else {
-        "MATEMATICAS II":   {"F1-mac": 0.724, "AUC": 0.675, "N": 52, "rep": 0.44},
-        "FISICA I":         {"F1-mac": 0.796, "AUC": 0.912, "N": 53, "rep": 0.26},
-        "ALGEBRA LINEAL":   {"F1-mac": 0.862, "AUC": 0.967, "N": 72, "rep": 0.29},
-        "MATEMATICAS I":    {"F1-mac": 0.982, "AUC": 0.998, "N": 73, "rep": 0.26},
-        "FUNDAMENTOS DE PROGRAMACION": {"F1-mac": 0.892, "AUC": 0.931, "N": 72, "rep": 0.21},
+        "MATEMATICAS II":   {"F1-mac": 0.670, "AUC": 0.691, "N": 52, "rep": 0.44},
+        "FISICA I":         {"F1-mac": 0.721, "AUC": 0.863, "N": 53, "rep": 0.26},
+        "ALGEBRA LINEAL":   {"F1-mac": 0.873, "AUC": 0.943, "N": 72, "rep": 0.29},
+        "MATEMATICAS I":    {"F1-mac": 0.816, "AUC": 0.832, "N": 73, "rep": 0.26},
+        "FUNDAMENTOS DE PROGRAMACION": {"F1-mac": 0.906, "AUC": 0.918, "N": 72, "rep": 0.21},
     }
 
     cols = st.columns(len(mat_resultados))
@@ -843,9 +843,9 @@ elif seccion == "Materias Críticas":
 
     st.markdown(insight(
         "En validación cruzada, <strong>Matemáticas II</strong> — la materia más crítica "
-        "(44% de reprobación) — es la más difícil de predecir (AUC 0.68): sus reprobaciones "
+        "(44% de reprobación) — es la más difícil de predecir (AUC 0.69): sus reprobaciones "
         "dependen de factores dentro del semestre, no solo del rendimiento previo. "
-        "Las demás se predicen bien (AUC 0.91–0.99)."
+        "Las demás se predicen razonablemente bien (AUC 0.83–0.94)."
     ), unsafe_allow_html=True)
 
     st.markdown("<p style='font-size:0.75rem; color:#7F8C8D; text-align:center; margin-top:12px;'>Nota metodológica: las 5 materias críticas tienen un modelo de reprobación (Random Forest). Las métricas son por validación cruzada (CV-5, out-of-fold): estiman el desempeño sobre estudiantes no vistos en el entrenamiento.</p>", unsafe_allow_html=True)

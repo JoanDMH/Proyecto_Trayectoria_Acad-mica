@@ -169,7 +169,7 @@ Períodos académicos con actividad real (`detalle_materias`) antes de abandonar
 
 ### Pregunta d — Materias críticas
 - Las 5 materias identificadas son del ciclo básico común de ciencias e ingeniería (semestres 1–4).
-- Alta correlación académica: se entrenan submodelos para predecir reprobación en base al promedio acumulado previo y la nota en Matemáticas I.
+- Se entrenan submodelos de reprobación por materia con 3 variables de trayectoria: promedio del estudiante en **las demás** materias, veces que cursó la materia, y nota en Matemáticas I. Para evitar **fuga de información**, el promedio excluye la materia objetivo y la nota de Matemáticas I no se usa para predecir esa misma materia.
 
 ---
 

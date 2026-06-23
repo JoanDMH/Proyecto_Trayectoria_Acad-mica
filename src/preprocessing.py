@@ -248,13 +248,7 @@ def construir_features_materias(ing_mat):
         .size().reset_index(name='veces_cursada')
     )
 
-    # Promedio global del estudiante (todas las materias)
-    prom_global = (
-        ult.groupby('CODIGO_INST')['DEFINITIVA']
-        .mean().reset_index(name='prom_global')
-    )
-
-    # Nota en Matemáticas I como predictor base
+    # Nota en Matemáticas I como predictor base (aptitud matemática previa)
     mat1 = ult[ult['MATERIA'].str.strip() == 'MATEMATICAS I'][['CODIGO_INST', 'DEFINITIVA']].rename(
         columns={'DEFINITIVA': 'nota_mat1'}
     )
@@ -267,16 +261,24 @@ def construir_features_materias(ing_mat):
         sub['reprobado'] = (sub['DEFINITIVA'] < 3.0).astype(int)
         if sub['reprobado'].sum() < 10:   # clase positiva insuficiente -> no se modela
             continue
+
+        # prom_global SIN la materia objetivo (evita fuga: la nota objetivo no entra al promedio)
+        otras = ult[ult['MATERIA'].str.strip() != materia]
+        prom_global = otras.groupby('CODIGO_INST')['DEFINITIVA'].mean().reset_index(name='prom_global')
         sub = sub.merge(prom_global, on='CODIGO_INST', how='left')
         sub = sub.merge(
             veces[veces['MATERIA'] == materia][['CODIGO_INST', 'veces_cursada']],
             on='CODIGO_INST', how='left'
         )
-        sub = sub.merge(mat1, on='CODIGO_INST', how='left')
         sub['veces_cursada'] = sub['veces_cursada'].fillna(1).astype(int)
-        sub['nota_mat1']     = sub['nota_mat1'].fillna(sub['prom_global'])
 
-        features_mat = ['prom_global', 'veces_cursada', 'nota_mat1']
+        features_mat = ['prom_global', 'veces_cursada']
+        # nota_mat1 solo si la materia NO es Matemáticas I (si lo es, sería el propio target -> fuga)
+        if materia != 'MATEMATICAS I':
+            sub = sub.merge(mat1, on='CODIGO_INST', how='left')
+            sub['nota_mat1'] = sub['nota_mat1'].fillna(sub['prom_global'])
+            features_mat = ['prom_global', 'veces_cursada', 'nota_mat1']
+
         X = sub[features_mat].values
         y = sub['reprobado'].values
         datasets[materia] = (X, y, sub)
