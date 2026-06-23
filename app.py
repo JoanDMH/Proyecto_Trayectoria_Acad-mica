@@ -159,11 +159,11 @@ NIVEL_EDU_LABELS = {
 }
 
 MATERIAS_CRITICAS = {
-    "FISICA I":             {"indice": 0.858, "tasa_rep": 0.357, "rep_media": 1.60, "N": 53},
-    "MATEMATICAS II":       {"indice": 0.849, "tasa_rep": 0.483, "rep_media": 1.31, "N": 52},
-    "ALGEBRA LINEAL":       {"indice": 0.743, "tasa_rep": 0.242, "rep_media": 1.54, "N": 71},
-    "PROGRAMACION":         {"indice": 0.630, "tasa_rep": 0.259, "rep_media": 1.33, "N": 48},
-    "MATEMATICAS ESPECIALES":{"indice":0.613, "tasa_rep": 0.167, "rep_media": 1.75, "N": 12},
+    "FISICA I":             {"indice": 0.858, "tasa_rep": 0.26, "rep_media": 1.60, "N": 53},
+    "MATEMATICAS II":       {"indice": 0.849, "tasa_rep": 0.44, "rep_media": 1.25, "N": 52},
+    "ALGEBRA LINEAL":       {"indice": 0.743, "tasa_rep": 0.28, "rep_media": 1.41, "N": 71},
+    "PROGRAMACION":         {"indice": 0.630, "tasa_rep": 0.15, "rep_media": 1.21, "N": 48},
+    "MATEMATICAS ESPECIALES":{"indice":0.580, "tasa_rep": 0.06, "rep_media": 1.34, "N": 32},
 }
 
 def kpi(valor, etiqueta, color="azul"):
@@ -849,7 +849,7 @@ elif seccion == "Materias Críticas":
         "son más complejos o dependientes de eventos dentro del semestre."
     ), unsafe_allow_html=True)
 
-    st.markdown("<p style='font-size:0.75rem; color:#7F8C8D; text-align:center; margin-top:12px;'>Nota metodológica: Las métricas de desempeño de estos modelos específicos por materia representan la evaluación sobre la muestra de entrenamiento (in-sample) debido al volumen de datos. Matemáticas Especiales no se modela predictivamente por tamaño muestral insuficiente (N=12).</p>", unsafe_allow_html=True)
+    st.markdown("<p style='font-size:0.75rem; color:#7F8C8D; text-align:center; margin-top:12px;'>Nota metodológica: Las métricas de desempeño de estos modelos específicos por materia representan la evaluación sobre la muestra de entrenamiento (in-sample) debido al volumen de datos. Matemáticas Especiales no se modela predictivamente porque, aunque la cursan 32 estudiantes, solo 2 la reprobaron: la clase positiva es demasiado pequeña para entrenar un clasificador de reprobación fiable.</p>", unsafe_allow_html=True)
 
 
 # ══════════════════════════════════════════════════════════════════════════════

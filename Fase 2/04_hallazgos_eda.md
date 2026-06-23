@@ -142,11 +142,11 @@ Períodos académicos con actividad real (`detalle_materias`) antes de abandonar
 
 | # | Materia | Prom. aprobados | Tasa reprobación | Repitencia media | Índice | N est. |
 |---|---|---|---|---|---|---|
-| 1 | **Física I** | 3.32 | 35.7 % | 1.60 veces | **0.858** | 53 |
-| 2 | **Matemáticas II** | 3.36 | 48.3 % | 1.31 veces | **0.849** | 52 |
-| 3 | **Álgebra Lineal** | 3.61 | 24.2 % | 1.54 veces | **0.743** | 71 |
-| 4 | **Programación** | 3.64 | 25.9 % | 1.33 veces | **0.630** | 48 |
-| 5 | **Matemáticas Especiales** | 3.75 | 16.7 % | 1.75 veces | **0.613** | 12 |
+| 1 | **Física I** | 3.32 | 26 % | 1.60 veces | **0.858** | 53 |
+| 2 | **Matemáticas II** | 3.36 | 44 % | 1.25 veces | **0.849** | 52 |
+| 3 | **Álgebra Lineal** | 3.61 | 28 % | 1.41 veces | **0.743** | 71 |
+| 4 | **Programación** | 3.64 | 15 % | 1.21 veces | **0.630** | 48 |
+| 5 | **Matemáticas Especiales** | 3.57 | 6 % | 1.34 veces | **0.580** | 32 |
 
 > **Nota de calidad:** en `detalle_materias` la asignatura "Matemáticas Especiales" aparece con dos grafías (`MATEMATICAS ESPECIALES` y `MATEMÁTICAS ESPECIALES`, con semestre 4 y 5). Conviene unificar el nombre antes de consolidar resultados por materia.
 
