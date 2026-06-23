@@ -5,37 +5,54 @@
 
 ## 1. Población base
 
-| Tabla | 2017-2 / 2018-1 (Muestra combinada) |
-|---|---|
-| `caracterización.xlsx` | 89 |
-| `historial_estados_.xlsx` | 561 registros |
-| `PROMEDIOS_DE_CARRERA.xlsx` | 89 |
-| `detalle_materias.xlsx` | 2 719 registros |
-| `promedios_semestre.xlsx` | 592 registros |
+Se distinguen dos poblaciones a lo largo del estudio:
 
-**Discrepancias resueltas:** Se realizó una exclusión metodológica de 5 estudiantes que presentaban promedios nulos y carecían de historial de materias inscritas. La muestra final limpia de población base para el modelado y análisis es de **89 estudiantes** pertenecientes a Ingeniería de Sistemas de ambas cohortes.
+- **Población descriptiva (n=95):** todos los estudiantes de Ingeniería de Sistemas de las cohortes 2017-2 y 2018-1 presentes en `caracterización.xlsx`. Es la base del análisis exploratorio (perfil, estado final, deserción).
+- **Muestra de modelado (n=89):** subconjunto con *features* académicas completas. Se excluyen **6 estudiantes**: 5 sin ninguna actividad académica (nunca cursaron materias) y 1 con un único período inscrito y sin promedio de carrera.
+
+| Tabla | Registros (cohortes 2017-2 / 2018-1) | Estudiantes |
+|---|---|---|
+| `caracterización.xlsx` | 95 filas | 95 |
+| `historial_estados_.xlsx` | 579 registros | 97* |
+| `detalle_materias.xlsx` | 2 725 registros | 90 |
+| `PROMEDIOS_DE_CARRERA.xlsx` | 90 filas | 90 |
+| `promedios_semestre.xlsx` | 593 registros | 90 |
+
+> \* El historial contiene 3 códigos que no están en `caracterización` (solo aparecen con estado `NO REALIZO PAGO`); no forman parte de la población de 95.
 
 ---
 
-## 2. Perfil sociodemográfico (n=89)
+## 1.1 Nota metodológica — Limitación de `historial_estados_`
+
+`historial_estados_.xlsx` **no conserva todos los estados `MATRICULADO`** de los primeros períodos de muchos estudiantes. Un estudiante puede aparecer solo con `RETIRADO BR` y/o `NO REALIZO PAGO`, dando la falsa impresión de que nunca tuvo actividad académica (caso verificado: estudiante `160004013`, que cursó 16 materias en 3 períodos pero en el historial solo figura el retiro y un impago posterior).
+
+Para evitar este sesgo se adoptaron tres criterios:
+
+1. **Actividad académica real** (cuántos períodos estuvo activo): se mide con `detalle_materias.xlsx` (número de `PERIODO_INSCRIPCION` distintos), **no** con el historial.
+2. **Tiempo hasta la graduación:** se calcula como *período de graduación − período de ingreso* (cohorte de `caracterización`), **no** con el primer `MATRICULADO` del historial, que está incompleto y subestimaba el tiempo en 29 de 35 graduados.
+3. **Clasificación del estado final por recencia** (ver sección 4.1).
+
+---
+
+## 2. Perfil sociodemográfico (n=95)
 
 | Variable | Hallazgo |
 |---|---|
-| **Género** | 74 hombres (83.1 %), 15 mujeres (16.9 %) — desbalance significativo |
+| **Género** | 80 hombres (84.2 %), 15 mujeres (15.8 %) — desbalance significativo |
 | **Edad al ingreso** | Media 18 años, rango 16–25 |
-| **Estrato socioeconómico** | Mayoría de estratos 1 y 2 (media 1.92); predominio de hogares de bajos ingresos |
-| **Zona de residencia** | 72 urbana (80.9 %), 17 rural (19.1 %) |
-| **Tipo de colegio** | 70 público (78.7 %), 19 privado (21.3 %) |
-| **SISBEN** | 58 estudiantes (65.2 %) beneficiarios del SISBEN |
-| **Repitencia escolar** | 15 estudiantes (16.9 %) repitieron al menos un año escolar antes del ingreso |
+| **Estrato socioeconómico** | Media 1.94; estratos 1 y 2 = 72.6 % (35 + 34); predominio de hogares de bajos ingresos |
+| **Zona de residencia** | 77 urbana (81.1 %), 18 rural (18.9 %) |
+| **Tipo de colegio** | 74 público/oficial (77.9 %), 21 privado (22.1 %) |
+| **SISBEN** | 62 estudiantes (65.3 %) beneficiarios del SISBEN |
+| **Repitencia escolar** | 17 estudiantes (17.9 %) repitieron al menos un año escolar antes del ingreso |
 
 ---
 
-## 3. Nivel educativo de los padres
+## 3. Nivel educativo de los padres (n=95)
 
 | Nivel | Padre | Madre |
 |---|---|---|
-| Sin datos | 19 (21.3 %) | 4 (4.5 %) |
+| Sin datos | 21 (22.1 %) | 4 (4.2 %) |
 | Bachillerato completo (código 5) | Más frecuente (Moda) | Más frecuente (Moda) |
 | Técnico completo (código 8) | Frecuente | Frecuente |
 | Universitario completo (código 12) | Presente | Frecuente |
@@ -47,18 +64,60 @@ La mayoría de los padres no alcanzaron educación universitaria, lo cual es rel
 
 ## 4. Resultados académicos
 
-### 4.1 Estado final de la cohorte
+### 4.1 Estado final de la cohorte (n=95) — clasificación por recencia
+
+Cada estudiante se clasifica en tres estados, en este orden:
+
+1. **Graduado** — alcanzó el estado `GRADUADO`.
+2. **En formación** — sin graduarse, pero con matrícula o materias en **2024-1 o después** (sigue activo).
+3. **Desertor** — el resto que no se graduó, **tenga o no acta formal de retiro**. Un último estado `NO REALIZO PAGO` de hace varios años no es "estar en formación".
 
 | Estado final | N | % |
 |---|---|---|
-| Graduados | 35 | 39.3 % |
-| No graduados (deserción / bajo rendimiento) | 54 | 60.7 % |
+| Graduados | 35 | 36.8 % |
+| Desertores | 59 | 62.1 % |
+| En formación | 1 | 1.1 % |
 
-*Por cohorte: 2017-2 = 14 graduados (30 %) · 2018-1 = 21 graduados (44 %)*
+*Por cohorte: 2017-2 = 14 graduados (30 %), 33 desertores, 0 en formación (n=47) · 2018-1 = 21 graduados (44 %), 26 desertores, 1 en formación (n=48).*
 
-La tasa de graduación acumulada de solo el 39.3 % es uno de los indicadores de mayor interés institucional.
+La **deserción real (62.1 %)** es muy superior a los 30 retiros con acta formal: 29 de los 59 desertores abandonaron sin acta (ver 4.3). La tasa de graduación acumulada de solo 36.8 % es el indicador de mayor interés institucional.
 
-### 4.2 Promedio acumulado de carrera
+### 4.2 Tiempo hasta la graduación (35 graduados)
+
+| Estadístico | Valor |
+|---|---|
+| Media | 6.4 años |
+| Mediana | 6.0 años |
+| Mínimo | 5.0 años |
+| Máximo | 8.0 años |
+
+Casi ningún estudiante se gradúa en los 5 años nominales del plan; la moda es 6 años (12 semestres).
+
+### 4.3 Causa de abandono (59 desertores)
+
+| Causa | N |
+|---|---|
+| Sin acta formal (abandono / impago) | 29 |
+| RETIRADO BR (bajo rendimiento) | 17 |
+| Retiro definitivo voluntario | 8 |
+| Retiro por no renovación de matrícula | 4 |
+| Retiro definitivo con bajo rendimiento | 1 |
+
+Solo **30 de 59** desertores tienen un acta formal de retiro; los otros **29** simplemente dejaron de pagar/cursar. No se les atribuye una causa de retiro inexistente.
+
+### 4.4 Duración en la carrera de los desertores (59)
+
+Períodos académicos con actividad real (`detalle_materias`) antes de abandonar:
+
+| Períodos activos | 0 | 1 | 2 | 3 | 4 | 6 | 8 | 9 |
+|---|---|---|---|---|---|---|---|---|
+| Estudiantes | 5 | 25 | 8 | 12 | 5 | 1 | 2 | 1 |
+
+- Mediana 1 período · media 2.2 períodos.
+- **5 desertores** nunca tuvieron actividad académica (inscritos sin materias).
+- **38 de 59 (64 %)** abandonan con 2 períodos activos o menos → la deserción se concentra en el primer año.
+
+### 4.5 Promedio acumulado de carrera (muestra de modelado, n=89)
 
 | Estadístico | Valor |
 |---|---|
@@ -68,6 +127,8 @@ La tasa de graduación acumulada de solo el 39.3 % es uno de los indicadores de 
 | Mínimo | 0.80 |
 | Máximo | 4.40 |
 | Estudiantes con promedio < 3.0 | 37 (41.6 %) |
+
+> El promedio de carrera y el target `rendimiento_bajo` se definen sobre la muestra de modelado (89), que es la que alimenta el modelo.
 
 ---
 
@@ -87,21 +148,23 @@ La tasa de graduación acumulada de solo el 39.3 % es uno de los indicadores de 
 | 4 | **Programación** | 3.64 | 25.9 % | 1.33 veces | **0.630** | 48 |
 | 5 | **Matemáticas Especiales** | 3.75 | 16.7 % | 1.75 veces | **0.613** | 12 |
 
+> **Nota de calidad:** en `detalle_materias` la asignatura "Matemáticas Especiales" aparece con dos grafías (`MATEMATICAS ESPECIALES` y `MATEMÁTICAS ESPECIALES`, con semestre 4 y 5). Conviene unificar el nombre antes de consolidar resultados por materia.
+
 ---
 
 ## 6. Hallazgos por pregunta problema
 
 ### Pregunta a — Brecha de género
-- 15 mujeres en la cohorte (16.9 %). Cualquier prueba estadística de comparación tiene poder limitado.
+- 15 mujeres en la población (15.8 %). Cualquier prueba estadística de comparación tiene poder limitado.
 - El análisis descriptivo muestra diferencias en el promedio a favor de las mujeres, pero no es significativo estadísticamente.
 
 ### Pregunta b — Nivel educativo de los padres
-- Variable disponible con 21.3 % nulos en padre y 4.5 % en madre.
+- Variable disponible con 22.1 % nulos en padre y 4.2 % en madre.
 - Imputación a realizar con moda o el valor máximo parental.
 - Al tratarse de variables ordinales, se aplican pruebas Spearman y modelos de árboles para capturar efectos no lineales.
 
 ### Pregunta c — Repitencia escolar previa
-- 15 estudiantes (16.9 %) repitieron algún año.
+- 17 estudiantes (17.9 %) repitieron algún año.
 - Variable binaria limpia (`ANOS_REPITIO`), sin nulos.
 - Se evalúa la asociación con la tasa de bajo rendimiento mediante pruebas Chi-cuadrado y diagramas de contingencia.
 
@@ -117,12 +180,12 @@ La tasa de graduación acumulada de solo el 39.3 % es uno de los indicadores de 
 |---|---|
 | Duplicados | ✅ 0 en todos los datasets a nivel de registros de estudiantes |
 | Nulos en identificadores | ✅ 0 |
-| Nulos en features críticas | ⚠️ `NIVEL_ED_PADRE`: 21.3 % nulos → imputar con moda |
-| Nulos en target `PROMEDIO_CARRERA` | ✅ Excluidos metodológicamente de la población base |
+| Nulos en features críticas | ⚠️ `NIVEL_ED_PADRE`: 22.1 % nulos → imputar con moda |
+| Integridad del historial de estados | ⚠️ `historial_estados_` no conserva todos los `MATRICULADO`; la actividad se mide con `detalle_materias` (ver 1.1) |
 | Columnas inutilizables (100 % nulos) | ❌ 5 columnas excluidas |
 | Outliers en notas | ✅ Ninguno fuera del rango [0.0, 5.0] |
-| Desbalance de clases (target) | ⚠️ Graduado: 39.3 % / No graduado: 60.7 % → aplicar SMOTE en entrenamiento |
-| Desbalance de género | ⚠️ 83.1 % masculino → limitación estadística de comparación |
+| Desbalance de clases (target `graduado`, n=89) | ⚠️ Graduado 39.3 % / No graduado 60.7 % → aplicar SMOTE en entrenamiento |
+| Desbalance de género | ⚠️ 84.2 % masculino → limitación estadística de comparación |
 
 ---
 
@@ -151,13 +214,15 @@ La tasa de graduación acumulada de solo el 39.3 % es uno de los indicadores de 
 
 ---
 
-## 9. Variables target
+## 9. Variables target (muestra de modelado, n=89)
 
 | Target | Definición | Distribución | Uso |
 |---|---|---|---|
 | `graduado` | 1 si el estado final es `GRADUADO`, 0 si no | 35 positivos / 54 negativos (39/61) | Preguntas a, b, c |
 | `rendimiento_bajo` | 1 si `PROMEDIO_CARRERA` < 3.0, 0 si ≥ 3.0 | 37 positivos / 52 negativos (42/58) | Preguntas a, b, c |
 | `reprobo_materia_X` | 1 si nota definitiva < 3.0 en materia X | Varía por materia (ver sección 5) | Pregunta d |
+
+> **Coherencia con la sección 4.1:** el target binario `graduado` se construye sobre los 89 de modelado y agrupa como "no graduado" tanto a los desertores como al único estudiante en formación. Los 59 desertores descriptivos (sobre 95) y los 54 "no graduados" del modelo difieren por la población usada; la identidad de los 35 graduados no cambia.
 
 ---
 
@@ -167,10 +232,10 @@ La tasa de graduación acumulada de solo el 39.3 % es uno de los indicadores de 
 |---|---|
 | Todos los DataFrames explorados con métricas indicadas | ✅ |
 | Datos filtrados correctamente (cohortes combinadas, Ing. Sistemas) | ✅ |
-| Población base correctamente establecida (n=89) | ✅ |
+| Población establecida (descriptiva n=95 · modelado n=89) | ✅ |
 | Variables clave identificadas para cada pregunta | ✅ |
 | Clave de unión confirmada (`CODIGO_INST` / `CODIGO_ESTUDIANTIL`) | ✅ |
-| Informe de calidad de datos (nulos, duplicados, outliers) | ✅ |
+| Informe de calidad de datos (nulos, duplicados, outliers, integridad del historial) | ✅ |
 | ≥ 15 features identificadas | ✅ (18 features) |
 | 5 materias críticas con índice compuesto correcto | ✅ |
 | Preguntas problema validadas | ✅ (ajustes menores documentados) |

@@ -216,7 +216,7 @@ Registro del estado académico-administrativo del estudiante por cada semestre.
 | `RETIRO DEFINITIVO VOLUNTARIO DEL PROGRAMA` | Retiro voluntario | Deserción |
 | `RETIRO DEFINITIVO DEL PROGRAMA CON BAJO RENDIMIENTO` | Retiro por rendimiento | Deserción |
 
-> **Nota:** 3 estudiantes (160004097, 160004098, 160004099) aparecen solo en este archivo con único estado `NO REALIZO PAGO`. No forman parte de la **población base** de análisis (n=46).
+> **Nota:** 3 estudiantes (160004097, 160004098, 160004099) aparecen solo en este archivo con único estado `NO REALIZO PAGO`. No forman parte de la **población** de análisis (n=95).
 
 ---
 

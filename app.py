@@ -133,8 +133,19 @@ def cargar_modelos():
     mat_mods  = joblib.load("src/modelos_materias.pkl")
     return modelo, features, umbral, resultados, pruebas, mat_mods
 
+@st.cache_data
+def cargar_metricas():
+    comp_rb = pd.read_csv("src/comparativa_rendimiento_bajo.csv").set_index("Modelo")
+    comp_gr = pd.read_csv("src/comparativa_graduado.csv").set_index("Modelo")
+    try:
+        mat_met = pd.read_csv("src/metricas_materias.csv").set_index("MATERIA")
+    except FileNotFoundError:
+        mat_met = None
+    return comp_rb, comp_gr, mat_met
+
 df                               = cargar_datos()
 modelo, FEATURES, UMBRAL, res, pruebas, mat_mods = cargar_modelos()
+comp_rb, comp_gr, mat_met        = cargar_metricas()
 
 # ── Utilidades ────────────────────────────────────────────────────────────────
 NIVEL_EDU_LABELS = {
@@ -245,11 +256,13 @@ if seccion == "Inicio":
     with col_right:
         st.markdown("### Resultados del modelo")
 
-        # Gauge de desempeño general
+        _rf = comp_rb.loc["Random Forest"]
+
+        # Gauge de desempeño general (Recall+ CV5, leído de comparativa_rendimiento_bajo.csv)
         fig = go.Figure(go.Indicator(
             mode="gauge+number",
-            value=82.6,
-            title={"text": "F1-macro CV5<br>Rendimiento Bajo", "font": {"size": 14}},
+            value=round(float(_rf["Recall+"]) * 100, 1),
+            title={"text": "Recall+ CV5<br>Riesgo detectado", "font": {"size": 14}},
             number={"suffix": "%", "font": {"size": 28, "color": AZUL}},
             gauge={
                 "axis": {"range": [0, 100], "tickwidth": 1},
@@ -266,10 +279,10 @@ if seccion == "Inicio":
         st.plotly_chart(fig, use_container_width=True)
 
         metricas = {
-            "Recall+ (riesgo detectado)": "81.1%",
-            "AUC-ROC": "0.821",
-            "MCC": "0.609",
-            "Avg. Precision": "0.825",
+            "F1-macro": f"{_rf['F1-mac']:.3f}",
+            "AUC-ROC": f"{_rf['AUC']:.3f}",
+            "MCC": f"{_rf['MCC']:.3f}",
+            "Avg. Precision": f"{_rf['AvgP']:.3f}",
         }
         for k, v in metricas.items():
             st.markdown(f"""
@@ -300,7 +313,7 @@ if seccion == "Inicio":
 elif seccion == "Perfil Estudiantil":
 
     st.markdown('<div class="section-header">¿Quiénes son los estudiantes?</div>', unsafe_allow_html=True)
-    st.markdown('<div class="section-subtitle">Perfil sociodemográfico de los 94 estudiantes de las cohortes 2017-2 y 2018-1 que ingresaron al programa de Ingeniería de Sistemas en la Universidad de los Llanos.</div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="section-subtitle">Perfil sociodemográfico de los {len(df)} estudiantes de las cohortes 2017-2 y 2018-1 que ingresaron al programa de Ingeniería de Sistemas en la Universidad de los Llanos.</div>', unsafe_allow_html=True)
 
     # KPIs
     c1, c2, c3, c4, c5 = st.columns(5)
@@ -400,12 +413,16 @@ elif seccion == "Perfil Estudiantil":
         fig.update_layout(height=260, margin=dict(t=10, b=10, l=10, r=10))
         st.plotly_chart(fig, use_container_width=True)
     with col6:
+        _rm = df["ANOS_REPITIO"] == "S"
         st.markdown(insight(
-            "<strong>18.1% de los estudiantes repitió al menos un año escolar</strong> (17 de 94). "
+            f"<strong>{_rm.mean():.1%} de los estudiantes repitió al menos un año escolar</strong> "
+            f"({int(_rm.sum())} de {len(df)}). "
             "Aunque la prueba estadística no es significativa por el tamaño muestral, "
             "el análisis descriptivo muestra que quienes repitieron tienen una tasa de "
-            "bajo rendimiento del <strong>52.9%</strong> vs <strong>36.4%</strong> de quienes no repitieron. "
-            "La diferencia en graduación es más marcada: <strong>17.6%</strong> vs <strong>41.6%</strong>.",
+            f"bajo rendimiento del <strong>{df[_rm]['rendimiento_bajo'].mean():.1%}</strong> vs "
+            f"<strong>{df[~_rm]['rendimiento_bajo'].mean():.1%}</strong> de quienes no repitieron. "
+            f"La diferencia en graduación es más marcada: <strong>{df[_rm]['graduado'].mean():.1%}</strong> vs "
+            f"<strong>{df[~_rm]['graduado'].mean():.1%}</strong>.",
             "alerta"
         ), unsafe_allow_html=True)
 
@@ -804,7 +821,7 @@ elif seccion == "Materias Críticas":
     st.markdown("#### Modelos de predicción de reprobación por materia")
     st.markdown('<div class="section-subtitle">¿Es posible predecir qué estudiante reprobará una materia crítica?</div>', unsafe_allow_html=True)
 
-    mat_resultados = {
+    mat_resultados = mat_met.to_dict("index") if mat_met is not None else {
         "ALGEBRA LINEAL":   {"F1-mac": 0.913, "AUC": 0.975, "N": 71, "rep": 0.28},
         "FISICA I":         {"F1-mac": 0.882, "AUC": 0.908, "N": 53, "rep": 0.36},
         "PROGRAMACION":     {"F1-mac": 0.820, "AUC": 0.875, "N": 48, "rep": 0.26},
@@ -1052,6 +1069,6 @@ elif seccion == "Predictor Interactivo":
         st.markdown(insight(
             "<strong>Aviso importante:</strong> Esta prediccion es una herramienta de apoyo para "
             "la intervencion temprana, no una sentencia academica. Se basa en patrones de "
-            "94 estudiantes de 2 cohortes. Usese junto con seguimiento personalizado y consejeria academica.",
+            "89 estudiantes de 2 cohortes. Usese junto con seguimiento personalizado y consejeria academica.",
             "alerta"
         ), unsafe_allow_html=True)
