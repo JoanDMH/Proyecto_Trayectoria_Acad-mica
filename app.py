@@ -141,11 +141,18 @@ def cargar_metricas():
         mat_met = pd.read_csv("src/metricas_materias.csv").set_index("MATERIA")
     except FileNotFoundError:
         mat_met = None
-    return comp_rb, comp_gr, mat_met
+    mc = pd.read_csv("src/materias_criticas.csv").sort_values("indice", ascending=False).head(5)
+    materias = {
+        r["materia"]: {"indice": float(r["indice"]), "tasa_rep": float(r["tasa_reprobacion"]),
+                       "rep_media": float(r["repitencia_media"]), "N": int(r["N"]),
+                       "promedio": float(r["promedio_aprobados"])}
+        for _, r in mc.iterrows()
+    }
+    return comp_rb, comp_gr, mat_met, materias
 
 df                               = cargar_datos()
 modelo, FEATURES, UMBRAL, res, pruebas, mat_mods = cargar_modelos()
-comp_rb, comp_gr, mat_met        = cargar_metricas()
+comp_rb, comp_gr, mat_met, MATERIAS_CRITICAS = cargar_metricas()
 
 # ── Utilidades ────────────────────────────────────────────────────────────────
 NIVEL_EDU_LABELS = {
@@ -158,13 +165,6 @@ NIVEL_EDU_LABELS = {
     12:"Posgrado completo",
 }
 
-MATERIAS_CRITICAS = {
-    "FISICA I":             {"indice": 0.858, "tasa_rep": 0.26, "rep_media": 1.60, "N": 53},
-    "MATEMATICAS II":       {"indice": 0.849, "tasa_rep": 0.44, "rep_media": 1.25, "N": 52},
-    "ALGEBRA LINEAL":       {"indice": 0.743, "tasa_rep": 0.28, "rep_media": 1.41, "N": 71},
-    "PROGRAMACION":         {"indice": 0.630, "tasa_rep": 0.15, "rep_media": 1.21, "N": 48},
-    "MATEMATICAS ESPECIALES":{"indice":0.580, "tasa_rep": 0.06, "rep_media": 1.34, "N": 32},
-}
 
 def kpi(valor, etiqueta, color="azul"):
     return f'<div class="kpi-card {color if color!="azul" else ""}"><div class="kpi-value">{valor}</div><div class="kpi-label">{etiqueta}</div></div>'
@@ -752,7 +752,7 @@ elif seccion == "Factores Predictivos":
 elif seccion == "Materias Críticas":
 
     st.markdown('<div class="section-header">Las materias más difíciles</div>', unsafe_allow_html=True)
-    st.markdown('<div class="section-subtitle">Ranking de las materias con mayor impacto negativo en el rendimiento académico, calculado con un índice compuesto de tasa de reprobación, promedio de aprobados y repitencia.</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-subtitle">Ranking de las materias con mayor impacto negativo en el rendimiento académico, calculado con un índice centrado en la tasa de reprobación y la repitencia (dificultad de aprobar).</div>', unsafe_allow_html=True)
 
     # Tabla de ranking
     df_mat = pd.DataFrame(MATERIAS_CRITICAS).T.reset_index()
@@ -763,7 +763,7 @@ elif seccion == "Materias Críticas":
     st.markdown("#### Ranking de criticidad (índice compuesto)")
     st.markdown("""
     <div style="font-size:0.85rem; color:#7F8C8D; margin-bottom:12px;">
-    Índice = 0.40 × (1 − promedio_norm) + 0.40 × tasa_reprobación_norm + 0.20 × repitencia_norm
+    Índice = 0.70 × tasa_reprobación_norm + 0.30 × repitencia_norm
     </div>""", unsafe_allow_html=True)
 
     col1, col2 = st.columns([1, 2])
@@ -790,8 +790,8 @@ elif seccion == "Materias Críticas":
 
     # Descomposición del índice
     st.markdown("#### Descomposición del índice por componente")
-    fig = make_subplots(rows=1, cols=3, subplot_titles=[
-        "Tasa de reprobación", "Rep. media (veces cursada)", "N estudiantes"
+    fig = make_subplots(rows=1, cols=2, subplot_titles=[
+        "Tasa de reprobación", "Rep. media (veces cursada)"
     ])
 
     materias_orden = df_mat["Materia"].tolist()
@@ -799,8 +799,7 @@ elif seccion == "Materias Críticas":
 
     for i, (col_name, campo) in enumerate([
         ("Tasa reprobación", "tasa_rep"),
-        ("Rep. media",        "rep_media"),
-        ("N estudiantes",     "N")
+        ("Rep. media",        "rep_media")
     ], 1):
         vals = [MATERIAS_CRITICAS[m][campo] for m in materias_orden]
 
@@ -828,7 +827,7 @@ elif seccion == "Materias Críticas":
         "MATEMATICAS II":   {"F1-mac": 0.650, "AUC": 0.735, "N": 52, "rep": 0.48},
     }
 
-    cols = st.columns(4)
+    cols = st.columns(3)
     for (mat, vals), col in zip(mat_resultados.items(), cols):
         color_borde = VERDE if vals["AUC"] >= 0.90 else (NARANJA if vals["AUC"] >= 0.75 else ROJO)
         with col:
@@ -844,12 +843,12 @@ elif seccion == "Materias Críticas":
 
     st.markdown(insight(
         "<strong>Álgebra Lineal y Física I</strong> son altamente predecibles (AUC > 0.90). "
-        "<strong>Matemáticas II</strong>, la materia con mayor tasa de reprobación (48%), "
+        "<strong>Matemáticas II</strong>, la materia con mayor tasa de reprobación (44%), "
         "es la más difícil de predecir (AUC 0.735), sugiriendo que sus factores de riesgo "
         "son más complejos o dependientes de eventos dentro del semestre."
     ), unsafe_allow_html=True)
 
-    st.markdown("<p style='font-size:0.75rem; color:#7F8C8D; text-align:center; margin-top:12px;'>Nota metodológica: Las métricas de desempeño de estos modelos específicos por materia representan la evaluación sobre la muestra de entrenamiento (in-sample) debido al volumen de datos. Matemáticas Especiales no se modela predictivamente porque, aunque la cursan 32 estudiantes, solo 2 la reprobaron: la clase positiva es demasiado pequeña para entrenar un clasificador de reprobación fiable.</p>", unsafe_allow_html=True)
+    st.markdown("<p style='font-size:0.75rem; color:#7F8C8D; text-align:center; margin-top:12px;'>Nota metodológica: Las métricas de desempeño de estos modelos específicos por materia representan la evaluación sobre la muestra de entrenamiento (in-sample) debido al volumen de datos. Las 5 materias críticas son modelables (todas con ≥10 reprobados); aquí se muestran las 3 ya validadas (Matemáticas II, Física I, Álgebra Lineal). Matemáticas I y Fundamentos de Programación se entrenan al re-ejecutar el pipeline con el nuevo conjunto.</p>", unsafe_allow_html=True)
 
 
 # ══════════════════════════════════════════════════════════════════════════════

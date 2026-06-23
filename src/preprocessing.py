@@ -56,11 +56,11 @@ NIVEL_EDU_LABELS = {
 
 # Materias críticas (top 5 por índice compuesto, post-corrección)
 MATERIAS_CRITICAS = [
-    'FISICA I',
     'MATEMATICAS II',
+    'FISICA I',
     'ALGEBRA LINEAL',
-    'PROGRAMACION',
-    'MATEMATICAS ESPECIALES',
+    'MATEMATICAS I',
+    'FUNDAMENTOS DE PROGRAMACION',
 ]
 
 # OBSERVACION válidas para análisis de notas
@@ -265,6 +265,8 @@ def construir_features_materias(ing_mat):
         if len(sub) < 10:
             continue
         sub['reprobado'] = (sub['DEFINITIVA'] < 3.0).astype(int)
+        if sub['reprobado'].sum() < 10:   # clase positiva insuficiente -> no se modela
+            continue
         sub = sub.merge(prom_global, on='CODIGO_INST', how='left')
         sub = sub.merge(
             veces[veces['MATERIA'] == materia][['CODIGO_INST', 'veces_cursada']],

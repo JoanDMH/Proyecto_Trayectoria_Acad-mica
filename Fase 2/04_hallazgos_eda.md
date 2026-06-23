@@ -132,23 +132,22 @@ Períodos académicos con actividad real (`detalle_materias`) antes de abandonar
 
 ---
 
-## 5. Materias críticas (índice compuesto corregido)
+## 5. Materias críticas (índice centrado en reprobación)
 
-**Metodología:**
-- Se excluyen registros con `OBSERVACION` ∈ {O (Homologada), I (Intercambio), C (Cancelada), E (En curso)}
-- Se toma la **última nota registrada** por estudiante-materia (sin repetidos)
-- El **promedio** se calcula solo sobre notas **≥ 3.0** (notas aprobatorias)
-- **Índice compuesto** = 0.40 × (1 − promedio\_norm) + 0.40 × tasa\_reprobación\_norm + 0.20 × repitencia\_media\_norm
+**Metodología** — reproducible con `src/indice_materias.py` → `src/materias_criticas.csv`:
+- Población: materias cursadas por **≥ 20 estudiantes** (registros con `OBSERVACION` ∈ {N, H, F, R, TG} y nota válida).
+- Se toma la **última nota** por estudiante-materia (reprobación = nota < 3.0).
+- **Índice** = 0.70 × tasa\_reprobación\_norm + 0.30 × repitencia\_media\_norm (normalización min-max). Mide la **dificultad de aprobar**.
 
-| # | Materia | Prom. aprobados | Tasa reprobación | Repitencia media | Índice | N est. |
-|---|---|---|---|---|---|---|
-| 1 | **Física I** | 3.32 | 26 % | 1.60 veces | **0.858** | 53 |
-| 2 | **Matemáticas II** | 3.36 | 44 % | 1.25 veces | **0.849** | 52 |
-| 3 | **Álgebra Lineal** | 3.61 | 28 % | 1.41 veces | **0.743** | 71 |
-| 4 | **Programación** | 3.64 | 15 % | 1.21 veces | **0.630** | 48 |
-| 5 | **Matemáticas Especiales** | 3.57 | 6 % | 1.34 veces | **0.580** | 32 |
+| # | Materia | Reprobados | Tasa reprobación | Repitencia media | Índice | N | Modelable |
+|---|---|---|---|---|---|---|---|
+| 1 | **Matemáticas II** | 23 | 44 % | 1.25 veces | **0.824** | 52 | ✅ |
+| 2 | **Física I** | 14 | 26 % | 1.60 veces | **0.718** | 53 | ✅ |
+| 3 | **Álgebra Lineal** | 21 | 29 % | 1.40 veces | **0.662** | 72 | ✅ |
+| 4 | **Matemáticas I** | 19 | 26 % | 1.03 veces | **0.425** | 73 | ✅ |
+| 5 | **Fundamentos de Programación** | 15 | 21 % | 1.15 veces | **0.406** | 72 | ✅ |
 
-> **Nota de calidad:** en `detalle_materias` la asignatura "Matemáticas Especiales" aparece con dos grafías (`MATEMATICAS ESPECIALES` y `MATEMÁTICAS ESPECIALES`, con semestre 4 y 5). Conviene unificar el nombre antes de consolidar resultados por materia.
+> **Modelado:** las 5 tienen clase positiva suficiente (≥ 10 reprobados) → todas modelables. Hay clasificadores validados para Matemáticas II, Física I y Álgebra Lineal; Matemáticas I y Fundamentos de Programación se entrenan al re-ejecutar el pipeline.
 
 ---
 
