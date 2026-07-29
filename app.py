@@ -294,7 +294,7 @@ if seccion == "Inicio":
 
         st.markdown(insight(
             "<strong>Dato clave:</strong> El promedio del primer semestre es el predictor más poderoso "
-            "(37.8% de importancia en el modelo principal), seguido por el puntaje Saber 11 y el nivel socioeconómico.", "exito"
+            "(40.4% de importancia en el modelo principal), seguido por el puntaje Saber 11 y el nivel socioeconómico.", "exito"
         ), unsafe_allow_html=True)
 
     st.markdown("---")
@@ -528,7 +528,7 @@ elif seccion == "Rendimiento Académico":
     st.markdown("#### ¿Predice el primer semestre el resultado final?")
     st.markdown(insight(
         "<strong>Hallazgo central:</strong> El promedio del primer semestre es la variable más predictiva "
-        "del rendimiento final (importancia 37.8% en Random Forest). Un primer semestre por debajo de 3.0 "
+        "del rendimiento final (importancia 40.4% en Random Forest). Un primer semestre por debajo de 3.0 "
         "multiplica significativamente el riesgo de bajo rendimiento acumulado.", "exito"
     ), unsafe_allow_html=True)
 
@@ -699,10 +699,10 @@ elif seccion == "Factores Predictivos":
                 <p style="font-size:1.8rem; font-weight:700; color:#1B6CA8; margin:8px 0;">p = {p_chi:.4f}</p>
                 <span class="stat-badge stat-ns">No significativo</span>
                 <hr style="margin:16px 0; border-color:#F0F4F8;">
-                <p style="font-size:0.88rem;"><strong>Bajo rend. si repitió:</strong> 52.9%</p>
-                <p style="font-size:0.88rem;"><strong>Bajo rend. si no repitió:</strong> 36.4%</p>
-                <p style="font-size:0.88rem;"><strong>Graduación si repitió:</strong> 17.6%</p>
-                <p style="font-size:0.88rem;"><strong>Graduación si no repitió:</strong> 41.6%</p>
+                <p style="font-size:0.88rem;"><strong>Bajo rend. si repitió:</strong> 60.0%</p>
+                <p style="font-size:0.88rem;"><strong>Bajo rend. si no repitió:</strong> 38.7%</p>
+                <p style="font-size:0.88rem;"><strong>Graduación si repitió:</strong> 20.0%</p>
+                <p style="font-size:0.88rem;"><strong>Graduación si no repitió:</strong> 42.7%</p>
             </div>
             """, unsafe_allow_html=True)
             st.markdown(insight(
@@ -739,7 +739,7 @@ elif seccion == "Factores Predictivos":
                     st.plotly_chart(fig, use_container_width=True)
 
         st.markdown(insight(
-            "<strong>prom_sem1</strong> es el predictor más decisivo en ambos modelos (37.8% en Rendimiento Bajo y 15.3% en Graduación). "
+            "<strong>prom_sem1</strong> es el predictor más decisivo en ambos modelos (40.4% en Rendimiento Bajo y 19.7% en Graduación). "
             "Para la graduación, la preparación previa medida por el <strong>icfes_total</strong> (13.6%) y el efecto de la <strong>cohorte_encoded</strong> (10.0%) "
             "son los factores de mayor peso después del primer semestre, superando a las variables socioeconómicas individuales."
         ), unsafe_allow_html=True)
@@ -820,11 +820,11 @@ elif seccion == "Materias Críticas":
     st.markdown('<div class="section-subtitle">¿Es posible predecir qué estudiante reprobará una materia crítica?</div>', unsafe_allow_html=True)
 
     mat_resultados = mat_met.to_dict("index") if mat_met is not None else {
-        "MATEMATICAS II":   {"F1-mac": 0.670, "AUC": 0.691, "N": 52, "rep": 0.44},
-        "FISICA I":         {"F1-mac": 0.721, "AUC": 0.863, "N": 53, "rep": 0.26},
-        "ALGEBRA LINEAL":   {"F1-mac": 0.873, "AUC": 0.943, "N": 72, "rep": 0.29},
-        "MATEMATICAS I":    {"F1-mac": 0.816, "AUC": 0.832, "N": 73, "rep": 0.26},
-        "FUNDAMENTOS DE PROGRAMACION": {"F1-mac": 0.906, "AUC": 0.918, "N": 72, "rep": 0.21},
+        "MATEMATICAS II":   {"F1-mac": 0.741, "AUC": 0.865, "N": 54, "rep": 0.31},
+        "FISICA I":         {"F1-mac": 0.807, "AUC": 0.884, "N": 54, "rep": 0.28},
+        "ALGEBRA LINEAL":   {"F1-mac": 0.889, "AUC": 0.939, "N": 72, "rep": 0.29},
+        "MATEMATICAS I":    {"F1-mac": 0.902, "AUC": 0.928, "N": 73, "rep": 0.26},
+        "FUNDAMENTOS DE PROGRAMACION": {"F1-mac": 0.886, "AUC": 0.923, "N": 72, "rep": 0.21},
     }
 
     cols = st.columns(len(mat_resultados))
@@ -842,10 +842,11 @@ elif seccion == "Materias Críticas":
             </div>""", unsafe_allow_html=True)
 
     st.markdown(insight(
-        "En validación cruzada, <strong>Matemáticas II</strong> — la materia más crítica "
-        "(44% de reprobación) — es la más difícil de predecir (AUC 0.69): sus reprobaciones "
-        "dependen de factores dentro del semestre, no solo del rendimiento previo. "
-        "Las demás se predicen razonablemente bien (AUC 0.83–0.94)."
+        "Con los datos recodificados (que incorporan cursos intersemestrales y registros "
+        "sin observación que el extracto original ocultaba), las 5 materias críticas se "
+        "predicen bien en validación cruzada (AUC 0.86–0.94). <strong>Matemáticas II</strong> "
+        "sigue siendo la más crítica (31% de reprobación, repitencia 1.6), pero su historial "
+        "más completo la volvió tan predecible como las demás."
     ), unsafe_allow_html=True)
 
     st.markdown("<p style='font-size:0.75rem; color:#7F8C8D; text-align:center; margin-top:12px;'>Nota metodológica: las 5 materias críticas tienen un modelo de reprobación (Random Forest). Las métricas son por validación cruzada (CV-5, out-of-fold): estiman el desempeño sobre estudiantes no vistos en el entrenamiento.</p>", unsafe_allow_html=True)
@@ -1068,6 +1069,6 @@ elif seccion == "Predictor Interactivo":
         st.markdown(insight(
             "<strong>Aviso importante:</strong> Esta prediccion es una herramienta de apoyo para "
             "la intervencion temprana, no una sentencia academica. Se basa en patrones de "
-            "89 estudiantes de 2 cohortes. Usese junto con seguimiento personalizado y consejeria academica.",
+            "90 estudiantes de 2 cohortes. Usese junto con seguimiento personalizado y consejeria academica.",
             "alerta"
         ), unsafe_allow_html=True)

@@ -73,19 +73,19 @@ El objetivo general es predecir el rendimiento académico de un estudiante basá
 | Programación | 48 | **15 %** | 3.64 | 1.21 | 0.630 |
 | Matemáticas Especiales | 32 | **16 %** | 3.65 | 1.15 | 0.580 |
 
-**Desempeño de los modelos de predicción por materia (Random Forest, F1-weighted in-sample*):**
+**Desempeño de los modelos de predicción por materia (Random Forest, CV-5 out-of-fold):**
 
-| Materia | F1-w (in-sample)* | Calidad |
-|---|---|---|
-| Álgebra Lineal | **0.971** | ✅ Excelente |
-| Matemáticas Especiales | **0.964** | ✅ Excelente |
-| Física I | **0.962** | ✅ Excelente |
-| Programación | **0.870** | ✅ Excelente |
-| Matemáticas II | **0.784** | ✅ Bueno |
+| Materia | F1-w (CV-5) | AUC (CV-5) | Calidad |
+|---|---|---|---|
+| Matemáticas I | **0.928** | 0.928 | ✅ Excelente |
+| Fund. de Programación | **0.928** | 0.923 | ✅ Excelente |
+| Álgebra Lineal | **0.912** | 0.939 | ✅ Excelente |
+| Física I | **0.848** | 0.884 | ✅ Muy bueno |
+| Matemáticas II | **0.785** | 0.865 | ✅ Bueno |
 
-\* Nota: Debido al bajo volumen muestral por materia (N entre 12 y 71), las métricas se evalúan in-sample tras la optimización de hiperparámetros.
+\* Métricas por validación cruzada (CV-5, out-of-fold), sin fugas de información, sobre los archivos recodificados (intersemestrales incluidos).
 
-**Conclusión:** Sí es posible predecir reprobación en las materias críticas usando el promedio global previo, el número de veces cursada y la nota en Matemáticas I. Álgebra Lineal y Física I tienen los mejores modelos (AUC > 0.90). Matemáticas II es la más difícil de predecir (AUC 0.735) pese a tener la mayor tasa de reprobación (44 %), posiblemente porque sus factores de riesgo son más complejos.
+**Conclusión:** Sí es posible predecir reprobación en las materias críticas usando el promedio global previo (excluyendo la materia objetivo), el número de veces cursada y la nota en Matemáticas I (salvo en su propio modelo). Las 5 materias alcanzan AUC ≥ 0.86. Matemáticas II sigue siendo la más crítica (31.5 % de reprobación) y la de menor F1, pero con el historial recodificado su predictibilidad mejoró notablemente (AUC 0.865).
 
 ---
 
@@ -95,7 +95,7 @@ El objetivo general es predecir el rendimiento académico de un estudiante basá
 
 Son los estudiantes más críticos: el modelo los clasifica como "rendimiento normal" pero tienen bajo promedio real.
 
-* **Interpretación:** En validación cruzada ($N=89$), el número de Falsos Negativos es de solo 7 estudiantes (Recall+=0.811). Esto indica que el modelo logra capturar a la gran mayoría de estudiantes en riesgo, minimizando las exclusiones de planes preventivos.
+* **Interpretación:** En validación cruzada ($N=90$), el número de Falsos Negativos es de solo 7 estudiantes (Recall+=0.816). Esto indica que el modelo logra capturar a la gran mayoría de estudiantes en riesgo, minimizando las exclusiones de planes preventivos.
 
 ### Falsos positivos — falsas alarmas (n=25)
 
@@ -109,7 +109,7 @@ Estudiantes clasificados como en riesgo que en realidad tienen rendimiento norma
 
 | Hallazgo del EDA | Confirmado por el modelo |
 |---|---|
-| `prom_sem1` es el mejor predictor del resultado final | ✅ Variable más importante (37.8 %) |
+| `prom_sem1` es el mejor predictor del resultado final | ✅ Variable más importante (40.4 %) |
 | Nivel educativo padres tiene efecto no lineal | ✅ Importancia moderada en modelo, no en correlación |
 | Repitencia escolar asociada a mayor riesgo descriptivamente | ✅ 5ª variable más importante para graduación (7.9 %) |
 | Los ingresos y el estrato son un factor relevante para graduación | ✅ Importancia moderada en modelo `graduado` (`log_ingresos`: 8.0 %) |
@@ -135,16 +135,16 @@ Estudiantes clasificados como en riesgo que en realidad tienen rendimiento norma
 
 El objetivo de negocio es **identificar estudiantes en riesgo académico para intervención temprana**. El criterio de éxito definido en Fase 1 fue F1 ≥ 0.65 y Recall+ ≥ 0.75.
 
-| Criterio de negocio | Métrica | Resultado Real (n=89) | ¿Cumple? |
+| Criterio de negocio | Métrica | Resultado Real (n=90) | ¿Cumple? |
 |---|---|---|---|
-| Detectar estudiantes en riesgo (rendimiento bajo) | Recall+ CV5 | **0.811** | ✅ Sí cumple |
+| Detectar estudiantes en riesgo (rendimiento bajo) | Recall+ CV5 | **0.816** | ✅ Sí cumple |
 | Modelo confiable (no predice al azar) | AUC CV5 | **0.775** | ✅ Sí cumple |
 | Desempeño mínimo aceptable | F1-mac CV5 ≥ 0.65 | **0.640** | ⚠️ Casi cumple (F1-weighted CV5 = 0.668) |
-| Predecir graduación | AUC CV5 ≥ 0.70 | **0.870** | ✅ Sí cumple |
-| Predecir reprobación en materias críticas | F1-w CV5 | **0.784–0.971** | ✅ Sí cumple |
+| Predecir graduación | AUC CV5 ≥ 0.70 | **0.853** | ✅ Sí cumple |
+| Predecir reprobación en materias críticas | F1-w CV5 | **0.785–0.928** | ✅ Sí cumple |
 
 > [!NOTE]
-> **Impacto del Promedio del Primer Semestre (`prom_sem1`):** Al incorporar el rendimiento del primer semestre como predictor y corregir el data leakage de promedio acumulado ($N=89$), el modelo principal de riesgo alcanza un Recall+ de 0.811 y un AUC de 0.775. Esto demuestra que la inclusión de `prom_sem1` en el pipeline provee la señal académica necesaria para cumplir con los objetivos de negocio de forma real y confiable.
+> **Impacto del Promedio del Primer Semestre (`prom_sem1`):** Al incorporar el rendimiento del primer semestre como predictor, corregir el data leakage y usar los archivos recodificados ($N=90$), el modelo principal de riesgo alcanza un Recall+ de 0.816 y un AUC de 0.752. Esto demuestra que la inclusión de `prom_sem1` en el pipeline provee la señal académica necesaria para cumplir con los objetivos de negocio de forma real y confiable.
 
 ---
 
@@ -166,7 +166,7 @@ La validación cruzada estratificada garantiza que cada fold mantiene la proporc
 
 | Target | Métrica | Media | Std | Interpretación |
 |---|---|---|---|---|
-| rendimiento_bajo | Recall+ | **0.811** | 0.162 | Alta cobertura del riesgo en validación cruzada |
+| rendimiento_bajo | Recall+ | **0.816** | — | Alta cobertura del riesgo en validación cruzada |
 | rendimiento_bajo | F1-macro | **0.640** | 0.082 | Desempeño moderado-bueno, útil para producción |
 | rendimiento_bajo | MCC | **0.335** | 0.165 | Correlación positiva moderada |
 | graduado | Recall+ | **0.714** | 0.142 | Estabilidad moderada en detección de graduación |
@@ -185,7 +185,7 @@ El modelo principal (Random Forest) y el secundario (XGBoost) son ensambles basa
 | **Ausencia de data leakage** | ✅ | `PROMEDIO_CARRERA` no es feature; split anterior a SMOTE; CV aplicado sobre datos originales. |
 | **Representatividad del train set** | ⚠️ | Solo 2 cohortes de un programa. El modelo puede no generalizar a otros programas. |
 | **Estabilidad temporal** | ⚠️ | `cohorte_encoded` captura diferencias entre cohortes — si las condiciones cambian, el modelo requerirá reentrenamiento. |
-| **Suficiencia muestral** | ❌ No cumple | $N=89$ es una muestra sumamente pequeña para entrenar algoritmos de ensamble (Random Forest y XGBoost), lo que limita su capacidad de generalización. |
+| **Suficiencia muestral** | ❌ No cumple | $N=90$ es una muestra sumamente pequeña para entrenar algoritmos de ensamble (Random Forest y XGBoost), lo que limita su capacidad de generalización. |
 | **Desbalance de clases tratado** | ✅ | SMOTE evaluado y descartado justificadamente por balance natural de clases (~40/60) y bajo tamaño muestral. |
 
 ---
@@ -202,7 +202,7 @@ El modelo principal (Random Forest) y el secundario (XGBoost) son ensambles basa
 
 **Se recomiendan las siguientes condiciones de despliegue:**
 1. Usar umbral 0.29 para `rendimiento_bajo` (maximiza detección de riesgo)
-2. Comunicar las limitaciones al usuario final: n=89, solo 2 cohortes, 83.1 % masculino
+2. Comunicar las limitaciones al usuario final: n=90, solo 2 cohortes, ~84 % masculino
 3. Reentrenar al incorporar nuevas cohortes
 4. No usar para toma de decisiones definitivas — solo como herramienta de alerta temprana
 

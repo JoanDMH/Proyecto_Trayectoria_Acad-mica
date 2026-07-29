@@ -10,7 +10,7 @@
 | Hiperparámetro | Valor | Justificación |
 |---|---|---|
 | `n_estimators` | 100 | Suficiente para robustez en dataset pequeño; evita alta varianza |
-| `max_depth` | 4 | Árboles poco profundos evitan sobreajuste con n=89 |
+| `max_depth` | 4 | Árboles poco profundos evitan sobreajuste con n=90 |
 | `min_samples_leaf` | 2 | Regularización para generalizar mejor en hojas pequeñas |
 | `random_state` | 42 | Reproducibilidad |
 | **`umbral de clasificación`** | **0.29** | Optimizado para maximizar Recall+ en la detección de riesgo |
@@ -60,7 +60,7 @@ Para la predicción de graduados, el umbral de 0.50 arrojó el mejor desempeño 
 
 ## 4. Justificación de la selección de algoritmo
 
-### Comparativa de algoritmos en Validación Cruzada (CV-5, n=89)
+### Comparativa de algoritmos en Validación Cruzada (CV-5, n=90)
 
 #### Target: `rendimiento_bajo`
 
@@ -96,7 +96,7 @@ Para la predicción de graduados, el umbral de 0.50 arrojó el mejor desempeño 
    - rendimiento_bajo: ratio = 0.71 (52 negativos, 37 positivos) → no requiere SMOTE.
    - graduado: ratio = 0.65 (54 negativos, 35 positivos) → no requiere SMOTE.
    
-   *Justificación Técnica:* Las proporciones de la clase minoritaria (~41.6 % y ~39.3 % respectivamente) son estables y equilibradas (ratio > 0.60). En estas condiciones, la aplicación de SMOTE u otras técnicas de remuestreo sintético no está justificada y es desaconsejada. Su uso induciría ruido sintético e incrementaría significativamente el riesgo de sobreajuste (overfitting), particularmente dado el tamaño de muestra limitado ($N=89$). El entrenamiento se realiza sobre los datos reales para preservar la veracidad estadística de la muestra.
+   *Justificación Técnica:* Las proporciones de la clase minoritaria (~42.2 % y ~38.9 % respectivamente) son estables y equilibradas (ratio > 0.60). En estas condiciones, la aplicación de SMOTE u otras técnicas de remuestreo sintético no está justificada y es desaconsejada. Su uso induciría ruido sintético e incrementaría significativamente el riesgo de sobreajuste (overfitting), particularmente dado el tamaño de muestra limitado ($N=90$). El entrenamiento se realiza sobre los datos reales para preservar la veracidad estadística de la muestra.
 
 3. Entrenamiento del modelo sobre train
 

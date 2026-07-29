@@ -4,11 +4,12 @@ Fase 3 CRISP-DM — Preparación de datos
 Universidad de los Llanos · Cohortes 2017-2 y 2018-1 · Ingeniería de Sistemas
 
 Correcciones aplicadas post-Fase 2:
-- Soporte multi-cohorte: Cruce de 2017-2 and 2018-1
-- Exclusión metodológica de 5 estudiantes con promedio de carrera nulo
-- Variable cohorte_encoded agregada formalmente
-- prom_sem1 mapeado dinámicamente según cohorte
-- OBSERVACION: excluye O (Homologada), I (Intercambio), C (Cancelada), E (En curso)
+- Población base: 89 estudiantes (cruce car ∩ historial)
+- 18 features seleccionadas
+- Insumos: detalle_materias_recod.xlsx e historial_estados_recod.xlsx (generados
+  desde los originales por src/recodificacion.py)
+- OBSERVACION validas para notas: N, C (curso intersemestral, INCLUIDO jul-2026), H.
+  Excluidas: O/V/I (notas externas), A/P/R/E (sin nota)
 - Promedio materias: solo notas >= 3.0, última nota por estudiante-materia
 - Materias críticas corregidas con índice compuesto
 - Mapeo NIVEL_ED sin código 6 (salto 5 → 7)
@@ -58,15 +59,17 @@ NIVEL_EDU_LABELS = {
 
 # Materias críticas (top 5 por índice compuesto, post-corrección)
 MATERIAS_CRITICAS = [
-    'FISICA I',
     'MATEMATICAS II',
+    'FISICA I',
     'ALGEBRA LINEAL',
-    'PROGRAMACION',
-    'MATEMATICAS ESPECIALES',
+    'MATEMATICAS I',
+    'FUNDAMENTOS DE PROGRAMACION',
 ]
 
-# OBSERVACION válidas para análisis de notas
-OBS_VALIDAS = {'N', 'H', 'F', 'R', 'TG'}
+# OBSERVACION validas para notas (diccionario corregido jul-2026):
+# N=Normal, C=Curso intersemestral (nota real, puede reprobarse), H=Habilitada.
+# A/P/R/E no tienen nota; O/V/I son notas externas.
+OBS_VALIDAS = {'N', 'C', 'H'}
 
 
 # ── Carga y filtrado ─────────────────────────────────────────────────────────
@@ -74,8 +77,9 @@ OBS_VALIDAS = {'N', 'H', 'F', 'R', 'TG'}
 def cargar_datos():
     """Carga los 5 datasets y filtra por cohortes/programa, excluyendo nulos de promedio acumulado."""
     df_car = pd.read_excel(os.path.join(DATA_DIR, 'caracterización.xlsx'))
-    df_mat = pd.read_excel(os.path.join(DATA_DIR, 'detalle_materias.xlsx'))
-    df_he  = pd.read_excel(os.path.join(DATA_DIR, 'historial_estados_.xlsx'))
+    # Archivos RECODIFICADOS (generados por src/recodificacion.py desde los originales)
+    df_mat = pd.read_excel(os.path.join(DATA_DIR, 'detalle_materias_recod.xlsx'))
+    df_he  = pd.read_excel(os.path.join(DATA_DIR, 'historial_estados_recod.xlsx'))
     df_pc  = pd.read_excel(os.path.join(DATA_DIR, 'PROMEDIOS_DE_CARRERA.xlsx'))
     df_ps  = pd.read_excel(os.path.join(DATA_DIR, 'promedios_semestre.xlsx'))
 
@@ -250,13 +254,7 @@ def construir_features_materias(ing_mat):
         .size().reset_index(name='veces_cursada')
     )
 
-    # Promedio global del estudiante (todas las materias)
-    prom_global = (
-        ult.groupby('CODIGO_INST')['DEFINITIVA']
-        .mean().reset_index(name='prom_global')
-    )
-
-    # Nota en Matemáticas I como predictor base
+    # Nota en Matemáticas I como predictor base (aptitud matemática previa)
     mat1 = ult[ult['MATERIA'].str.strip() == 'MATEMATICAS I'][['CODIGO_INST', 'DEFINITIVA']].rename(
         columns={'DEFINITIVA': 'nota_mat1'}
     )
@@ -267,16 +265,26 @@ def construir_features_materias(ing_mat):
         if len(sub) < 10:
             continue
         sub['reprobado'] = (sub['DEFINITIVA'] < 3.0).astype(int)
+        if sub['reprobado'].sum() < 10:   # clase positiva insuficiente -> no se modela
+            continue
+
+        # prom_global SIN la materia objetivo (evita fuga: la nota objetivo no entra al promedio)
+        otras = ult[ult['MATERIA'].str.strip() != materia]
+        prom_global = otras.groupby('CODIGO_INST')['DEFINITIVA'].mean().reset_index(name='prom_global')
         sub = sub.merge(prom_global, on='CODIGO_INST', how='left')
         sub = sub.merge(
             veces[veces['MATERIA'] == materia][['CODIGO_INST', 'veces_cursada']],
             on='CODIGO_INST', how='left'
         )
-        sub = sub.merge(mat1, on='CODIGO_INST', how='left')
         sub['veces_cursada'] = sub['veces_cursada'].fillna(1).astype(int)
-        sub['nota_mat1']     = sub['nota_mat1'].fillna(sub['prom_global'])
 
-        features_mat = ['prom_global', 'veces_cursada', 'nota_mat1']
+        features_mat = ['prom_global', 'veces_cursada']
+        # nota_mat1 solo si la materia NO es Matemáticas I (si lo es, sería el propio target -> fuga)
+        if materia != 'MATEMATICAS I':
+            sub = sub.merge(mat1, on='CODIGO_INST', how='left')
+            sub['nota_mat1'] = sub['nota_mat1'].fillna(sub['prom_global'])
+            features_mat = ['prom_global', 'veces_cursada', 'nota_mat1']
+
         X = sub[features_mat].values
         y = sub['reprobado'].values
         datasets[materia] = (X, y, sub)
@@ -293,11 +301,9 @@ def pipeline_completo(verbose=True):
     ing_car, ing_mat, ing_he, ing_pc, ing_ps, poblacion = cargar_datos()
     if verbose:
         print(f"  Población base: {len(poblacion)} estudiantes")
-
     if verbose:
         print("Construyendo features de estudiante...")
     df_master, feature_cols = construir_features_estudiante(ing_car, ing_he, ing_pc, ing_ps)
-
     if verbose:
         print("Construyendo features de materias críticas...")
     datasets_materias = construir_features_materias(ing_mat)
@@ -305,11 +311,6 @@ def pipeline_completo(verbose=True):
     # Guardar
     src_dir = os.path.dirname(os.path.abspath(__file__))
     df_master.to_csv(os.path.join(src_dir, 'df_master_limpio.csv'), index=False)
-
-    # Copiar a la carpeta Fase 3 como df_master_limpio.csv
-    fase3_dir = os.path.join(os.path.dirname(src_dir), 'Fase 3')
-    if os.path.exists(fase3_dir):
-        df_master.to_csv(os.path.join(fase3_dir, '01_df_master_limpio.csv'), index=False)
 
     if verbose:
         print(f"\n[OK] df_master_limpio.csv guardado: {df_master.shape}")

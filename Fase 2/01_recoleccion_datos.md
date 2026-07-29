@@ -47,7 +47,7 @@ El corte de los datos corresponde al momento de la extracción solicitada a la O
 | `promedios_semestre.xlsx` | 1 903 filas · 9 columnas | 593 filas | 90 |
 
 > \* El historial incluye 3 códigos que no están en `caracterización` (solo aparecen con estado `NO REALIZO PAGO`); no forman parte de la población.
-> **Población descriptiva: 95 estudiantes** (47 de 2017-2 + 48 de 2018-1). **Muestra de modelado: 89** (se excluyen 6 sin features académicas completas: 5 sin ninguna actividad y 1 con un único período sin promedio de carrera).
+> **Población descriptiva: 95 estudiantes** (47 de 2017-2 + 48 de 2018-1). **Muestra de modelado: 90** (se excluyen 5 sin ninguna actividad académica; con el historial recodificado, el estudiante 160004030 —antes invisible en el historial— entra a la muestra con features completas).
 
 ---
 
@@ -59,7 +59,7 @@ El corte de los datos corresponde al momento de la extracción solicitada a la O
 | Cohortes | **2017-2 y 2018-1** |
 | Facultad | Ciencias Básicas e Ingeniería |
 | Población descriptiva | **95 estudiantes** |
-| Muestra de modelado | **89 estudiantes** |
+| Muestra de modelado | **90 estudiantes** |
 | Formato de entrega | Archivos `.xlsx` locales |
 | Restricciones de privacidad | Los datos contienen identificadores estudiantiles; el análisis no publica datos nominales |
 

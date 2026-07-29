@@ -48,7 +48,7 @@ df = pd.read_csv(os.path.join(SRC_DIR, 'df_master_limpio.csv'))
 features = joblib.load(os.path.join(SRC_DIR, 'feature_names.pkl'))
 X = df[features].values
 
-# 2. Regenerar y guardar train_test_split.json para N=89
+# 2. Regenerar y guardar train_test_split.json para N=90
 indices = np.arange(len(df))
 idx_train, idx_test = train_test_split(
     indices, test_size=0.2, random_state=SEED, stratify=df['rendimiento_bajo'].values
@@ -120,7 +120,7 @@ plt.ylabel('Real')
 plt.xticks([0.5, 1.5], ['No Graduado', 'Graduado'])
 plt.yticks([0.5, 1.5], ['No Graduado', 'Graduado'])
 
-plt.suptitle('Matrices de Confusión - CV-5 (n=89)', fontsize=14, y=1.02)
+plt.suptitle('Matrices de Confusión - CV-5 (n=90)', fontsize=14, y=1.02)
 plt.tight_layout()
 plt.savefig(os.path.join(FASE5_DIR, 'fig1_matrices_confusion.png'), bbox_inches='tight', dpi=150)
 plt.savefig(os.path.join(ASSETS_DIR, 'fig1_matrices_confusion.png'), bbox_inches='tight', dpi=150)
@@ -207,7 +207,7 @@ axes[1, 1].set_xlabel('Recall')
 axes[1, 1].set_ylabel('Precision')
 axes[1, 1].legend()
 
-plt.suptitle('Curvas de Evaluación de Clasificadores (CV-5, n=89)', fontsize=14, y=1.02)
+plt.suptitle('Curvas de Evaluación de Clasificadores (CV-5, n=90)', fontsize=14, y=1.02)
 plt.tight_layout()
 plt.savefig(os.path.join(FASE5_DIR, 'fig2_curvas_roc_pr.png'), bbox_inches='tight', dpi=150)
 plt.savefig(os.path.join(ASSETS_DIR, 'fig2_curvas_roc_pr.png'), bbox_inches='tight', dpi=150)
@@ -288,7 +288,7 @@ plt.ylabel('Score')
 plt.xlabel('')
 plt.legend(loc='lower left')
 
-plt.suptitle('Estabilidad de Métricas en CV-5 (n=89)', fontsize=14, y=1.02)
+plt.suptitle('Estabilidad de Métricas en CV-5 (n=90)', fontsize=14, y=1.02)
 plt.tight_layout()
 plt.savefig(os.path.join(FASE5_DIR, 'fig3_cv_por_fold.png'), bbox_inches='tight', dpi=150)
 plt.savefig(os.path.join(ASSETS_DIR, 'fig3_cv_por_fold.png'), bbox_inches='tight', dpi=150)

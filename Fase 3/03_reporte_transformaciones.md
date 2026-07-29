@@ -8,7 +8,7 @@
 | Paso | Descripción | Archivo |
 |---|---|---|
 | Carga y filtrado | Selección de cohortes 2017-2 y 2018-1, Ing. de Sistemas | `preprocessing.py` |
-| Definición de población base | Cruce de caracterización ∩ historial → 89 estudiantes | `preprocessing.py` |
+| Definición de población base | Cruce de caracterización ∩ historial recodificado → 90 estudiantes | `preprocessing.py` |
 | Selección de features | 18 variables de entrada | `preprocessing.py` |
 | Transformaciones | Encoding, imputación, normalización, derivación | `preprocessing.py` |
 | Construcción de targets | 2 variables objetivo binarias | `preprocessing.py` |
@@ -72,8 +72,8 @@
 
 | Target | Definición | Positivos | Negativos | Desbalance |
 |---|---|---|---|---|
-| `rendimiento_bajo` | `PROMEDIO_CARRERA` < 3.0 | 37 (41.6 %) | 52 (58.4 %) | Moderado |
-| `graduado` | Último estado = `GRADUADO` | 35 (39.3 %) | 54 (60.7 %) | Moderado |
+| `rendimiento_bajo` | `PROMEDIO_CARRERA` < 3.0 | 38 (42.2 %) | 52 (57.8 %) | Moderado |
+| `graduado` | Último estado = `GRADUADO` | 35 (38.9 %) | 55 (61.1 %) | Moderado |
 
 **Manejo del desbalance:** Se aplica SMOTE (Synthetic Minority Oversampling Technique) únicamente sobre el conjunto de entrenamiento cuando la proporción minoritaria es < 55 %. Nunca se aplica sobre el test set para evitar data leakage.
 
@@ -85,15 +85,16 @@ Para el análisis de materias críticas y el submodelo de predicción por materi
 
 | Acción | Registros excluidos | Razón |
 |---|---|---|
-| `OBSERVACION` = O (Homologada) | 54 | Nota no refleja aprendizaje en el programa |
+| `OBSERVACION` = O (Homologada) | 54 | Nota externa (convalidada), siempre ≥ 3.0 |
 | `OBSERVACION` = I (Intercambio) | — | Nota de otra institución |
-| `OBSERVACION` = C (Cancelada) | 11 | Sin nota definitiva |
-| `OBSERVACION` = E (En curso) | — | Sin nota definitiva |
+| `OBSERVACION` = V (Validada) | — | Nota externa |
 | `DEFINITIVA` nula | 33 | Sin información |
-| **Total excluidos** | **~98** | |
+| **Total excluidos** | **~87** | |
 | **Registros válidos** | **1 044 de 1 183** | |
 
 Adicionalmente, por cada estudiante-materia se toma **únicamente la última nota registrada** (orden por `PERIODO_INSCRIPCION` descendente) para evitar contar múltiples intentos como observaciones independientes.
+
+> **Aplicado (jul-2026):** `C` = **Curso intersemestral** (el antiguo rótulo "Cancelada" era un error del diccionario). Los intersemestrales tienen nota real y **se incluyen** en el análisis de notas y reprobación (`OBS_VALIDAS = {N, C, H}`). El pipeline consume los archivos recodificados `detalle_materias_recod.xlsx` e `historial_estados_recod.xlsx`, generados desde los originales por `src/recodificacion.py` (recodificación de OBSERVACION, imputación de estados y estados finales inferidos).
 
 ---
 
@@ -105,9 +106,9 @@ Adicionalmente, por cada estudiante-materia se toma **únicamente la última not
 | Semilla aleatoria | 42 |
 | Proporción test | 20 % |
 | Variable de estratificación | `rendimiento_bajo` |
-| **N train** | **71 estudiantes** |
+| **N train** | **72 estudiantes** |
 | **N test** | **18 estudiantes** |
-| Distribución target train | 40.8 % rendimiento bajo |
+| Distribución target train | 41.7 % rendimiento bajo |
 | Distribución target test | 44.4 % rendimiento bajo |
 
 La estratificación garantiza que ambas particiones tengan proporciones similares de la clase positiva.
@@ -127,5 +128,5 @@ La validación cruzada (StratifiedKFold, k=5) se aplica **solo sobre el train se
 | Tipos de datos correctos | ✅ Todos numéricos (int/float) |
 | Sin data leakage | ✅ `PROMEDIO_CARRERA` solo en target, no en features |
 | Número de features | ✅ 18 (≥ 15 requeridas, incluye `cohorte_encoded`) |
-| Población base correcta | ✅ 89 estudiantes (2017-2 y 2018-1, tras depuración) |
+| Población base correcta | ✅ 90 estudiantes (2017-2 y 2018-1, tras depuración con archivos recodificados) |
 | Targets definidos | ✅ `rendimiento_bajo` y `graduado` |

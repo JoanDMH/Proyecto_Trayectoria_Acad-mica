@@ -8,89 +8,89 @@
 
 ## 1. Random Forest → `rendimiento_bajo` — Umbral 0.29
 
-### CV-5 (n=89, referencia principal)
+### CV-5 (n=90, referencia principal)
 
 | Métrica | Valor | Interpretación |
 |---|---|---|
-| **Recall+ (clase en riesgo)** | **0.811** | El modelo detecta el 81.1 % de los estudiantes con bajo rendimiento real |
-| Precisión+ | 0.545 | De los estudiantes marcados en riesgo, el 54.5 % efectivamente lo tiene |
-| F1+ (binario) | 0.652 | Balance Recall/Precisión para la clase positiva |
-| **F1-macro** | **0.640** | Desempeño equilibrado entre ambas clases |
-| F1-weighted | 0.668 | F1 promedio ponderado por soporte |
-| **AUC-ROC** | **0.775** | Buena capacidad discriminativa general |
-| Average Precision | 0.791 | Área bajo curva Precision-Recall |
-| **MCC** | **0.335** | Correlación de Matthews para clasificación binaria |
-| Accuracy | 0.640 | 64.0 % de clasificaciones correctas en CV-5 |
+| **Recall+ (clase en riesgo)** | **0.816** | El modelo detecta el 81.6 % de los estudiantes con bajo rendimiento real |
+| Precisión+ | 0.484 | De los estudiantes marcados en riesgo, el 48.4 % efectivamente lo tiene |
+| F1+ (binario) | 0.608 | Balance Recall/Precisión para la clase positiva |
+| **F1-macro** | **0.548** | Desempeño equilibrado entre ambas clases |
+| F1-weighted | 0.538 | F1 promedio ponderado por soporte |
+| **AUC-ROC** | **0.752** | Buena capacidad discriminativa general |
+| Average Precision | 0.774 | Área bajo curva Precision-Recall |
+| **MCC** | **0.197** | Correlación de Matthews para clasificación binaria |
+| Accuracy | 0.556 | 55.6 % de clasificaciones correctas en CV-5 (umbral agresivo pro-Recall) |
 
 ### Test (n=18, indicativo)
 
 | Métrica | Valor |
 |---|---|
-| Recall+ | 0.429 |
-| Precisión+ | 0.500 |
-| F1-macro | 0.580 |
-| AUC-ROC | 0.591 |
-| MCC | 0.161 |
+| Recall+ | 0.875 |
+| Precisión+ | 0.538 |
+| F1-macro | 0.600 |
+| AUC-ROC | 0.713 |
+| MCC | 0.305 |
 | Accuracy | 0.611 |
 
 ### Matriz de confusión — Test
 
 |  | Pred. Normal | Pred. Riesgo |
 |---|---|---|
-| **Real Normal** (n=11) | 8 ✅ | 3 ❌ falsas alarmas |
-| **Real Riesgo** (n=7) | 4 ❌ no detectados | 3 ✅ |
+| **Real Normal** (n=10) | 4 ✅ | 6 ❌ falsas alarmas |
+| **Real Riesgo** (n=8) | 1 ❌ no detectado | 7 ✅ |
 
-> **Interpretación práctica:** De 7 estudiantes en riesgo real, el modelo detecta 3 (43 %). Genera 3 falsas alarmas. En contexto de intervención temprana, el modelo provee una primera alerta útil aunque moderada en el conjunto de prueba pequeño.
+> **Interpretación práctica:** De 8 estudiantes en riesgo real, el modelo detecta 7 (87.5 %) a costa de 6 falsas alarmas. Consistente con el objetivo de alerta temprana: máxima cobertura del riesgo con revisión manual de las alarmas.
 
 ---
 
 ## 2. XGBoost → `graduado` — Umbral 0.50
 
-### CV-5 (n=89, referencia principal)
+### CV-5 (n=90, referencia principal)
 
 | Métrica | Valor |
 |---|---|
-| **Recall+ (graduados)** | **0.714** |
-| Precisión+ | 0.806 |
-| **F1-macro** | **0.807** |
-| F1-weighted | 0.820 |
-| **AUC-ROC** | **0.870** |
-| Average Precision | 0.823 |
-| MCC | 0.618 |
-| Accuracy | 0.820 |
+| **Recall+ (graduados)** | **0.600** |
+| Precisión+ | 0.808 |
+| **F1-macro** | **0.764** |
+| F1-weighted | 0.781 |
+| **AUC-ROC** | **0.853** |
+| Average Precision | 0.727 |
+| MCC | 0.548 |
+| Accuracy | 0.789 |
 
 ### Test (n=18, indicativo)
 
 | Métrica | Valor |
 |---|---|
-| Recall+ | 0.857 |
-| Precisión+ | 0.667 |
-| F1-macro | 0.775 |
-| AUC-ROC | 0.922 |
-| MCC | 0.570 |
-| Accuracy | 0.778 |
+| Recall+ | 0.400 |
+| Precisión+ | 0.400 |
+| F1-macro | 0.585 |
+| AUC-ROC | 0.600 |
+| MCC | 0.169 |
+| Accuracy | 0.667 |
 
 ### Matriz de confusión — Test
 
 |  | Pred. No graduado | Pred. Graduado |
 |---|---|---|
-| **Real No graduado** (n=11) | 8 ✅ | 3 ❌ |
-| **Real Graduado** (n=7) | 1 ❌ | 6 ✅ |
+| **Real No graduado** (n=13) | 10 ✅ | 3 ❌ |
+| **Real Graduado** (n=5) | 3 ❌ | 2 ✅ |
 
 ---
 
 
 ## 3. Modelos por materia crítica — Random Forest, umbral 0.50
 
-| Materia | N | Tasa rep. | F1-w (in-sample)* | Calidad |
-|---|---|---|---|---|
-| Álgebra Lineal | 71 | 28 % | **0.971** | ✅ Excelente |
-| Matemáticas Especiales | 32 | 16 % | **0.964** | ✅ Excelente |
-| Física I | 53 | 26 % | **0.962** | ✅ Excelente |
-| Programación | 48 | 15 % | **0.870** | ✅ Excelente |
-| Matemáticas II | 52 | 44 % | **0.784** | ✅ Bueno |
+Métricas por validación cruzada (CV-5, out-of-fold), sin fugas, sobre datos recodificados:
 
-\* Nota: Debido al bajo volumen muestral por materia (N entre 12 y 71), las métricas se evalúan in-sample tras la optimización de hiperparámetros.
+| Materia | N | Tasa rep. | F1-w (CV-5) | AUC (CV-5) | Calidad |
+|---|---|---|---|---|---|
+| Matemáticas I | 73 | 26.0 % | **0.928** | 0.928 | ✅ Excelente |
+| Fund. de Programación | 72 | 20.8 % | **0.928** | 0.923 | ✅ Excelente |
+| Álgebra Lineal | 72 | 29.2 % | **0.912** | 0.939 | ✅ Excelente |
+| Física I | 54 | 27.8 % | **0.848** | 0.884 | ✅ Muy bueno |
+| Matemáticas II | 54 | 31.5 % | **0.785** | 0.865 | ✅ Bueno |
 
 ---
 

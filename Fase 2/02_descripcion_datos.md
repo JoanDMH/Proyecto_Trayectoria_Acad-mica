@@ -1,7 +1,7 @@
 # Reporte de Descripción de Datos
 ## CRISP-DM Fase 2 · Universidad de los Llanos · Cohortes 2017-2 y 2018-1 · Ingeniería de Sistemas
 
-> **Poblaciones:** análisis descriptivo sobre **n=95** (caracterización, ambas cohortes). El **modelado** (Fases 3-5) usa una submuestra de **89** con features académicas completas (se excluyen 6 estudiantes sin actividad o sin promedio).
+> **Poblaciones:** análisis descriptivo sobre **n=95** (caracterización, ambas cohortes). El **modelado** (Fases 3-5) usa una submuestra de **90** con features académicas completas (se excluyen 5 estudiantes sin ninguna actividad académica).
 
 ---
 
@@ -76,11 +76,13 @@
 |---|---|---|---|
 | N | Normal | 2 338 | 85.8 % |
 | O | Homologada | 118 | 4.3 % |
-| H | Habilitación | 110 | 4.0 % |
-| TG | Trabajo de Grado | 78 | 2.9 % |
-| NaN | Sin registro | 65 | 2.4 % |
-| C | Cancelada | 15 | 0.6 % |
-| V | Vacía | 1 | 0.0 % |
+| H | Habilitada | 110 | 4.0 % |
+| TG | Trabajo de Grado (→ `A` aprobado / `P` no aprobado) | 78 | 2.9 % |
+| (vacía) | Sin registro (→ recodificar `R` no presenta / `E` en curso 2026-1) | 65 | 2.4 % |
+| C | Curso intersemestral | 15 | 0.6 % |
+| V | Validada | 1 | 0.0 % |
+
+> **Corrección (Oficina de Sistemas, jul-2026):** `C` = **Curso intersemestral** (antes "Cancelada") y `V` = **Validada** (antes "Vacía"). Los intersemestrales tienen nota real y pueden reprobarse. Ver el diccionario completo en `03_diccionario_datos.md`.
 
 ---
 
@@ -124,7 +126,7 @@ Todos los campos son texto/categórico excepto `PERIODO_ESTADO` (string tipo `AA
 |---|---|---|---|---|---|---|---|
 | `PROMEDIO_CARRERA` | 90 | 3.08 | 0.86 | 0.8 | 3.40 | 4.40 | 0 |
 
-- 38 estudiantes (42.2 %) tienen `PROMEDIO_CARRERA` < 3.0. Sobre la muestra de modelado (89), el target `rendimiento_bajo` queda en 37 positivos (41.6 %).
+- 38 estudiantes (42.2 %) tienen `PROMEDIO_CARRERA` < 3.0. Sobre la muestra de modelado (90), el target `rendimiento_bajo` queda en 38 positivos (42.2 %).
 
 ---
 
@@ -148,4 +150,4 @@ Todos los campos son texto/categórico excepto `PERIODO_ESTADO` (string tipo `AA
 | Integridad del historial | ⚠️ `historial_estados_` no conserva todos los `MATRICULADO`; actividad medida con `detalle_materias` |
 | Variables inutilizables (> 95 % nulos) | 5 columnas socioeconómicas de `caracterización` |
 | Outliers en notas | Ninguno fuera del rango institucional [0.0, 5.0] |
-| Cruce de llaves | Población descriptiva n=95; modelado n=89 (exclusión de 6 estudiantes sin features académicas completas). |
+| Cruce de llaves | Población descriptiva n=95; modelado n=90 (exclusión de 5 estudiantes sin actividad académica; pipeline sobre archivos recodificados). |

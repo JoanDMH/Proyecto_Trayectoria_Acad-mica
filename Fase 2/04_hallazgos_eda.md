@@ -8,7 +8,7 @@
 Se distinguen dos poblaciones a lo largo del estudio:
 
 - **Población descriptiva (n=95):** todos los estudiantes de Ingeniería de Sistemas de las cohortes 2017-2 y 2018-1 presentes en `caracterización.xlsx`. Es la base del análisis exploratorio (perfil, estado final, deserción).
-- **Muestra de modelado (n=89):** subconjunto con *features* académicas completas. Se excluyen **6 estudiantes**: 5 sin ninguna actividad académica (nunca cursaron materias) y 1 con un único período inscrito y sin promedio de carrera.
+- **Muestra de modelado (n=90):** subconjunto con *features* académicas completas. Se excluyen **5 estudiantes** sin ninguna actividad académica (nunca cursaron materias). Con el historial recodificado (jul-2026), el estudiante 160004030 —que cursó 2017-2 pero no aparecía en el historial original— entra a la muestra.
 
 | Tabla | Registros (cohortes 2017-2 / 2018-1) | Estudiantes |
 |---|---|---|
@@ -117,7 +117,7 @@ Períodos académicos con actividad real (`detalle_materias`) antes de abandonar
 - **5 desertores** nunca tuvieron actividad académica (inscritos sin materias).
 - **38 de 59 (64 %)** abandonan con 2 períodos activos o menos → la deserción se concentra en el primer año.
 
-### 4.5 Promedio acumulado de carrera (muestra de modelado, n=89)
+### 4.5 Promedio acumulado de carrera (muestra de modelado, n=90)
 
 | Estadístico | Valor |
 |---|---|
@@ -126,28 +126,30 @@ Períodos académicos con actividad real (`detalle_materias`) antes de abandonar
 | Desviación estándar | 0.86 |
 | Mínimo | 0.80 |
 | Máximo | 4.40 |
-| Estudiantes con promedio < 3.0 | 37 (41.6 %) |
+| Estudiantes con promedio < 3.0 | 38 (42.2 %) |
 
-> El promedio de carrera y el target `rendimiento_bajo` se definen sobre la muestra de modelado (89), que es la que alimenta el modelo.
+> El promedio de carrera y el target `rendimiento_bajo` se definen sobre la muestra de modelado (90), que es la que alimenta el modelo.
 
 ---
 
 ## 5. Materias críticas (índice centrado en reprobación)
 
 **Metodología** — reproducible con `src/indice_materias.py` → `src/materias_criticas.csv`:
-- Población: materias cursadas por **≥ 20 estudiantes** (registros con `OBSERVACION` ∈ {N, H, F, R, TG} y nota válida).
+- Población: materias cursadas por **≥ 20 estudiantes** (registros con `OBSERVACION` ∈ {N, C, H} y nota válida, sobre `detalle_materias_recod.xlsx`). Desde jul-2026 se incluyen los cursos intersemestrales (`C`) y los registros sin observación con nota (recodificados a `N`), que el pipeline anterior excluía.
 - Se toma la **última nota** por estudiante-materia (reprobación = nota < 3.0).
 - **Índice** = 0.70 × tasa\_reprobación\_norm + 0.30 × repitencia\_media\_norm (normalización min-max). Mide la **dificultad de aprobar**.
 
 | # | Materia | Reprobados | Tasa reprobación | Repitencia media | Índice | N | Modelable |
 |---|---|---|---|---|---|---|---|
-| 1 | **Matemáticas II** | 23 | 44 % | 1.25 veces | **0.824** | 52 | ✅ |
-| 2 | **Física I** | 14 | 26 % | 1.60 veces | **0.718** | 53 | ✅ |
-| 3 | **Álgebra Lineal** | 21 | 29 % | 1.40 veces | **0.662** | 72 | ✅ |
-| 4 | **Matemáticas I** | 19 | 26 % | 1.03 veces | **0.425** | 73 | ✅ |
-| 5 | **Fundamentos de Programación** | 15 | 21 % | 1.15 veces | **0.406** | 72 | ✅ |
+| 1 | **Matemáticas II** | 17 | 31.5 % | 1.61 veces | **0.983** | 54 | ✅ |
+| 2 | **Física I** | 15 | 27.8 % | 1.65 veces | **0.918** | 54 | ✅ |
+| 3 | **Álgebra Lineal** | 21 | 29.2 % | 1.40 veces | **0.835** | 72 | ✅ |
+| 4 | **Matemáticas I** | 19 | 26.0 % | 1.10 veces | **0.623** | 73 | ✅ |
+| 5 | **Fundamentos de Programación** | 15 | 20.8 % | 1.15 veces | **0.534** | 72 | ✅ |
 
-> **Modelado:** las 5 tienen clase positiva suficiente (≥ 10 reprobados) → todas modelables. Hay clasificadores validados para Matemáticas II, Física I y Álgebra Lineal; Matemáticas I y Fundamentos de Programación se entrenan al re-ejecutar el pipeline.
+> **Modelado:** las 5 tienen clase positiva suficiente (≥ 10 reprobados) y clasificador Random Forest entrenado (`src/entrenar_materias.py`), con métricas por validación cruzada (CV-5, out-of-fold): F1-w 0.79–0.93, AUC 0.86–0.94.
+>
+> **Nota (jul-2026):** al incorporar los intersemestrales y los registros sin observación con nota, la tasa de reprobación de Matemáticas II baja de 44 % a 31.5 % (varios registros recuperados eran aprobaciones posteriores) y su repitencia sube a 1.61; el top 5 y su orden se mantienen.
 
 ---
 
@@ -183,7 +185,7 @@ Períodos académicos con actividad real (`detalle_materias`) antes de abandonar
 | Integridad del historial de estados | ⚠️ `historial_estados_` no conserva todos los `MATRICULADO`; la actividad se mide con `detalle_materias` (ver 1.1) |
 | Columnas inutilizables (100 % nulos) | ❌ 5 columnas excluidas |
 | Outliers en notas | ✅ Ninguno fuera del rango [0.0, 5.0] |
-| Desbalance de clases (target `graduado`, n=89) | ⚠️ Graduado 39.3 % / No graduado 60.7 % → aplicar SMOTE en entrenamiento |
+| Desbalance de clases (target `graduado`, n=90) | ⚠️ Graduado 38.9 % / No graduado 61.1 % → desbalance leve, sin SMOTE (ver Fase 4) |
 | Desbalance de género | ⚠️ 84.2 % masculino → limitación estadística de comparación |
 
 ---
@@ -213,7 +215,7 @@ Períodos académicos con actividad real (`detalle_materias`) antes de abandonar
 
 ---
 
-## 9. Variables target (muestra de modelado, n=89)
+## 9. Variables target (muestra de modelado, n=90)
 
 | Target | Definición | Distribución | Uso |
 |---|---|---|---|
@@ -231,7 +233,7 @@ Períodos académicos con actividad real (`detalle_materias`) antes de abandonar
 |---|---|
 | Todos los DataFrames explorados con métricas indicadas | ✅ |
 | Datos filtrados correctamente (cohortes combinadas, Ing. Sistemas) | ✅ |
-| Población establecida (descriptiva n=95 · modelado n=89) | ✅ |
+| Población establecida (descriptiva n=95 · modelado n=90) | ✅ |
 | Variables clave identificadas para cada pregunta | ✅ |
 | Clave de unión confirmada (`CODIGO_INST` / `CODIGO_ESTUDIANTIL`) | ✅ |
 | Informe de calidad de datos (nulos, duplicados, outliers, integridad del historial) | ✅ |

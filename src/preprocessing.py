@@ -6,7 +6,10 @@ Universidad de los Llanos · Cohortes 2017-2 y 2018-1 · Ingeniería de Sistemas
 Correcciones aplicadas post-Fase 2:
 - Población base: 89 estudiantes (cruce car ∩ historial)
 - 18 features seleccionadas
-- OBSERVACION: excluye O (Homologada), I (Intercambio), C (Cancelada), E (En curso)
+- Insumos: detalle_materias_recod.xlsx e historial_estados_recod.xlsx (generados
+  desde los originales por src/recodificacion.py)
+- OBSERVACION validas para notas: N, C (curso intersemestral, INCLUIDO jul-2026), H.
+  Excluidas: O/V/I (notas externas), A/P/R/E (sin nota)
 - Promedio materias: solo notas >= 3.0, última nota por estudiante-materia
 - Materias críticas corregidas con índice compuesto
 - Mapeo NIVEL_ED sin código 6 (salto 5 → 7)
@@ -63,8 +66,10 @@ MATERIAS_CRITICAS = [
     'FUNDAMENTOS DE PROGRAMACION',
 ]
 
-# OBSERVACION válidas para análisis de notas
-OBS_VALIDAS = {'N', 'H', 'F', 'R', 'TG'}
+# OBSERVACION validas para notas (diccionario corregido jul-2026):
+# N=Normal, C=Curso intersemestral (nota real, puede reprobarse), H=Habilitada.
+# A/P/R/E no tienen nota; O/V/I son notas externas.
+OBS_VALIDAS = {'N', 'C', 'H'}
 
 
 # ── Carga y filtrado ─────────────────────────────────────────────────────────
@@ -72,8 +77,9 @@ OBS_VALIDAS = {'N', 'H', 'F', 'R', 'TG'}
 def cargar_datos():
     """Carga los 5 datasets y filtra por cohortes/programa, excluyendo nulos de promedio acumulado."""
     df_car = pd.read_excel(os.path.join(DATA_DIR, 'caracterización.xlsx'))
-    df_mat = pd.read_excel(os.path.join(DATA_DIR, 'detalle_materias.xlsx'))
-    df_he  = pd.read_excel(os.path.join(DATA_DIR, 'historial_estados_.xlsx'))
+    # Archivos RECODIFICADOS (generados por src/recodificacion.py desde los originales)
+    df_mat = pd.read_excel(os.path.join(DATA_DIR, 'detalle_materias_recod.xlsx'))
+    df_he  = pd.read_excel(os.path.join(DATA_DIR, 'historial_estados_recod.xlsx'))
     df_pc  = pd.read_excel(os.path.join(DATA_DIR, 'PROMEDIOS_DE_CARRERA.xlsx'))
     df_ps  = pd.read_excel(os.path.join(DATA_DIR, 'promedios_semestre.xlsx'))
 

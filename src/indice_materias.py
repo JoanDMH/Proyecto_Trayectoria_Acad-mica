@@ -12,7 +12,7 @@ import pandas as pd
 
 PROG = 'INGENIERIA DE SISTEMAS'
 COHORTES = ['2017-2', '2018-1']
-OBS_VALIDAS = {'N', 'H', 'F', 'R', 'TG'}   # observaciones con nota valida
+OBS_VALIDAS = {'N', 'C', 'H'}   # nota valida (C = curso intersemestral, incluido jul-2026)
 N_MIN = 20                                  # materias cursadas por >= 20 estudiantes
 PESOS = {'reprobacion': 0.70, 'repitencia': 0.30}
 
@@ -22,7 +22,7 @@ OUT_CSV = os.path.join(_BASE, 'materias_criticas.csv')
 
 
 def calcular_indice(data_dir=DATA_DIR):
-    mat = pd.read_excel(os.path.join(data_dir, 'detalle_materias.xlsx'))
+    mat = pd.read_excel(os.path.join(data_dir, 'detalle_materias_recod.xlsx'))
     mat = mat[(mat['PROGRAMA'].str.strip().str.upper() == PROG) &
               (mat['COHORTE'].astype(str).str.strip().isin(COHORTES))].copy()
     mat['OBS'] = mat['OBSERVACION'].astype(str).str.strip().str.upper()

@@ -172,21 +172,26 @@ Registro de todas las materias cursadas por los estudiantes, con su calificació
 | `DEFINITIVA` | numérico (0–5) | Nota definitiva obtenida |
 | `OBSERVACION` | categórico | Tipo de registro académico — ver tabla abajo |
 
-**Valores de `OBSERVACION`**
+**Valores de `OBSERVACION`** (diccionario actualizado por la Oficina de Sistemas, jul-2026)
 
-| Código | Significado | Incluir en análisis de notas |
+| Código | Significado | ¿Nota propia y calificable? |
 |---|---|---|
 | `N` | Normal (primera vez o repetición estándar) | ✅ Sí |
-| `H` | Habilitación (examen de recuperación) | ✅ Sí |
-| `F` | Pérdida por fallas (inasistencia) | ✅ Sí |
-| `R` | No aprobada (sin habilitación) | ✅ Sí |
-| `TG` | Trabajo de Grado | ✅ Sí (si aplica) |
-| `O` | Homologada (convalidada de otro programa) | ❌ No (excluir) |
-| `I` | Intercambio académico | ❌ No (excluir) |
-| `C` | Cancelada | ❌ No (sin nota válida) |
-| `E` | En curso actualmente | ❌ No (sin nota definitiva) |
+| `C` | **Curso intersemestral** | ✅ Sí |
+| `H` | Habilitada (examen de recuperación) | ✅ Sí |
+| `A` | Trabajo de grado **aprobado** | ✅ Sí |
+| `P` | Trabajo de grado **no aprobado** | ✅ Sí |
+| `O` | Homologada (convalidada de otro programa) | ❌ No (nota externa, siempre ≥ 3.0) |
+| `I` | Intercambio académico | ❌ No (nota externa) |
+| `V` | Validada | ❌ No (nota externa) |
+| `R` | No presenta (relleno de vacías **no** recientes) | ❌ No (sin nota real) |
+| `E` | En curso actualmente (vacías recientes, 2026-1) | ❌ No (sin nota definitiva) |
 
-> **Nota de procesamiento:** Para calcular promedios por materia se toma la **última nota registrada** por estudiante-materia (ordenado por `PERIODO_INSCRIPCION` descendente) y se excluyen los registros con `OBSERVACION` ∈ {O, I, C, E}.
+> **Correcciones frente a la versión anterior** (Oficina de Sistemas): `C` = **Curso intersemestral** (antes se documentaba erróneamente como "Cancelada"); `V` = **Validada** (antes "Vacía"); `R` = **No presenta** (antes "No aprobada"). El código `F` **no existe** en el sistema (0 registros). La antigua `TG` se desdobla en `A` (aprobado) / `P` (no aprobado): un estudiante puede tener varias `P` previas pero su observación final debe ser `A`, salvo en un periodo reciente (p. ej. 2026-1).
+>
+> **Estado del extracto actual:** los códigos `A`, `P`, `R`, `E` pertenecen al nuevo esquema de recodificación y **aún no están** en el extracto entregado, que trae `TG` y celdas vacías. Las conversiones vacías→`R`/`E` y `TG`→`A`/`P` son una transformación **pendiente de aplicar**.
+>
+> **Nota de procesamiento (pipeline vigente):** para promedios y reprobación por materia se toma la **última nota registrada** por estudiante-materia (orden `PERIODO_INSCRIPCION` descendente) e incluye {N, H, TG}. Con la corrección de `C`, los cursos intersemestrales son intentos **reales y calificables** (17 de 79 reprobados en el dataset completo), por lo que su inclusión en el análisis de reprobación queda **por revisar**.
 
 ---
 
