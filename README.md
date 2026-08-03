@@ -2,7 +2,7 @@
 
 Trabajo de grado (Ing. de Sistemas, Universidad de los Llanos). Predicción de la trayectoria académica (rendimiento bajo, graduación, reprobación por materia) de las cohortes 2017-2 y 2018-1 de la FCBI mediante aprendizaje automático, siguiendo CRISP-DM.
 
-**Documento rector:** [`PLAN_DE_TRABAJO.md`](PLAN_DE_TRABAJO.md) — sustituye a la propuesta en PDF; contiene objetivos, estado actual, brechas y plan incremental. **Léelo primero si retomas el proyecto.**
+**Documento rector:** [`PLAN_DE_TRABAJO.md`](PLAN_DE_TRABAJO.md) — sustituye a la propuesta en PDF; contiene objetivos, estado actual, brechas y plan incremental. **Léelo primero si retomas el proyecto.** La ejecución detallada por objetivos (multiagente) está en [`PLAN_OPERATIVO_AGENTES.md`](PLAN_OPERATIVO_AGENTES.md) y la bitácora de hallazgos en [`REGISTRO_CIENTIFICO.md`](REGISTRO_CIENTIFICO.md).
 
 ## Estructura del repositorio
 

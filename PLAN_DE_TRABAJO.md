@@ -1,6 +1,6 @@
 # PLAN DE TRABAJO — Modelo Predictivo de Trayectoria Académica FCBI
 ### Documento rector del proyecto de grado · Sustituye a "Propuesta de Proyecto de Grado.pdf" para consulta rápida
-**Última actualización:** 2026-07-29 · **Estado global:** núcleo técnico completo para Ing. de Sistemas; pendiente extensión FCBI, target de trayectoria unificado, algoritmos baseline y entregables formales.
+**Última actualización:** 2026-07-29 · **Estado global:** estudios preliminares completos para Ing. de Sistemas (modelos binarios + por materia); el modelo comprometido —trayectoria multiclase FCBI con algoritmo ganador único— está pendiente (H2–H3), junto con baselines y entregables formales.
 
 ---
 
@@ -30,9 +30,11 @@
 
 **Definiciones de la propuesta a tener presentes:**
 
-- **Variable objetivo propuesta:** estado académico al final del seguimiento — **graduado, activo, desertor, rezagado** (multiclase).
+- **Variable objetivo propuesta:** estado académico al final del seguimiento — **graduado, activo, desertor, rezagado** (multiclase), con salidas **probabilísticas** por estudiante.
+
+**Visión de producto (aclaración del estudiante, jul-2026 — referencia: SPADIES):** el modelo se prueba mediante una **aplicación desplegada**, buscando un resultado similar o superior a la plataforma colombiana SPADIES. Para un estudiante dado, la aplicación debe: (a) dar la **probabilidad de graduarse** y la **probabilidad de desertar** en algún punto de la carrera; (b) medir su **probabilidad de rezago**; (c) señalar si está en **riesgo de bajo rendimiento**; y (d) mostrar la **probabilidad general al ingreso y actualizarla semestre a semestre** a medida que avanza (seguimiento longitudinal, no una foto única).
 - **Algoritmos candidatos propuestos:** regresión logística (línea base), árbol de decisión, Random Forest, SVM, XGBoost; redes neuronales opcional.
-- **Alcance:** programas de la FCBI (los datos disponibles cubren Ing. de Sistemas, Ing. Electrónica, Biología y Lic. en Matemáticas).
+- **Alcance:** programas de la FCBI — **Ing. de Sistemas, Ing. Electrónica y Biología**. Lic. en Matemáticas se ignora (está en los datos entregados, pero fuera del alcance del estudio).
 - **Despliegue:** la integración completa en la plataforma del proyecto longitudinal es *trabajo futuro*; este proyecto entrega el modelo empaquetado + manual técnico de integración. La app Streamlit actual es un **prototipo provisional**.
 
 ## 3. Entregables comprometidos (Tabla 7 de la propuesta)
@@ -40,7 +42,7 @@
 | # | Producto | Meta | Estado |
 |---|---|---|---|
 | E1 | Artículo académico (revista indexada Cat. B/C, estilo revista BI) | 1 | 🔴 No iniciado |
-| E2 | Modelo ML entrenado, validado y **empaquetado** + pipeline documentado e integrable (repo GitHub + **manual técnico de integración**) | 1 | 🟡 Modelos y repo listos; falta manual técnico formal |
+| E2 | Modelo ML entrenado, validado y **empaquetado** + pipeline documentado e integrable (repo GitHub + **manual técnico de integración**) | 1 | 🔴 **No listo.** Los modelos actuales son binarios y solo de Ing. de Sistemas: son *estudios preliminares*, no el modelo comprometido. El entregable es **UN** modelo ganador de **trayectoria multiclase FCBI** (ver §4.2-bis y hitos H2–H3). El pipeline y el repo sí están listos. |
 | E3 | Conjunto de datos procesado y listo para modelado (archivo + **diccionario documentado**) | 1 | 🟢 Casi completo (df_master + recod + diccionario Fase 2; falta empaquetado formal de entrega) |
 | E4 | Documento final del trabajo de grado (informe final EPI) avalado | 1 | 🟡 Informes por fase listos; falta consolidar informe final (existía Informe.tex IEEE, hoy fuera del repo) |
 | E5 | Ponencia en evento científico nacional/internacional | 1 | 🔴 No iniciado |
@@ -71,6 +73,19 @@ Todo por **CV-5 estratificada out-of-fold, SEED=42, sin SMOTE, sin fugas** (anti
 - Variable dominante: `prom_sem1` (40.4 % en RF) → alerta temprana al primer semestre.
 - Comparativa DT/RF/XGB documentada (`Fase 4/`), pruebas estadísticas (género, edu. padres, repitencia: no significativas), impacto antes/después de la recodificación (`Fase 5/03`).
 
+### 4.2-bis. Compatibilidad de los modelos actuales con la propuesta (revisión jul-2026)
+
+La propuesta compromete **UN** modelo predictivo de **trayectoria** (target multiclase: graduado/activo/desertor/rezagado) para la FCBI, seleccionado al comparar algoritmos. Los modelos existentes **no son ese modelo**; su rol queda definido así:
+
+| Modelo actual | ¿Es el entregable E2? | Rol en el proyecto |
+|---|---|---|
+| `rendimiento_bajo` (RF binario, Sistemas) | ❌ No (por sí solo) | **Componente del producto**: la visión SPADIES exige señalar riesgo de bajo rendimiento, así que este modelo se conserva como una de las salidas de la aplicación (extendido a FCBI). Además validó pipeline, features y la señal de `prom_sem1`. |
+| `graduado` (XGB binario, Sistemas) | ❌ No | Estudio preliminar: es un *colapso binario* del target de trayectoria; será absorbido por la clase `graduado` del modelo multiclase. |
+| 5 modelos de reprobación por materia | ❌ No | Hallazgo secundario valioso (pregunta d del estudio interno); va al informe como análisis complementario, no como producto E2. |
+| **Modelo de trayectoria multiclase FCBI** (H2–H3) | ✅ **Sí — por construir** | El único que responde la pregunta problema. Al final se elige **un solo algoritmo ganador** para este target y ese es el que se empaqueta (E2). |
+
+**Decisión:** no se descarta el trabajo existente — se re-encuadra. El entregable E2 es **un** modelo ganador **del target de trayectoria** (con probabilidades por clase); el modelo de riesgo de bajo rendimiento acompaña como salida adicional de la aplicación (visión SPADIES), y los modelos por materia quedan como análisis complementario del informe.
+
 ### 4.3 Prototipo de despliegue
 
 - `app.py` (Streamlit, desplegada en Streamlit Cloud): KPIs, EDA interactivo, comparativa de modelos, gauge Recall+, modelos por materia, predictor interactivo. Lee métricas dinámicamente de los CSVs de `src/`.
@@ -79,7 +94,7 @@ Todo por **CV-5 estratificada out-of-fold, SEED=42, sin SMOTE, sin fugas** (anti
 
 | # | Brecha | Detalle |
 |---|---|---|
-| B1 | **Alcance FCBI incompleto** | Todo el modelado es de Ing. de Sistemas. Faltan Electrónica y Biología (y decidir si Lic. Matemáticas): modelos por programa o modelo general FCBI. La recodificación ya cubre los 4 programas (parametrizada). |
+| B1 | **Alcance FCBI incompleto** | Todo el modelado es de Ing. de Sistemas. Faltan Electrónica y Biología: modelos por programa o modelo general FCBI. **Lic. en Matemáticas queda fuera del alcance** (sus datos existen pero se ignoran). La recodificación ya está parametrizada por programa. |
 | B2 | **Target de trayectoria multiclase** | La propuesta define el target como estado final: *graduado / activo / desertor / rezagado*. Hoy existen dos binarios. El historial recodificado + estados inferidos + regla de recencia ya permiten construir la etiqueta multiclase (falta definir "rezagado": p. ej. activo con avance < créditos esperados, o graduado en > tiempo nominal). |
 | B3 | **Algoritmos baseline faltantes** | La propuesta compara: regresión logística (baseline), DT, RF, SVM, XGBoost (+NN opcional). Faltan **regresión logística y SVM** en la comparativa (y decidir NN). |
 | B4 | **Informe final (E4)** | Consolidar el informe EPI. El `Informe.tex` (IEEE) salió del repo; recuperarlo o reconstruirlo con las cifras vigentes (las de este documento). |
@@ -89,6 +104,10 @@ Todo por **CV-5 estratificada out-of-fold, SEED=42, sin SMOTE, sin fugas** (anti
 | B8 | **Empaquetado formal del dataset (E3)** | Falta paquete de entrega: dataset procesado + diccionario + licencia/anonimización para el equipo investigador. **Atención privacidad:** los archivos actuales contienen nombres; el paquete de entrega debe anonimizarse. |
 | B9 | **Exploración Power BI** | La propuesta menciona Power BI en la Etapa 1. Se cubrió con Python/Streamlit; documentar la sustitución justificada (o generar un tablero PBI mínimo si los evaluadores lo exigen). |
 | B10 | **Notebooks desactualizados** | `Fase 2/05_eda_notebook.ipynb` y `Fase 5/02_evaluacion_modelo.ipynb` tienen salidas previas a la recodificación (n=89); re-ejecutar. Igual `src/save_evaluation_plots.py` para regenerar figuras con n=90. |
+
+## 5.1 Ejecución operativa
+
+> El desglose detallado por objetivo (paquetes de trabajo, dependencias, criterios de aceptación, protocolo multiagente y guía de redacción del informe) está en **`PLAN_OPERATIVO_AGENTES.md`**. Los hallazgos con valor científico se registran en **`REGISTRO_CIENTIFICO.md`** (insumo directo del informe final).
 
 ## 6. Plan incremental (hitos)
 
@@ -102,21 +121,24 @@ Todo por **CV-5 estratificada out-of-fold, SEED=42, sin SMOTE, sin fugas** (anti
 
 ### H2 — Target de trayectoria unificado (B2) — *núcleo conceptual*
 1. Definir formalmente las 4 clases con las reglas ya validadas: `graduado` (estado GRADUADO), `desertor` (retiro formal o inferido / sin actividad reciente), `activo` (actividad ≥2024-1), `rezagado` (definir umbral: sin graduarse dentro del tiempo nominal +X semestres, o avance de créditos < esperado).
-2. Construir la etiqueta para los 4 programas desde `historial_estados_recod` + `detalle_materias_recod` (función nueva en `preprocessing.py`).
-3. Documentar distribución de clases por programa y decidir estrategia de desbalance.
+2. Construir la etiqueta desde `historial_estados_recod` + `detalle_materias_recod` (función nueva en `preprocessing.py`) para los 3 programas del alcance.
+3. **Diseño longitudinal (visión SPADIES):** además del vector de ingreso, construir *snapshots* por semestre (features acumuladas hasta el semestre k → probabilidades actualizadas), para que la predicción sea medible al inicio y en cada semestre.
+4. Documentar distribución de clases por programa y decidir estrategia de desbalance.
 - **Criterio de cierre:** columna `trayectoria` en el dataset maestro FCBI, documentada en Fase 3.
 
 ### H3 — Comparativa completa de algoritmos a escala FCBI (B1+B3) — *responde la pregunta problema*
-1. Extender `preprocessing.py` a los 4 programas (features comunes; validar disponibilidad de caracterización por programa).
+1. Extender `preprocessing.py` a los 3 programas del alcance (Sistemas, Electrónica, Biología; features comunes; validar disponibilidad de caracterización por programa).
 2. Añadir **regresión logística** (baseline) y **SVM** a `entrenar_principal.py`; opcional MLP. Mantener CV-5 OOF, SEED=42.
 3. Entrenar: (a) modelo general FCBI (target multiclase de H2, con `programa` como feature) y (b) modelos por programa si el general no discrimina bien.
 4. Comparativa final de 5–6 algoritmos × métricas (Accuracy, Precision, Recall, F1 por clase, AUC-ROC por clase) + interpretación de variables (importancias/SHAP).
+5. **Selección del modelo ganador único** (algoritmo + configuración) para el target de trayectoria: este es el modelo que se empaqueta como E2.
 - **Criterio de cierre:** tabla comparativa que responde explícitamente "¿cuál algoritmo ofrece el mejor desempeño?" — el corazón del OG.
 
-### H4 — Empaquetado y manual técnico (B7+B8 → E2+E3) — *transferencia*
+### H4 — Empaquetado, manual técnico y aplicación de despliegue (B7+B8 → E2+E3) — *transferencia*
 1. Paquete del modelo: `joblib` versionado + `predict()` de referencia + contrato JSON de entrada/salida + versiones de dependencias.
 2. `MANUAL_TECNICO_INTEGRACION.md`: pipeline, artefactos, ejemplo de consumo (para la plataforma del co-investigador).
 3. Paquete de datos para el equipo investigador: dataset procesado **anonimizado** + diccionario.
+4. **Aplicación de despliegue** (sucesora del prototipo Streamlit): vista por estudiante estilo SPADIES — probabilidad de graduación/deserción, probabilidad de rezago, riesgo de bajo rendimiento; probabilidad al ingreso y evolución semestre a semestre. La tecnología final se decide aquí (Streamlit afinado u otra pila).
 - **Criterio de cierre:** un tercero puede cargar el modelo y predecir sin leer el código fuente.
 
 ### H5 — Informe final EPI (B4 → E4) — *documento de grado*
@@ -143,7 +165,7 @@ Todo por **CV-5 estratificada out-of-fold, SEED=42, sin SMOTE, sin fugas** (anti
 
 | Riesgo | Mitigación |
 |---|---|
-| Muestra pequeña por programa (~90) debilita el modelo multiclase | Modelo general FCBI (n≈360) con `programa` como feature; reportar por-clase con IC |
+| Muestra pequeña por programa (~90) debilita el modelo multiclase | Modelo general FCBI (n≈275: Sistemas 95 + Electrónica 95 + Biología 85) con `programa` como feature; reportar por-clase con IC |
 | Clase "rezagado" ambigua | Definirla con la codirectora (experticia en trayectoria) antes de H3 |
 | Datos con nombres (privacidad) | Anonimizar todo paquete que salga del repo (E3); el repo es privado |
 | Corrupción de archivos xlsx (ocurrió 2 veces) | `Datos.zip` intacto + todo regenerable por script |
