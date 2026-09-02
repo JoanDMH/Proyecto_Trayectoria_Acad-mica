@@ -192,7 +192,7 @@ with st.sidebar:
     st.markdown(f"**n =** {len(df)} estudiantes")
     st.markdown("---")
     st.markdown("**Desarrollado por:**")
-    st.markdown("Joan Martínez & Johan Arango")
+    st.markdown("Joan Martínez")
     st.markdown("Universidad de los Llanos · FCBI")
     st.markdown("2026-06")
 
@@ -780,9 +780,11 @@ elif seccion == "Materias Críticas":
             color="Índice crítico", color_continuous_scale="Reds",
             text=df_mat.sort_values("Índice crítico")["Índice crítico"].apply(lambda x: f"{x:.3f}")
         )
-        fig.update_traces(textposition="outside")
+        fig.update_traces(textposition="outside",
+                          textfont=dict(color="black"))
         fig.update_layout(height=280, margin=dict(t=20, b=20, l=20, r=50),
-                          coloraxis_showscale=False, xaxis_title="Índice crítico")
+                          coloraxis_showscale=False, xaxis_title="Índice crítico",
+                          xaxis_range=[0, 1.3])
         st.plotly_chart(fig, use_container_width=True)
 
     st.markdown("---")
@@ -832,13 +834,13 @@ elif seccion == "Materias Críticas":
         color_borde = VERDE if vals["AUC"] >= 0.90 else (NARANJA if vals["AUC"] >= 0.75 else ROJO)
         with col:
             st.markdown(f"""
-            <div style="background:white; border-radius:12px; padding:16px;
+            <div style="background:white; border-radius:12px; padding:18px;
                         border-top:4px solid {color_borde};
                         box-shadow:0 2px 12px rgba(0,0,0,0.08); text-align:center;">
-                <p style="font-size:0.82rem; font-weight:700; color:#1A1A2E; margin:0 0 10px 0;">{mat}</p>
-                <p style="font-size:1.6rem; font-weight:800; color:{color_borde}; margin:0;">AUC {vals['AUC']:.3f}</p>
-                <p style="font-size:0.8rem; color:#7F8C8D; margin:4px 0;">F1-mac: {vals['F1-mac']:.3f}</p>
-                <p style="font-size:0.8rem; color:#7F8C8D; margin:0;">N={vals['N']} · Rep={vals['rep']:.0%}</p>
+                <p style="font-size:1.0rem; font-weight:700; color:#1A1A2E; margin:0 0 10px 0;">{mat}</p>
+                <p style="font-size:2.0rem; font-weight:800; color:{color_borde}; margin:0;">AUC {vals['AUC']:.3f}</p>
+                <p style="font-size:0.95rem; color:#7F8C8D; margin:4px 0;">F1-mac: {vals['F1-mac']:.3f}</p>
+                <p style="font-size:0.95rem; color:#7F8C8D; margin:0;">N={vals['N']} · Rep={vals['rep']:.0%}</p>
             </div>""", unsafe_allow_html=True)
 
     st.markdown(insight(

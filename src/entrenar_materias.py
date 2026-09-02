@@ -38,7 +38,7 @@ def main():
         print(f"  {materia}: F1w={filas[-1]['F1-w']} AUC={filas[-1]['AUC']} N={len(y)} rep={y.mean():.0%}")
     pd.DataFrame(filas).to_csv(os.path.join(SRC, 'metricas_materias.csv'), index=False)
     joblib.dump(modelos, os.path.join(SRC, 'modelos_materias.pkl'))
-    print('[OK] metricas_materias.csv y modelos_materias.pkl')
+    print(' metricas_materias.csv y modelos_materias.pkl')
 
 if __name__ == '__main__':
     main()

@@ -66,4 +66,25 @@
   5. **E2:** paquete de inferencia dual (sub-modelos de trayectoria del algoritmo ganador + modelo de riesgo de bajo rendimiento) tras un contrato JSON único.
 - **Destino en el informe:** metodología (diseño experimental pre-registrado; las decisiones 1–3 son defensa directa contra sesgos conocidos).
 
+### RC-009 · 2026-08-12 · Fase 1 (contexto) · paper de congreso
+- **Motivación:** verificar la cifra nacional de deserción usada como antecedente; la codirectora sospechaba que superaba el 50 % y la fuente citada (MEN) podía estar desactualizada.
+- **Método:** búsqueda y lectura directa del informe LEE-Javeriana No. 74 (2023), elaborado con datos de SNIES y SPADIES del MEN.
+- **Resultado:** la tasa de deserción *por cohorte* a 10 semestres es 36,7 % (cohorte 2016-1), pero la **tasa de graduación acumulada al semestre 15 es 45,1 %**: más de la mitad de quienes ingresan no se gradúa. La cifra "deserción >40 %" era imprecisa como antecedente.
+- **Decisión:** en el paper (y en el informe final) se usa el enunciado verificable "más de la mitad no logra graduarse tras quince semestres (graduación acumulada 45,1 %)" citando LEE (2023). No se encontró fuente que sustente >50 % de deserción *específica de ingeniería* por cohorte: no se afirma.
+- **Destino en el informe:** introducción (antecedentes) y justificación.
+
+### RC-010 · 2026-08-12 · Fase 5 · paper de congreso
+- **Motivación:** objeción de la codirectora: usar la U de Mann-Whitney como "prueba de asociación" es inadecuado.
+- **Método:** revisión del uso de cada prueba respecto de su hipótesis.
+- **Resultado:** la objeción aplica al *rótulo*, no al test: Mann-Whitney contrasta diferencias entre dos distribuciones independientes (promedio por sexo), Spearman mide correlación (educación parental) y χ² mide asociación entre categóricas (repitencia). Agruparlas como "pruebas de asociación" era incorrecto.
+- **Decisión:** cada resultado se enuncia con el verbo que corresponde a su prueba: "no evidenció diferencias" (Mann-Whitney), "no se halló correlación" (Spearman), "ni asociación" (χ²).
+- **Destino en el informe:** resultados (hallazgos no significativos) — corrige credibilidad estadística.
+
+### RC-011 · 2026-08-24 · Fase 4–5 · paper de congreso
+- **Motivación:** el paper reportaba los modelos de reprobación por asignatura (AUC 0,865–0,939) sin declarar su especificación. Un lector no puede saber con qué se predice.
+- **Método:** auditoría de `src/entrenar_materias.py` y `construir_features_materias` (en `src/preprocessing.py`).
+- **Resultado:** los modelos usan **solo 3 predictores** —`prom_global` (excluye la asignatura objetivo), `veces_cursada` y `nota_mat1`— y **2** cuando la asignatura objetivo es Matemáticas I (se omite `nota_mat1` por ser el propio target). Rejilla reducida (`n_estimators` 50/100, `max_depth` 2/3) acorde a N=54–73 por asignatura. Se identifica además una debilidad de diseño: `veces_cursada` es información posterior al momento en que la alerta sería útil, por lo que el modelo es descriptivo del patrón de repitencia más que una alerta ex ante.
+- **Decisión:** por restricción de espacio (4 páginas), **se retira del paper toda mención a los modelos de reprobación** y se conserva únicamente el **índice de criticidad**, reetiquetado explícitamente como *índice descriptivo* (no modelo). Los modelos permanecen en el repositorio y se reportarán en el informe final con su especificación completa y una variante sin `veces_cursada`.
+- **Destino en el informe:** metodología (modelos por asignatura: especificación y limitación de `veces_cursada`) + limitaciones.
+
 <!-- Nuevas entradas debajo de esta línea. Formato en PLAN_OPERATIVO_AGENTES.md §0.3 -->

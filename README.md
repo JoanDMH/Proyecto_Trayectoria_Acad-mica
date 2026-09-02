@@ -24,6 +24,10 @@ Trabajo de grado (Ing. de Sistemas, Universidad de los Llanos). Predicción de l
 ├── Fase 5/                   ← Evaluación (informes, figuras, impacto recodificación)
 ├── src/                      ← Código del pipeline + artefactos de modelo (los que consume app.py)
 ├── figuras/                  ← Figuras para el informe final (fig1–fig8)
+├── paper_congreso/           ← Resumen extenso para congreso (Springer LNCS, 4 pp.)
+│   ├── paper_congreso.tex      Fuente LaTeX (versión final)
+│   ├── paper_congreso.pdf      Compilado
+│   └── figuras/                Solo las figuras que cita el .tex
 └── archivo/                  ← Documentos históricos (plan interno inicial, auditorías)
 ```
 
