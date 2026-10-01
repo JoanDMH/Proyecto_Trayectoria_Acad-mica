@@ -1,6 +1,14 @@
 # Reporte de Transformaciones Aplicadas
 ## CRISP-DM Fase 3 · Universidad de los Llanos · Cohortes 2017-2 y 2018-1 · Ingeniería de Sistemas
 
+
+> ### ⚠️ FE DE ERRATAS (2026-09-30 · REVISION_FASES_2_3.md, R3)
+> Este informe se conserva como registro histórico, pero varias secciones no describen el pipeline vigente:
+> **§3** el target vigente es `bajo_rendimiento_art19` (no `rendimiento_bajo`) y **no se usa SMOTE**;
+> **§5** la partición 72/18 fue sustituida por validación cruzada anidada 5×10 (archivo/train_test_split_OBSOLETO.json);
+> la mediana imputada de `prom_sem1` es **3,4** (no 3,6) y afecta a **16** estudiantes, señalados con `sin_primer_semestre`,
+> que en realidad identifica el **ingreso por homologación (PENSUM 603)** (R1); las variables candidatas son **19**.
+
 ---
 
 ## 1. Resumen del pipeline de preparación

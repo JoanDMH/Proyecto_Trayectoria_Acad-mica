@@ -1,0 +1,11 @@
+modelo_a,modelo_b,media_a,media_b,diferencia,t,p_valor,significativo,relevante,veredicto
+Árbol de Decisión,Regresión Logística (L2),0.6143791453232125,0.5495281481150902,0.06485099720812235,1.0802090139823077,0.30814445380119326,False,True,EMPATE: sin evidencia de diferencia (p=0.308). Elegir el modelo más simple.
+Árbol de Decisión,SVM (RBF),0.6143791453232125,0.7135777814382822,-0.09919863611506954,-2.208856752237618,0.054546879692971784,False,True,EMPATE: sin evidencia de diferencia (p=0.055). Elegir el modelo más simple.
+Árbol de Decisión,Random Forest,0.6143791453232125,0.7450729690410736,-0.13069382371786104,-3.690240961871292,0.004995518590758197,True,True,Random Forest es mejor (diferencia significativa y relevante)
+Árbol de Decisión,XGBoost,0.6143791453232125,0.6297654498352312,-0.015386304512018644,-0.3333466478101993,0.7465072835999402,False,False,EMPATE: sin evidencia de diferencia (p=0.747). Elegir el modelo más simple.
+Regresión Logística (L2),SVM (RBF),0.5495281481150902,0.7135777814382822,-0.16404963332319186,-2.4641971663137823,0.03591052376863768,True,True,SVM (RBF) es mejor (diferencia significativa y relevante)
+Regresión Logística (L2),Random Forest,0.5495281481150902,0.7450729690410736,-0.1955448209259834,-3.6691546948607336,0.005161610577284481,True,True,Random Forest es mejor (diferencia significativa y relevante)
+Regresión Logística (L2),XGBoost,0.5495281481150902,0.6297654498352312,-0.08023730172014099,-1.6609811724192791,0.13108515033736534,False,True,EMPATE: sin evidencia de diferencia (p=0.131). Elegir el modelo más simple.
+SVM (RBF),Random Forest,0.7135777814382822,0.7450729690410736,-0.0314951876027915,-1.2755985283110338,0.23403603603980572,False,True,EMPATE: sin evidencia de diferencia (p=0.234). Elegir el modelo más simple.
+SVM (RBF),XGBoost,0.7135777814382822,0.6297654498352312,0.08381233160305089,2.668038114294112,0.0257049591278411,True,True,SVM (RBF) es mejor (diferencia significativa y relevante)
+Random Forest,XGBoost,0.7450729690410736,0.6297654498352312,0.1153075192058424,3.82608043254025,0.004051980216162709,True,True,Random Forest es mejor (diferencia significativa y relevante)

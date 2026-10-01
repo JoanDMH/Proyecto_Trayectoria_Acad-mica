@@ -1,0 +1,4 @@
+comparacion,AUC_PR,separados_ponderado,diferencia,p_valor,veredicto
+Conjunto sin indicador,0.6585,0.6891,-0.0306,0.0433,Separados (media ponderada) es mejor (diferencia significativa y relevante)
+Conjunto con indicador,0.6615,0.6891,-0.0276,0.0382,EMPATE TÉCNICO: la diferencia es significativa (p=0.038) pero de magnitud irrelevante (|Δ|=0.028 < 0.03). Elegir el modelo más simple.
+Con vs sin indicador de programa,0.6615,0.6585,0.003,0.4531,EMPATE: sin evidencia de diferencia (p=0.453). Elegir el modelo más simple.

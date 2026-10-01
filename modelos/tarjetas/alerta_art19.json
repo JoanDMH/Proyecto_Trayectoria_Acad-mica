@@ -1,0 +1,101 @@
+{
+ "modelo": "Alerta de bajo rendimiento — art. 19 del Reglamento Estudiantil",
+ "pregunta": "¿Este estudiante perderá la calidad de estudiante por bajo rendimiento (art. 19) en algún momento de la carrera?",
+ "momento_de_uso": "Al cierre del primer periodo académico",
+ "algoritmo": "Random Forest",
+ "hiperparametros": {
+  "max_depth": 3,
+  "max_features": null,
+  "min_samples_leaf": 1,
+  "n_estimators": 150
+ },
+ "variables": [
+  "prom_sem1",
+  "sin_primer_semestre",
+  "icfes_total",
+  "icfes_mat",
+  "icfes_lec",
+  "icfes_nat"
+ ],
+ "poblacion": "Ing. de Sistemas, cohortes 2017-2 y 2018-1, expuestos al art. 19",
+ "n": 80,
+ "positivos": 19,
+ "linea_base_auc_pr": 0.2375,
+ "desempeno_canonico": {
+  "fuente": "RC-033 (I-3 bis, CV-5×10 anidada)",
+  "auc_pr": 0.7451,
+  "sd": 0.0252,
+  "ic95": [
+   0.7031,
+   0.783
+  ]
+ },
+ "calibracion": {
+  "variante_adoptada": "sin calibrar",
+  "tabla": {
+   "Platt (sigmoide)": {
+    "AUC_PR_mean": 0.7254,
+    "Brier_mean": 0.118,
+    "ECE_mean": 0.0785,
+    "logloss_mean": 0.3992
+   },
+   "isotónica": {
+    "AUC_PR_mean": 0.7341,
+    "Brier_mean": 0.1122,
+    "ECE_mean": 0.0845,
+    "logloss_mean": 0.4239
+   },
+   "sin calibrar": {
+    "AUC_PR_mean": 0.7514,
+    "Brier_mean": 0.1112,
+    "ECE_mean": 0.0755,
+    "logloss_mean": 0.3878
+   }
+  },
+  "regla": "se adopta si reduce Brier y ECE sin perder > 0,03 de AUC-PR"
+ },
+ "niveles_alerta": {
+  "confirmado": {
+   "umbral": 0.63,
+   "recall": 0.6316,
+   "precision": 0.9231,
+   "alertas": 13,
+   "pct_cohorte": 0.1625
+  },
+  "equilibrado": {
+   "umbral": 0.13,
+   "recall": 0.7895,
+   "precision": 0.3846,
+   "alertas": 39,
+   "pct_cohorte": 0.4875
+  },
+  "cobertura": {
+   "umbral": 0.02,
+   "recall": 1.0,
+   "precision": 0.2603,
+   "alertas": 73,
+   "pct_cohorte": 0.9125
+  }
+ },
+ "importancia_mdi_referencial": {
+  "prom_sem1": 0.5278,
+  "icfes_total": 0.2444,
+  "icfes_mat": 0.1379,
+  "icfes_lec": 0.0448,
+  "icfes_nat": 0.042,
+  "sin_primer_semestre": 0.0031
+ },
+ "limitaciones": [
+  "Sin validación externa: todo procede de remuestreo sobre 80 casos (P18).",
+  "El 42 % de los positivos activa el art. 19 en el primer semestre: el modelo los detecta, no los anticipa (RC-035). Solo-predictivo: AUC-PR 0,473 (lift 3,10×).",
+  "Etiquetas del reglamento 2022 aplicadas a cohortes regidas por el Acuerdo 015 de 2003 (D-REGIMEN).",
+  "Para cohortes del plan 2018 el promedio del 1.er semestre se desplaza en promedio +0,125 (sale Álgebra Lineal): el ordenamiento se conserva (AUC-PR 0,749) pero los umbrales deben revisarse (src/cambio_plan_sensibilidad.csv)."
+ ],
+ "versiones": {
+  "python": "3.12.14",
+  "scikit-learn": "1.8.0",
+  "xgboost": "3.2.0",
+  "pandas": "3.0.6",
+  "numpy": "2.5.3"
+ }
+}

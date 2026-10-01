@@ -1,0 +1,247 @@
+{
+ "modelo": "Riesgo semestre a semestre — pérdida de más de la mitad de los créditos (art. 20)",
+ "pregunta": "En el corte k, para quien aún no ha reprobado más del 50 % de los créditos de un periodo: ¿le ocurrirá en un periodo posterior?",
+ "poblacion": "Ing. de Sistemas + Ing. Electrónica (comparables, RC-036), cohortes 2017-2 y 2018-1",
+ "variables": [
+  "icfes_total",
+  "icfes_mat",
+  "icfes_lec",
+  "icfes_nat",
+  "prog_sistemas",
+  "prom_ponderado_acum",
+  "pct_creditos_reprob_acum",
+  "pct_creditos_reprob_ultimo",
+  "n_art20_acum",
+  "max_veces_cursado",
+  "creditos_acum",
+  "n_asignaturas_acum"
+ ],
+ "resultados": [
+  {
+   "corte": 1,
+   "modelo": "Regresión Logística (L2)",
+   "n": 114,
+   "eventos": 63,
+   "linea_base": 0.5526,
+   "AUC_PR": 0.571,
+   "sd": 0.0265,
+   "AUC_ROC": 0.5461,
+   "lift": 1.03,
+   "AUC_ROC_sistemas_oof": 0.4794,
+   "n_sistemas": 60,
+   "eventos_sistemas": 31,
+   "elegido": true
+  },
+  {
+   "corte": 1,
+   "modelo": "Random Forest",
+   "n": 114,
+   "eventos": 63,
+   "linea_base": 0.5526,
+   "AUC_PR": 0.6031,
+   "sd": 0.0282,
+   "AUC_ROC": 0.5777,
+   "lift": 1.09,
+   "AUC_ROC_sistemas_oof": 0.6285,
+   "n_sistemas": 60,
+   "eventos_sistemas": 31,
+   "elegido": false
+  },
+  {
+   "corte": 2,
+   "modelo": "Regresión Logística (L2)",
+   "n": 76,
+   "eventos": 26,
+   "linea_base": 0.3421,
+   "AUC_PR": 0.303,
+   "sd": 0.0245,
+   "AUC_ROC": 0.4026,
+   "lift": 0.89,
+   "AUC_ROC_sistemas_oof": 0.4362,
+   "n_sistemas": 42,
+   "eventos_sistemas": 14,
+   "elegido": true
+  },
+  {
+   "corte": 2,
+   "modelo": "Random Forest",
+   "n": 76,
+   "eventos": 26,
+   "linea_base": 0.3421,
+   "AUC_PR": 0.3189,
+   "sd": 0.0179,
+   "AUC_ROC": 0.4483,
+   "lift": 0.93,
+   "AUC_ROC_sistemas_oof": 0.4719,
+   "n_sistemas": 42,
+   "eventos_sistemas": 14,
+   "elegido": false
+  },
+  {
+   "corte": 3,
+   "modelo": "Regresión Logística (L2)",
+   "n": 64,
+   "eventos": 15,
+   "linea_base": 0.2344,
+   "AUC_PR": 0.2425,
+   "sd": 0.0467,
+   "AUC_ROC": 0.4582,
+   "lift": 1.03,
+   "AUC_ROC_sistemas_oof": 0.4815,
+   "n_sistemas": 35,
+   "eventos_sistemas": 8,
+   "elegido": true
+  },
+  {
+   "corte": 3,
+   "modelo": "Random Forest",
+   "n": 64,
+   "eventos": 15,
+   "linea_base": 0.2344,
+   "AUC_PR": 0.2972,
+   "sd": 0.0503,
+   "AUC_ROC": 0.535,
+   "lift": 1.27,
+   "AUC_ROC_sistemas_oof": 0.4398,
+   "n_sistemas": 35,
+   "eventos_sistemas": 8,
+   "elegido": false
+  }
+ ],
+ "cortes": {
+  "1": {
+   "algoritmo": "Regresión Logística (L2)",
+   "hiperparametros": {
+    "clf__C": 0.1
+   },
+   "umbrales": {
+    "confirmado": {
+     "umbral": 0.64,
+     "recall": 0.1587,
+     "precision": 0.625,
+     "alertas": 16,
+     "pct_cohorte": 0.1404
+    },
+    "equilibrado": {
+     "umbral": 0.5,
+     "recall": 0.8254,
+     "precision": 0.619,
+     "alertas": 84,
+     "pct_cohorte": 0.7368
+    },
+    "cobertura": {
+     "umbral": 0.11,
+     "recall": 1.0,
+     "precision": 0.5526,
+     "alertas": 114,
+     "pct_cohorte": 1.0
+    }
+   },
+   "n": 114,
+   "eventos": 63,
+   "comparaciones": [
+    {
+     "lider": "Random Forest",
+     "rival": "Regresión Logística (L2)",
+     "delta": 0.0321,
+     "p": 0.0876,
+     "empate": true
+    }
+   ]
+  },
+  "2": {
+   "algoritmo": "Regresión Logística (L2)",
+   "hiperparametros": {
+    "clf__C": 0.3
+   },
+   "umbrales": {
+    "confirmado": {
+     "umbral": 0.1,
+     "recall": 1.0,
+     "precision": 0.3467,
+     "alertas": 75,
+     "pct_cohorte": 0.9868
+    },
+    "equilibrado": {
+     "umbral": 0.1,
+     "recall": 1.0,
+     "precision": 0.3467,
+     "alertas": 75,
+     "pct_cohorte": 0.9868
+    },
+    "cobertura": {
+     "umbral": 0.12,
+     "recall": 1.0,
+     "precision": 0.3467,
+     "alertas": 75,
+     "pct_cohorte": 0.9868
+    }
+   },
+   "n": 76,
+   "eventos": 26,
+   "comparaciones": [
+    {
+     "lider": "Random Forest",
+     "rival": "Regresión Logística (L2)",
+     "delta": 0.016,
+     "p": 0.436,
+     "empate": true
+    }
+   ]
+  },
+  "3": {
+   "algoritmo": "Regresión Logística (L2)",
+   "hiperparametros": {
+    "clf__C": 0.03
+   },
+   "umbrales": {
+    "confirmado": {
+     "umbral": 0.22,
+     "recall": 0.6,
+     "precision": 0.2812,
+     "alertas": 32,
+     "pct_cohorte": 0.5
+    },
+    "equilibrado": {
+     "umbral": 0.15,
+     "recall": 0.8,
+     "precision": 0.2449,
+     "alertas": 49,
+     "pct_cohorte": 0.7656
+    },
+    "cobertura": {
+     "umbral": 0.01,
+     "recall": 1.0,
+     "precision": 0.2344,
+     "alertas": 64,
+     "pct_cohorte": 1.0
+    }
+   },
+   "n": 64,
+   "eventos": 15,
+   "comparaciones": [
+    {
+     "lider": "Random Forest",
+     "rival": "Regresión Logística (L2)",
+     "delta": 0.0547,
+     "p": 0.0762,
+     "empate": true
+    }
+   ]
+  }
+ },
+ "limitaciones": [
+  "Señal modesta (cribado, no diagnóstico).",
+  "Quien abandona tras el corte sin reprobar queda como «sin evento» (censura): el modelo no predice deserción.",
+  "Entrenado con dos programas; aplicado a Sistemas.",
+  "Sin validación externa."
+ ],
+ "versiones": {
+  "python": "3.12.14",
+  "scikit-learn": "1.8.0",
+  "xgboost": "3.2.0",
+  "pandas": "3.0.6",
+  "numpy": "2.5.3"
+ },
+ "veredicto": "NO SE DESPLIEGA COMO PREDICTOR. Con la definición corregida (cortes solo sobre periodos regulares, redondeo del parágrafo del art. 20) y la población comparable (Sistemas + Electrónica), el lift sobre el azar es ≈1,0 en los tres cortes (AUC-ROC 0,40-0,58). La mejora +0,20 de RC-039 solo se reproduce incluyendo Biología y contando los intersemestrales como cortes (src/_cache_mvp, diagnóstico en REVISION_FASES_2_3.md). El software muestra el seguimiento semestral con los indicadores NORMATIVOS (arts. 19-22), que son reglas, no predicciones."
+}

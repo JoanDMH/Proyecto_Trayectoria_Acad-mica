@@ -1,0 +1,38 @@
+{
+  "experimento": "I3bis_art19_Random Forest",
+  "inicio": "2026-09-15T09:06:39",
+  "seed": 42,
+  "versiones": {
+    "python": "3.14.0",
+    "plataforma": "Windows-11-10.0.26200-SP0",
+    "numpy": "2.4.4",
+    "pandas": "2.3.3",
+    "sklearn": "1.8.0",
+    "xgboost": "3.2.0",
+    "scipy": "1.16.3"
+  },
+  "archivos_entrada": {
+    "src/df_master_limpio.csv": {
+      "hash_sha256_12": "2d50f6413337",
+      "bytes": 12021
+    }
+  },
+  "notas": "I-3 bis · target=bajo_rendimiento_art19 · features=S3 (6) · RC-025/027/031/032",
+  "fin": "2026-09-15T09:31:17",
+  "duracion_segundos": 1477.8,
+  "resumen": {
+    "target": "bajo_rendimiento_art19",
+    "n": 80,
+    "positivos": 19,
+    "features": [
+      "prom_sem1",
+      "sin_primer_semestre",
+      "icfes_total",
+      "icfes_mat",
+      "icfes_lec",
+      "icfes_nat"
+    ]
+  },
+  "n_repeticiones_registradas": 10,
+  "n_pliegues_registrados": 50
+}

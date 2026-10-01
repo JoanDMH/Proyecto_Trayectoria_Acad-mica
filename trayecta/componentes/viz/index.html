@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #14213D; --ink-2: #44546C; --muted: #7A889D; --grid: #E7ECF3; --surface: #FFFFFF;
+    --s1: #2A78D6; --s2: #EB6834; --s1-soft: #A9C6EE;
+    --crit: #D93F3F; --warn: #E8A317; --good: #1F9D6B;
+    --n0: #C5D0DE; --n1: #E58A3A; --n2: #D2602E; --n3: #B23B28; --n4: #7A1E22;
+    --brand-a: #1E1B4B; --brand-b: #3730A3; --brand-c: #0E7490;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: transparent; font-family: Inter, "Segoe UI", system-ui, -apple-system, sans-serif;
+               color: var(--ink); -webkit-font-smoothing: antialiased; }
+  svg text { font-family: inherit; }
+  .axis text { fill: var(--muted); font-size: 11px; }
+  .axis path, .axis line { stroke: var(--grid); }
+  .grid line { stroke: var(--grid); stroke-dasharray: 2 3; }
+  .tip { position: fixed; pointer-events: none; background: rgba(20,33,61,.96); color: #fff; padding: 9px 12px;
+         border-radius: 10px; font-size: 12.5px; line-height: 1.45; box-shadow: 0 10px 30px rgba(20,33,61,.25);
+         opacity: 0; transition: opacity .12s; z-index: 10; max-width: 260px; }
+  .tip b { font-weight: 700; } .tip .k { color: #A9B6CC; }
+  .legend { display: flex; gap: 16px; flex-wrap: wrap; font-size: 12px; color: var(--ink-2); margin: 2px 0 8px 2px; }
+  .legend i { display: inline-block; width: 11px; height: 11px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+  .legend i.line { height: 3px; width: 16px; border-radius: 2px; vertical-align: 3px; }
+  .help { display:inline-flex; align-items:center; justify-content:center; width:17px; height:17px; border-radius:50%;
+          border:1.5px solid currentColor; font-size:11px; font-weight:700; cursor:help; opacity:.7; margin-left:6px; }
+  .help:hover { opacity: 1; }
+  /* héroe */
+  .hero { position: relative; border-radius: 20px; padding: 22px 28px; color: #fff; overflow: hidden;
+          background: radial-gradient(120% 140% at 0% 0%, #4338CA 0%, var(--brand-a) 45%, #0B1E3A 100%); }
+  .hero:after { content:""; position:absolute; right:-80px; top:-120px; width:420px; height:420px; border-radius:50%;
+                background: radial-gradient(circle, rgba(14,165,233,.45), rgba(14,165,233,0) 65%); }
+  .hero .row { position: relative; z-index: 1; display: flex; gap: 24px; align-items: center; flex-wrap: wrap; }
+  .hero h1 { margin: 0; font-size: 25px; font-weight: 800; letter-spacing: -.3px; }
+  .hero .sub { color: #C7D2FE; font-size: 13px; margin-top: 4px; }
+  .chips { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+  .chip { font-size: 11.5px; padding: 4px 10px; border-radius: 999px; background: rgba(255,255,255,.12);
+          border: 1px solid rgba(255,255,255,.2); color: #E0E7FF; }
+  .big { font-size: 54px; font-weight: 800; line-height: .95; letter-spacing: -1.5px; }
+  .big small { display:block; font-size: 12px; font-weight: 500; letter-spacing: 0; color: #C7D2FE; margin-top: 6px; }
+  .seg-wrap { flex: 0 0 350px; }
+  .seg-lbl { display: flex; justify-content: space-between; font-size: 12px; color: #C7D2FE; margin-bottom: 8px; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<div class="tip" id="tip"></div>
+<script src="d3.min.js"></script>
+<script src="viz.js"></script>
+</body>
+</html>

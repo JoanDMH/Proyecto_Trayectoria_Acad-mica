@@ -30,14 +30,27 @@
 % babel(spanish) redefine estos rotulos al iniciar el documento; se re-aplican
 \AtBeginDocument{\renewcommand{\tablename}{Tabla}%
 \renewcommand{\figurename}{Fig.}\renewcommand{\refname}{Referencias}}
-\setlength{\textfloatsep}{8pt}
-\setlength{\intextsep}{8pt}
+\setlength{\textfloatsep}{3pt}
+\setlength{\emergencystretch}{3em}
+\setlength{\floatsep}{10pt}
+\setlength{\intextsep}{3pt}
+\setlength{\abovecaptionskip}{3pt}
+\setlength{\belowcaptionskip}{0pt}
+% Flotantes: article topa en 70%% de pagina y 3 flotantes; la pag. 3 lleva
+% Fig. 1 + Tabla 1 y por ese tope expulsaba la Fig. 2 a la pagina siguiente.
+\renewcommand{\topfraction}{0.92}
+\renewcommand{\bottomfraction}{0.65}
+\renewcommand{\textfraction}{0.06}
+\renewcommand{\floatpagefraction}{0.75}
+\setcounter{topnumber}{3}\setcounter{bottomnumber}{2}\setcounter{totalnumber}{4}
+
 \addto\captionsspanish{\renewcommand{\refname}{Referencias}}
 %
 \providecommand{\doi}[1]{\href{https://doi.org/#1}{https://doi.org/#1}}
 \providecommand{\email}[1]{\texttt{#1}}
 \providecommand{\orcidID}[1]{\orcidlink{#1}}
 %
+\hyphenation{ad-mi-nis-tra-ti-vos in-s-ti-tu-cio-na-les ca-rac-te-ri-za-cion his-to-rial asig-na-tu-ras ho-mo-lo-ga-cio-nes re-gis-tros}
 \begin{document}
 %
 \title{Aprendizaje automático para predicción del éxito académico en Ingeniería de Sistemas}
@@ -141,7 +154,10 @@ de 0,05 a 0,10 en XGBoost. El desempeño se estimó con predicciones
 clases, reportando exhaustividad, precisión, F1-macro, AUC-ROC, exactitud y
 coeficientes de Mann-Whitney y de Spearman. Para bajo rendimiento el umbral se
 fijó en 0,29, priorizando la exhaustividad porque el falso negativo es
-el error más costoso en alertas tempranas~\cite{fawcett2006}. Adicionalmente, las 52~asignaturas con al menos 20~estudiantes se ordenaron por un índice descriptivo de criticidad calculado, este pondera la tasa de reprobación normalizada (entre 0 y 1) por 0,70 adicionando la ponderación de la repitencia media normalizada (entre 0 y 1) por 0,30.
+el error más costoso en alertas tempranas~\cite{fawcett2006}. Adicionalmente, las 52~asignaturas con al menos 20~estudiantes se
+ordenaron por un índice descriptivo de criticidad que pondera la tasa de
+reprobación (0,70) y la repitencia media (0,30), ambas escaladas al
+intervalo $[0,1]$.
  
 %  3. RESULTADOS% 
 \section{Resultados}
@@ -158,7 +174,7 @@ ambos modelos, con 40,4\,\% y 19,7\,\% de la importancia
  
 \begin{figure}[!ht]
 \centering
-\includegraphics[width=\textwidth]{figuras/fig5_importancia_variables.png}
+\includegraphics[width=\textwidth]{figuras/fig5_importancia_variables_crop.png}
 \caption{Importancia de las cinco variables principales en cada modelo
 ganador.}\label{fig:importancia}
 \end{figure}
@@ -194,27 +210,28 @@ ganador.}\label{fig:importancia}
 }
 \end{table}
  
-Entre los factores explorados, la comparación del promedio entre
-hombres y mujeres no evidenció diferencias significativas (U de
-Mann-Whitney, $p=0{,}246$)~\cite{guerrero2024}; tampoco se identificó
-correlación entre el nivel educativo de los padres y el promedio
-(Spearman, $p>0{,}6$), ni asociación entre repitencia escolar previa y
-bajo rendimiento ($\chi^{2}$, $p=0{,}215$). Estos resultados negativos, condicionados por
-el tamaño de los subgrupos, son consistentes con la dominancia del
-desempeño académico temprano que evidencia la Fig.~\ref{fig:importancia}.
+Entre los factores explorados no se evidenciaron diferencias
+significativas por género (U de Mann-Whitney,
+$p=0{,}246$)~\cite{guerrero2024}, correlación con el nivel educativo de
+los padres (Spearman, $p>0{,}6$) ni asociación con la repitencia escolar
+previa ($\chi^{2}$, $p=0{,}215$). Estos resultados negativos, condicionados
+por el tamaño de los subgrupos, son consistentes con la dominancia del
+desempeño académico temprano (Fig.~\ref{fig:importancia}).
  
- 
-\begin{figure}[!ht]
-\centering
-\includegraphics[width=\textwidth]{figuras/fig8_app_criticidad.png}
-\caption{Aplicación en Streamlit: índice de criticidad de las cinco
-asignaturas con mayor valor.}\label{fig:materias}
-\end{figure}
  
 Las cinco asignaturas de mayor índice de criticidad fueron
 Matemáticas~II, Física~I, Álgebra Lineal, Matemáticas~I y Fundamentos
 de Programación (Fig.~\ref{fig:materias}), todas ellas de los primeros
-semestres del plan de estudios. 
+semestres del plan de estudios.
+
+\begin{figure}[!b]
+\centering
+\includegraphics[width=0.85\textwidth]{figuras/fig8_app_criticidad.png}
+\caption{Aplicación en Streamlit: índice de criticidad de las cinco
+asignaturas con mayor valor.}\label{fig:materias}
+\end{figure}
+
+\FloatBarrier
  
  
 %  4. CONCLUSIONES

@@ -1,0 +1,4 @@
+t_segundos,evento
+0.1,n=80 positivos=19 (23.8%) baseline AUC-PR=0.2375
+0.1,XGBoost: rejilla de 24 combinaciones
+185.2,XGBoost: AUC-PR 0.6298 ± 0.0452

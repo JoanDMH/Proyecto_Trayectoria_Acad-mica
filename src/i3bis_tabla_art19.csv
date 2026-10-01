@@ -1,0 +1,6 @@
+Modelo,AUC_PR_media,AUC_PR_sd,IC95_lo,IC95_hi
+Random Forest,0.7451,0.0252,0.7031,0.783
+SVM (RBF),0.7136,0.0368,0.637,0.7504
+XGBoost,0.6298,0.0452,0.5734,0.7032
+Árbol de Decisión,0.6144,0.0549,0.5164,0.6929
+Regresión Logística (L2),0.5495,0.0877,0.4108,0.6629

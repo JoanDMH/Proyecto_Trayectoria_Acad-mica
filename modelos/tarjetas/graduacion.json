@@ -1,0 +1,108 @@
+{
+ "modelo": "Probabilidad de graduación",
+ "algoritmo": "Random Forest",
+ "hiperparametros": {
+  "max_depth": 4,
+  "max_features": null,
+  "min_samples_leaf": 1,
+  "n_estimators": 150
+ },
+ "variables": [
+  "prom_sem1",
+  "sin_primer_semestre",
+  "icfes_total",
+  "icfes_mat",
+  "icfes_lec",
+  "icfes_nat"
+ ],
+ "poblacion": "Ing. de Sistemas 2017-2 y 2018-1 con actividad (n=90)",
+ "n": 90,
+ "positivos": 35,
+ "linea_base_auc_pr": 0.3889,
+ "comparativa": {
+  "SVM (RBF)": {
+   "AUC_PR": 0.7247,
+   "sd": 0.0327,
+   "IC95_lo": 0.6667,
+   "IC95_hi": 0.7614,
+   "AUC_ROC": 0.8148,
+   "linea_base": 0.3889
+  },
+  "Random Forest": {
+   "AUC_PR": 0.7047,
+   "sd": 0.0205,
+   "IC95_lo": 0.6818,
+   "IC95_hi": 0.7467,
+   "AUC_ROC": 0.8117,
+   "linea_base": 0.3889
+  },
+  "XGBoost": {
+   "AUC_PR": 0.6515,
+   "sd": 0.0235,
+   "IC95_lo": 0.6112,
+   "IC95_hi": 0.6854,
+   "AUC_ROC": 0.798,
+   "linea_base": 0.3889
+  },
+  "Árbol de Decisión": {
+   "AUC_PR": 0.6327,
+   "sd": 0.0588,
+   "IC95_lo": 0.5579,
+   "IC95_hi": 0.7392,
+   "AUC_ROC": 0.776,
+   "linea_base": 0.3889
+  },
+  "Regresión Logística (L2)": {
+   "AUC_PR": 0.6142,
+   "sd": 0.0416,
+   "IC95_lo": 0.5552,
+   "IC95_hi": 0.6958,
+   "AUC_ROC": 0.7446,
+   "linea_base": 0.3889
+  }
+ },
+ "comparaciones": [
+  {
+   "lider": "SVM (RBF)",
+   "rival": "Random Forest",
+   "delta": 0.02,
+   "p": 0.3943,
+   "empate": true
+  },
+  {
+   "lider": "SVM (RBF)",
+   "rival": "XGBoost",
+   "delta": 0.0732,
+   "p": 0.0184,
+   "empate": false
+  },
+  {
+   "lider": "SVM (RBF)",
+   "rival": "Árbol de Decisión",
+   "delta": 0.092,
+   "p": 0.0336,
+   "empate": false
+  },
+  {
+   "lider": "SVM (RBF)",
+   "rival": "Regresión Logística (L2)",
+   "delta": 0.1105,
+   "p": 0.0101,
+   "empate": false
+  }
+ ],
+ "regla": "ESPEC_I3: mejor AUC-PR; empate (p≥0,05 o Δ<0,03) → más parsimonioso",
+ "umbral_referencia": 0.38,
+ "limitaciones": [
+  "Ventana de observación ~17 periodos: «no graduado» mezcla abandono y rezago.",
+  "Sin validación externa.",
+  "Probabilidades sin calibrar: usar como ordenamiento."
+ ],
+ "versiones": {
+  "python": "3.12.14",
+  "scikit-learn": "1.8.0",
+  "xgboost": "3.2.0",
+  "pandas": "3.0.6",
+  "numpy": "2.5.3"
+ }
+}

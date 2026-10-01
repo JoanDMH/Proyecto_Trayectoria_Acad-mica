@@ -1,6 +1,19 @@
 # Informe de Fase 2 — Comprensión de los Datos
 ## CRISP-DM · Universidad de los Llanos · Cohortes 2017-2 y 2018-1 · Ingeniería de Sistemas
 
+> ## ⛔ AVISO — MODELOS POR ASIGNATURA RETIRADOS (I-4 · RC-013 / RC-022)
+> Las métricas de los **modelos de reprobación por asignatura** que aparecen en este
+> documento (AUC 0,865–0,939, F1-w 0,79–0,93) **quedan invalidadas por fuga temporal**:
+> el predictor `prom_global` es el promedio del estudiante en el resto de la carrera y
+> entre el 70 % y el 83 % de esa información proviene de semestres **posteriores** a la
+> asignatura que se predice. El desempeño honesto es AUC 0,70–0,74.
+>
+> El **índice de criticidad** (ranking de asignaturas) **no está afectado**: es un
+> indicador descriptivo, no un modelo. Sigue siendo válido.
+>
+> Este documento se conserva como registro histórico de la fase. Ver
+> `AUDITORIA_2026-09.md` §3 antes de reutilizar cualquier cifra.
+
 ---
 
 ## 1. Población base
@@ -82,6 +95,20 @@ Cada estudiante se clasifica en tres estados, en este orden:
 
 La **deserción real (62.1 %)** es muy superior a los 30 retiros con acta formal: 29 de los 59 desertores abandonaron sin acta (ver 4.3). La tasa de graduación acumulada de solo 36.8 % es el indicador de mayor interés institucional.
 
+> ### Nota de lectura — por qué aquí se lee 62,1 % y en el paper 63 %
+> **Las dos cifras son correctas y no se contradicen: miden cosas distintas sobre la misma población de 95.**
+>
+> | Cifra | Definición | Cálculo |
+> |---|---|---|
+> | **62,1 %** (este documento) | **Deserción** en sentido estricto: no se graduó **y** no sigue activo | 59 desertores / 95 |
+> | **63 %** (`paper_congreso`, aceptado) | **No graduación** dentro de la ventana observada: el complemento de la tasa de graduación | 60 no graduados / 95 = 63,2 % |
+>
+> La diferencia es exactamente **el único estudiante en formación**, que no se graduó pero tampoco desertó: entra en el 63 % de no graduación y queda fuera del 62,1 % de deserción. Coherentemente, 36,8 % + 63,2 % = 100 %, mientras que 36,8 % + 62,1 % + 1,1 % = 100 %.
+>
+> **Regla de uso:** al citar la cifra hay que nombrar el indicador, no solo el porcentaje. Si se habla de *deserción*, es 62,1 %; si se habla de *no graduación en la ventana observada* —que es el enunciado del paper—, es 63 %. No deben intercambiarse, y en ningún caso debe escribirse «deserción del 63 %».
+>
+> **No confundir con un tercer 63 %.** RC-041 reporta que, entre quienes **no** desertaron en el conjunto de la FCBI, **el 63 % excedió el plan nominal**. Es una tasa de **rezago**, calculada sobre otra población (los no desertores de los tres programas) y sin relación aritmética con las dos anteriores. La coincidencia del número es casual.
+
 ### 4.2 Tiempo hasta la graduación (35 graduados)
 
 | Estadístico | Valor |
@@ -129,6 +156,8 @@ Períodos académicos con actividad real (`detalle_materias`) antes de abandonar
 | Estudiantes con promedio < 3.0 | 38 (42.2 %) |
 
 > El promedio de carrera y el target `rendimiento_bajo` se definen sobre la muestra de modelado (90), que es la que alimenta el modelo.
+>
+> ⚠️ **`rendimiento_bajo` es el target SUSTITUIDO.** Se descartó por tautológico (RC-012, RC-017): el promedio de carrera incluye el primer semestre y para el 26 % de la muestra coincide con `prom_sem1`. El vigente deriva del **artículo 19** del Reglamento Estudiantil y se mide sobre los **80 expuestos**, con 19 positivos. Las cifras descriptivas de esta tabla siguen siendo válidas como caracterización de la muestra; lo que no es válido es usarlas como variable objetivo.
 
 ---
 
@@ -219,11 +248,13 @@ Períodos académicos con actividad real (`detalle_materias`) antes de abandonar
 
 | Target | Definición | Distribución | Uso |
 |---|---|---|---|
-| `graduado` | 1 si el estado final es `GRADUADO`, 0 si no | 35 positivos / 54 negativos (39/61) | Preguntas a, b, c |
-| `rendimiento_bajo` | 1 si `PROMEDIO_CARRERA` < 3.0, 0 si ≥ 3.0 | 37 positivos / 52 negativos (42/58) | Preguntas a, b, c |
+| `graduado` | 1 si el estado final es `GRADUADO`, 0 si no | 35 positivos / 55 negativos (39/61) | Preguntas a, b, c |
+| `rendimiento_bajo` ⚠️ *target sustituido* | 1 si `PROMEDIO_CARRERA` < 3.0, 0 si ≥ 3.0 | 38 positivos / 52 negativos (42/58) | Preguntas a, b, c |
 | `reprobo_materia_X` | 1 si nota definitiva < 3.0 en materia X | Varía por materia (ver sección 5) | Pregunta d |
 
-> **Coherencia con la sección 4.1:** el target binario `graduado` se construye sobre los 89 de modelado y agrupa como "no graduado" tanto a los desertores como al único estudiante en formación. Los 59 desertores descriptivos (sobre 95) y los 54 "no graduados" del modelo difieren por la población usada; la identidad de los 35 graduados no cambia.
+> **Coherencia con la sección 4.1:** el target binario `graduado` se construye sobre los **90** de modelado y agrupa como "no graduado" tanto a los desertores como al único estudiante en formación. Los 59 desertores descriptivos (sobre 95) y los **55** "no graduados" del modelo difieren por la población usada; la identidad de los 35 graduados no cambia.
+>
+> ⚠️ **Corregido el 2026-09-30.** Esta nota decía "los 89 de modelado" y "54 no graduados": son cifras **anteriores a la recodificación**, antes de recuperar al estudiante 160004030, cuya exclusión era un defecto del archivo y no una decisión metodológica. Verificado contra `src/df_master_limpio.csv`: 90 filas, 35 graduados, 55 no graduados.
 
 ---
 

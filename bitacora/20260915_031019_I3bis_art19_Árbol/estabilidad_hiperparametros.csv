@@ -1,0 +1,2 @@
+modelo,configuraciones_distintas,config_mas_frecuente,frecuencia_de_la_moda
+Árbol de Decisión,15,"{""criterion"": ""gini"", ""max_depth"": 3, ""min_samples_leaf"": 4}",0.22

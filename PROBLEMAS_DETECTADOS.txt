@@ -1,0 +1,748 @@
+================================================================================
+PROBLEMAS DETECTADOS EN LA AUDITORIA METODOLOGICA
+Proyecto: Modelo predictivo de trayectoria academica FCBI - Universidad de los Llanos
+Estudiante: Joan David Martinez Hernandez
+Fecha de corte: 29 de septiembre de 2026
+Respaldo completo: REGISTRO_CIENTIFICO.md (entradas RC-012 a RC-044)
+================================================================================
+
+COMO LEER ESTE DOCUMENTO
+
+Cada problema incluye: que se encontro, como se midio, y que se decidio.
+Todas las cifras son reproducibles con los scripts de src/.
+Los problemas estan agrupados en cuatro bloques y ordenados por gravedad.
+
+RESUMEN: 21 problemas detectados. 13 corregidos, 3 abiertos sin corregir, 5
+requieren decision de la direccion del proyecto (marcados con >>> PENDIENTE).
+
+Los problemas estan agrupados en cinco bloques. Los bloques 1 a 3 son errores
+que YA SE CORRIGIERON; el bloque 4 recoge limites del estudio que no son fallos
+sino hallazgos; el BLOQUE 5 es el mas importante para quien recibe este
+proyecto: recoge lo que sigue ABIERTO a fecha de hoy.
+
+
+================================================================================
+BLOQUE 1 - FUGAS DE INFORMACION (el hallazgo central)
+================================================================================
+
+Se detecto la misma clase de error --usar en el entrenamiento informacion que el
+modelo no tendria disponible al momento de predecir-- en TRES niveles
+independientes. Cada uno se cuantifico con datos propios.
+
+--------------------------------------------------------------------------------
+P1. FUGA TEMPORAL EN LOS MODELOS DE REPROBACION POR ASIGNATURA    [RC-013]
+--------------------------------------------------------------------------------
+QUE SE ENCONTRO
+  Las cinco asignaturas criticas son de primer y segundo semestre, pero el
+  predictor dominante (prom_global) era el promedio del estudiante en el RESTO
+  de la carrera. Entre el 70% y el 83% de esa informacion provenia de semestres
+  POSTERIORES a la asignatura que se predecia. No era prediccion: era
+  retrodiccion.
+
+MAGNITUD
+  AUC reportado con la fuga : 0,865 - 0,939
+  AUC honesto (solo informacion previa a cursar la asignatura):
+      Matematicas II  0,707
+      Fisica I        0,740
+  Variables de ingreso por si solas: 0,41 - 0,51 (azar)
+
+DECISION
+  Los cinco modelos fueron RETIRADOS del repositorio, la aplicacion y el informe.
+  Se conserva el indice de criticidad, que es descriptivo y no esta afectado.
+
+--------------------------------------------------------------------------------
+P2. SELECCION DE HIPERPARAMETROS FUERA DEL PLIEGUE                [RC-021]
+--------------------------------------------------------------------------------
+QUE SE ENCONTRO
+  La busqueda en malla se hacia sobre la muestra completa y despues se medía por
+  validacion cruzada. Los pliegues de prueba ya habian intervenido en elegir la
+  configuracion, de modo que el desempeño quedaba sobreestimado.
+
+MAGNITUD
+  Sesgo en Arbol de Decision : +0,011
+  Sesgo en Random Forest     : +0,008
+  Sesgo en XGBoost           : +0,046
+
+  Lo grave no es el sesgo sino que NO ES UNIFORME entre algoritmos: XGBoost se
+  beneficiaba cinco veces mas que Random Forest, de modo que el orden del ganador
+  se invertia segun el protocolo. El protocolo, y no los datos, decidia el
+  resultado.
+
+DECISION
+  Validacion anidada obligatoria en toda comparacion de algoritmos.
+
+--------------------------------------------------------------------------------
+P3. SELECCION DE VARIABLES FUERA DEL PLIEGUE                 [RC-030, RC-032]
+--------------------------------------------------------------------------------
+QUE SE ENCONTRO
+  El subconjunto "top-5 por importancia" se elegia observando toda la muestra y
+  despues se evaluaba sobre esa misma muestra.
+
+MAGNITUD  (el mayor sesgo del estudio)
+  top-5 seleccionado fuera del pliegue : AUC-PR 0,8204
+  top-5 seleccionado dentro del pliegue: AUC-PR 0,6705
+  SESGO                                : +0,1499
+
+  Es cinco veces el umbral de relevancia pre-registrado (0,03) y mayor que la
+  distancia entre el mejor y el peor algoritmo del estudio. Habria llevado a
+  adoptar un conjunto de variables PEOR creyendolo mejor.
+
+POR QUE OCURRE (verificado)
+  La seleccion es inestable. A lo largo de 40 pliegues, solo prom_sem1 entra en
+  el top-5 el 100% de las veces; icfes_total el 75%, icfes_mat el 60%, y a partir
+  de la tercera posicion la eleccion es practicamente azar. Con 19 casos
+  positivos, el ranking de importancia mas alla del top-2 o top-3 es ruido.
+
+DECISION
+  Prohibida toda seleccion de variables fuera del pliegue de entrenamiento.
+  Conjunto definitivo: S3 (6 variables academicas), definido a priori.
+
+NOTA HONESTA
+  Esta fuga se cometio DESPUES de haber documentado las dos anteriores. Ilustra
+  mejor que cualquier argumento lo dificil que es evitarla incluso estando
+  advertido.
+
+
+================================================================================
+BLOQUE 2 - DEFINICION DE LA VARIABLE OBJETIVO
+================================================================================
+
+--------------------------------------------------------------------------------
+P4. EL TARGET ORIGINAL ERA TAUTOLOGICO                            [RC-012]
+--------------------------------------------------------------------------------
+QUE SE ENCONTRO
+  "rendimiento_bajo" se definia como PROMEDIO_CARRERA < 3,0. Pero el promedio de
+  carrera INCLUYE el primer semestre, que era precisamente el predictor dominante
+  del modelo. Para los 17 estudiantes que cursaron un solo periodo (19% de la
+  muestra), ambos valores casi coinciden (r = 0,921).
+
+MAGNITUD
+  Con las 18 variables            : AUC 0,761
+  Sin prom_sem1                   : AUC 0,483  (azar)
+  Restringido a >=3 periodos      : AUC 0,546
+
+  Es decir: el modelo no predecia rendimiento academico; en buena medida detectaba
+  a quien ya se habia ido, porque en esos casos el target y el predictor eran casi
+  el mismo numero.
+
+DECISION
+  Sustituido por la definicion institucional del articulo 19 del Reglamento
+  Estudiantil.
+
+--------------------------------------------------------------------------------
+P5. EL PROYECTO NO USABA LA DEFINICION INSTITUCIONAL          [RC-014, RC-017]
+--------------------------------------------------------------------------------
+QUE SE ENCONTRO
+  El Reglamento Estudiantil define el bajo rendimiento academico en su articulo
+  19: pierde la condicion de estudiante quien repruebe el 100% de los creditos
+  inscritos Y tenga promedio ponderado inferior a 3,0, O quien repruebe por cuarta
+  vez un curso.
+
+  El proyecto usaba un umbral propio (PROMEDIO_CARRERA < 3,0) que es solo la mitad
+  de esa conjuncion e ignora por completo la via de la cuarta reprobacion.
+
+  Ademas existe verdad de campo en los datos: 40 de 90 estudiantes de Ing. de
+  Sistemas tienen el estado BAJO RENDIMIENTO aplicado por la universidad. Coincide
+  con el target antiguo en solo el 84% de los casos.
+
+DECISION
+  Se adopta el target derivado del articulo 19, re-calculado sobre los datos.
+  Mejora el desempeño: RF 0,707 -> 0,825 y XGBoost 0,712 -> 0,829.
+
+--------------------------------------------------------------------------------
+P6. LAS ETIQUETAS PROVIENEN DE UN REGLAMENTO DEROGADO              [RC-015]
+--------------------------------------------------------------------------------
+QUE SE ENCONTRO
+  El reglamento vigente rige desde 2022 y sustituyo al Acuerdo Superior 015 de
+  2003. Las cohortes 2017-2 y 2018-1 vivieron casi toda su trayectoria bajo la
+  norma anterior: 65 de los 66 estados de bajo rendimiento registrados se
+  aplicaron bajo el reglamento derogado.
+
+  Los dos regimenes persiguen fenomenos distintos:
+    2003 (art. 26): reprobar >50% de las ASIGNATURAS habiendo aprobado al menos
+                    una, con umbral de promedio 3,2
+    2022 (art. 19): reprobar el 100% de los CREDITOS con promedio < 3,0
+
+  Simulados sobre los mismos estudiantes, cada regimen afecta a 20 personas pero
+  SOLO 7 SON LAS MISMAS.
+
+DECISION
+  Se re-deriva la etiqueta con la regla vigente. Se declara explicitamente el
+  supuesto de que el reglamento no cambiara durante la vida util del modelo.
+
+>>> A CONSIDERAR: el comportamiento de los estudiantes tambien estuvo condicionado
+    por las reglas antiguas (el umbral 3,2 del art. 26 pudo inducir esfuerzo
+    diferencial). Ese efecto no es corregible con los datos disponibles y queda
+    como limitacion declarada.
+
+--------------------------------------------------------------------------------
+P7. EL TARGET MULTICLASE COMPROMETIDO NO ES VIABLE                 [RC-041]
+--------------------------------------------------------------------------------
+>>> DECISION PENDIENTE DE LA DIRECCION DEL PROYECTO
+
+QUE SE ENCONTRO
+  La propuesta de grado compromete un target de cuatro clases: graduado, activo,
+  desertor y rezagado. Al construirlo sobre los 262 estudiantes de la FCBI y
+  aplicarle la regla de viabilidad pre-registrada en RC-008 (clase minoritaria
+  >=25 estudiantes Y >=5 por pliegue):
+
+    Target                      Clases   Minoritaria    n   Por pliegue  Viable
+    4 clases (propuesta)          4        ACTIVO       5      1,0        NO
+    3 clases (colapsada)          3        ACTIVO      20      4,0        NO
+    2 clases (graduacion)         2        GRADUADO    66     13,2        SI
+
+  Distribucion con 4 clases: DESERTOR 176 (67,2%), GRADUADO 66 (25,2%),
+  REZAGADO 15 (5,7%), ACTIVO 5 (1,9%).
+
+SE PROBARON TRES DEFINICIONES ALTERNATIVAS DE "REZAGADO"
+  Antes de declarar la inviabilidad se ensayaron otras operacionalizaciones
+  razonables. Ninguna rescata el target:
+
+    A. Rezagado = activo que excede 10 semestres
+       -> minoritaria ACTIVO, n=5,  1,0 por pliegue   NO VIABLE
+    B. Rezagado = cualquiera que excede 10 semestres (incluye graduados tardios)
+       -> minoritaria ACTIVO, n=5,  1,0 por pliegue   NO VIABLE
+    C. Separar graduado a tiempo vs graduado tardio
+       -> minoritaria ACTIVO, n=20, 4,0 por pliegue   NO VIABLE
+
+  EL LIMITANTE NO ES "REZAGADO" SINO "ACTIVO". En cuanto se separa el rezago --con
+  cualquier criterio-- ACTIVO se queda con los 5 estudiantes que siguen
+  matriculados DENTRO del tiempo nominal. Y sin separarlo, ACTIVO sigue en 20, por
+  debajo del umbral.
+
+TRES CAUSAS VERIFICADAS
+  a) La clase ACTIVO es en esencia el grupo censurado de Biologia: 15 de los 20
+     activos son de ese programa (75%), frente a 4 de Electronica y 1 de Sistemas.
+     No captura un fenomeno academico sino un artefacto de la ventana de
+     observacion.
+
+  b) La ventana agoto las trayectorias. Las cohortes llevan ~17 periodos frente a
+     un plan nominal de 10. Los graduados tardaron una mediana de 11 periodos
+     (maximo 14) y los activos llevan 12. A esta altura casi nadie sigue "activo a
+     tiempo".
+
+  c) EN ESTAS COHORTES EL REZAGO ES LA NORMA, NO LA EXCEPCION. De los 66
+     graduados, 39 (59%) tardaron mas de 10 periodos; de los 20 activos, 15 (75%).
+     Entre quienes no desertaron, el 63% excedio el plan nominal.
+
+     Una clase que agrupa al 63% de la poblacion no discrimina: "rezagado" no
+     describe un subgrupo en riesgo sino la condicion habitual del estudiante que
+     persiste. El target de cuatro clases presupone que "a tiempo" y "rezagado"
+     son grupos comparables, y en esta poblacion ESTAR A TIEMPO ES LO EXCEPCIONAL.
+
+DECISION PROPUESTA (requiere aprobacion)
+  Adoptar el target binario de graduacion, que si es viable y ya esta evaluado.
+  El rezago pasa a indicador continuo secundario (periodos_sobre_plan), tal como
+  RC-008 lo previo. Los 20 activos se marcan como censurados.
+
+NOTA PARA LA DISCUSION
+  El criterio de viabilidad se fijo el 3 de agosto de 2026, ANTES de ver estos
+  datos. Ajustar el target al criterio es metodologia; ajustar el criterio al
+  target habria sido oportunismo. La fecha del registro lo documenta.
+
+
+================================================================================
+BLOQUE 3 - DISEÑO EXPERIMENTAL Y MEDICION
+================================================================================
+
+--------------------------------------------------------------------------------
+P8. PRESUPUESTO DE AJUSTE DESIGUAL ENTRE ALGORITMOS           [RC-025, RC-033]
+--------------------------------------------------------------------------------
+QUE SE ENCONTRO
+  Las rejillas de busqueda de hiperparametros eran muy distintas entre algoritmos,
+  y la de XGBoost no incluia NINGUN parametro de regularizacion:
+
+    Random Forest        48 combinaciones
+    Arbol de Decision    24
+    SVM                  12
+    Regresion Logistica   5
+    XGBoost               8   <- sin regularizacion alguna
+
+  La comparacion no era justa: XGBoost competia con seis veces menos presupuesto
+  de ajuste que Random Forest.
+
+MAGNITUD (tras equilibrar a 16-24 combinaciones para todos)
+  XGBoost paso de AUC-PR 0,528 a 0,630  (+0,102), del quinto al tercer puesto.
+
+  Esa recuperacion es MAYOR que la distancia entre el primero y el segundo
+  clasificado (+0,032). Un presupuesto desigual no solo penaliza a un algoritmo:
+  reordena la tabla completa.
+
+DECISION
+  Rejillas equilibradas y presupuesto documentado en el codigo para que la
+  equidad de la comparacion sea auditable.
+
+--------------------------------------------------------------------------------
+P9. LA IMPORTANCIA DE VARIABLES USADA ERA ENGAÑOSA                 [RC-019]
+--------------------------------------------------------------------------------
+QUE SE ENCONTRO
+  El proyecto reportaba la importancia por impureza (MDI, feature_importances_ de
+  Random Forest). Esa metrica mide cuantas veces el arbol uso la variable para
+  partir los datos, no cuanto aporta a predecir: favorece a las variables con
+  muchos valores distintos.
+
+DEMOSTRACION
+  Se inyectaron al modelo DOS COLUMNAS DE RUIDO ALEATORIO PURO. Capturaron el
+  14,3% de la importancia MDI total, y una de ellas quedo por encima de trece
+  variables reales.
+
+  Caso concreto: nivel_edu_madre aparecia con 7,6% de importancia MDI, pero por
+  permutacion RESTA capacidad predictiva (-0,007).
+
+DECISION
+  Se reporta importancia por permutacion en todo el informe. La MDI se conserva
+  solo como contraste metodologico.
+
+--------------------------------------------------------------------------------
+P10. EL ERROR SE ESTIMABA SOLO POR VALIDACION CRUZADA              [RC-026]
+--------------------------------------------------------------------------------
+QUE SE ENCONTRO
+  No habia conjunto externo (decision justificada: con n=80 un holdout del 20%
+  tendria 4 casos positivos) ni un segundo estimador independiente. La validacion
+  cruzada informa el error de generalizacion pero no cuantifica el sobreajuste.
+
+DECISION
+  Se complementa con brecha train-validacion, curva de aprendizaje, bootstrap
+  .632+ y curva de validacion de la regularizacion.
+
+RESULTADO RELEVANTE
+  La curva de aprendizaje sube de forma monotonica y sin meseta (0,557 -> 0,768):
+  el modelo esta limitado por FALTA DE DATOS, no por el algoritmo.
+
+--------------------------------------------------------------------------------
+P11. EL UMBRAL SE ELEGIA CON LA METRICA EQUIVOCADA                 [RC-034]
+--------------------------------------------------------------------------------
+QUE SE ENCONTRO
+  La rutina elegia el umbral que maximiza F1-macro, metrica que premia el
+  equilibrio entre clases y empuja a umbrales altos. Es el criterio OPUESTO al
+  declarado por el proyecto, que prioriza la exhaustividad porque el falso
+  negativo es el error caro en alertas tempranas.
+
+  Ademas, la curva de umbral se calculaba con una sola repeticion de validacion
+  cruzada y desde 0,10, lo que producia un techo aparente de Recall 0,684 que no
+  existia.
+
+MAGNITUD
+  Con probabilidades promediadas y umbrales bajos, el modelo alcanza Recall 1,000
+  en umbral 0,06 y Recall 0,789 en umbral 0,14.
+
+DECISION
+  Criterio de maxima deteccion. La aplicacion ofrece tres niveles de alerta
+  seleccionables; la capacidad de atencion es decision institucional (art. 23).
+
+--------------------------------------------------------------------------------
+P12. COLISION EN EL ORDENAMIENTO DE PERIODOS ACADEMICOS            [RC-020]
+--------------------------------------------------------------------------------
+QUE SE ENCONTRO
+  La funcion que ordena periodos colapsaba AAAA-0 (curso intersemestral) con
+  AAAA-2 del mismo año, mezclando 133 registros. Ademas, la condicion del articulo
+  19 se evaluaba sobre periodos intersemestrales, donde el estudiante suele
+  inscribir un solo curso: reprobarlo activaba la condicion del "100% de los
+  creditos" de forma espuria.
+
+MAGNITUD
+  Al corregirlo, el target paso de 20 a 19 positivos, los casos ambiguos de 2 a 0,
+  y el desempeño subio ~0,06 de AUC en todos los algoritmos.
+
+DECISION
+  Ordenamiento corregido. La condicion del articulo 19 se evalua solo sobre
+  periodos regulares, conforme a los articulos 15 y 40 del Reglamento.
+
+--------------------------------------------------------------------------------
+P13. IMPUTACION CIEGA EN LA VARIABLE MAS INFLUYENTE                [RC-018]
+--------------------------------------------------------------------------------
+QUE SE ENCONTRO
+  16 de 90 estudiantes (18%) no tenian promedio de primer semestre y recibian la
+  mediana global. Se insertaba un valor neutro en la variable dominante para un
+  grupo que se comporta de forma marcadamente distinta:
+
+    rendimiento bajo:  12% (imputados)  vs  49% (con dato real)
+    graduacion      :  19% (imputados)  vs  43% (con dato real)
+
+DECISION
+  Indicador explicito sin_primer_semestre ademas de la imputacion.
+
+NOTA HONESTA
+  La verificacion posterior mostro que el indicador NO mejora la prediccion
+  (delta entre -0,001 y -0,009). Se conserva por correccion metodologica, no por
+  desempeño, y asi se reporta.
+
+
+================================================================================
+BLOQUE 4 - LIMITES DEL ESTUDIO (no son errores, son hallazgos)
+================================================================================
+
+--------------------------------------------------------------------------------
+P14. EL FENOMENO DEL ARTICULO 19 ES AGUDO, NO GRADUAL         [RC-038, RC-039]
+--------------------------------------------------------------------------------
+QUE SE ENCONTRO
+  Se intento un diseño longitudinal por cortes semestrales, incorporando las
+  variables acumuladas de los articulos 19 a 22. NO MEJORO NADA: en el corte 1 el
+  aporte fue nulo (p=0,514) y en el corte 2 EMPEORO el modelo (p=0,044).
+
+CAUSA VERIFICADA
+  Entre los estudiantes que sobrevivieron a cada corte, ninguna variable acumulada
+  distingue a quienes activaran el articulo despues (todas con p > 0,5). En
+  contraste, sin condicionar a supervivencia, prom_sem1 marca una diferencia
+  enorme: 2,293 en quienes activan frente a 3,283 en quienes no.
+
+  El articulo 19 exige reprobar el 100% de los creditos de un periodo: es un
+  COLAPSO PUNTUAL, no un deterioro progresivo. El estudiante mediocre sostenido no
+  lo activa; lo activa quien tiene un semestre catastrofico.
+
+EXPERIMENTO DE CONFIRMACION
+  Manteniendo todo constante y variando solo el umbral que define el evento:
+
+    Art. 19 estricto (100% de creditos) : AUC-ROC 0,496 / 0,468
+    >=75% de creditos reprobados        : AUC-ROC 0,603 / 0,567
+    >50% de creditos (art. 20)          : AUC-ROC 0,647 / 0,673
+
+  Un salto de ~0,20 producido UNICAMENTE por cambiar la definicion del evento.
+  Ademas, de 1.232 periodos analizados, 65 activaron el articulo (100% reprobado)
+  frente a 104 que quedaron entre el 60% y el 99%: hay 1,6 casi-activaciones por
+  cada activacion. La diferencia entre disparar el articulo y no dispararlo es
+  aprobar UN SOLO CURSO.
+
+CONCLUSION
+  El problema no es principalmente la falta de datos sino la definicion del
+  evento. Para un producto con actualizacion semestral, el target deberia ser el
+  articulo 20 (>50% de creditos), que ademas es el disparador real del
+  acompañamiento institucional segun el articulo 23.
+
+--------------------------------------------------------------------------------
+P15. LOS TRES PROGRAMAS NO SON MEZCLABLES                     [RC-036, RC-037]
+--------------------------------------------------------------------------------
+QUE SE ENCONTRO
+  Biologia es una poblacion estructuralmente distinta:
+
+                        Sistemas   Electronica   Biologia
+    Mujeres               15,8%        7,4%       64,7%
+    Saber 11 matematicas   65,6        65,3        54,8
+    Promedio de carrera    3,083       3,036       2,702
+
+  Al comparar un modelo conjunto contra modelos separados por programa:
+
+    Separado Sistemas      AUC-PR 0,7483
+    Separado Electronica   AUC-PR 0,7250
+    Separado Biologia      AUC-PR 0,5983
+    Conjunto (3 programas) AUC-PR 0,6585   <- peor que dos de los tres
+
+  El modelo conjunto pierde 0,031 (p=0,043) pese a disponer de casi el triple de
+  datos. Añadir un indicador de programa no compensa (p=0,453).
+
+DECISION
+  Modelos separados por programa, con el mismo algoritmo y el mismo protocolo.
+  Compatible con la propuesta: el compromiso es seleccionar UN ALGORITMO ganador,
+  no una unica instancia entrenada.
+
+MATIZ IMPORTANTE PARA EL INFORME
+  Esto parece contradecir la curva de aprendizaje, que indica que mas datos
+  ayudan. No hay contradiccion:
+    - mas datos de la MISMA poblacion    -> mejora
+    - mas datos de poblaciones DISTINTAS -> empeora
+  Conviene enunciarlo asi para evitar que se lea como inconsistencia.
+
+ADEMAS
+  Biologia tiene 15 estudiantes aun matriculados (18% de su muestra) cuyo
+  desenlace se desconoce. Su tasa de graduacion del 7,1% esta sesgada a la baja
+  por esa censura y no debe reportarse sin la advertencia.
+
+
+================================================================================
+DOS BRECHAS DE INFORMACION (no accionables en este momento)
+================================================================================
+
+1. ASISTENCIA
+   El articulo 58 del Reglamento la hace obligatoria, con minimos del 50% al 90%
+   segun el tipo de curso. Siendo obligatoria, la universidad debe registrarla,
+   pero no forma parte del extracto entregado. Seria el predictor natural de un
+   colapso puntual (ver P14).
+
+2. INFORMACION NO ACADEMICA
+   Fechas de pago y renovacion, cancelaciones de curso, situacion laboral. El
+   hallazgo P14 apunta a que un semestre catastrofico suele originarse FUERA del
+   expediente academico, y esos datos no estan disponibles.
+
+Estas brechas se documentan como limitacion del estudio y como recomendacion
+institucional. Constituyen, con alta probabilidad, el techo real del desempeño
+alcanzable: el limite es la informacion disponible, no la tecnica empleada.
+
+
+================================================================================
+ESTADO ACTUAL DEL MODELO (tras las correcciones)
+================================================================================
+
+  Variable objetivo : Bajo rendimiento segun el articulo 19 del Reglamento
+  Poblacion         : n = 80 expuestos (Ing. de Sistemas), 19 positivos (23,8%)
+  Variables         : 6 (conjunto S3, academicas)
+  Algoritmo ganador : Random Forest - AUC-PR 0,745 (linea base del azar: 0,2375)
+  Protocolo         : CV-5 x 10 repeticiones anidada, rejillas equilibradas
+  Seleccion         : por aplicacion directa de la regla pre-registrada, sin
+                      desviaciones
+
+  El desempeño del mejor modelo paso de 0,569 a 0,745 (+0,176) usando un tercio
+  de las variables. La mejora no provino del algoritmo sino de la calidad del
+  diseño experimental.
+
+
+
+================================================================================
+BLOQUE 5 - PROBLEMAS ABIERTOS A 29-09-2026 (leer antes de continuar el trabajo)
+================================================================================
+
+  Este bloque es el que importa si usted retoma el proyecto. Nada de lo que
+  sigue esta resuelto.
+
+--------------------------------------------------------------------------------
+P16. COLINEALIDAD EN EL BLOQUE SABER 11                            [RC-043]
+--------------------------------------------------------------------------------
+
+  QUE SE ENCONTRO
+  La posterior bayesiana asigna a la variable icfes_total un coeficiente
+  POSITIVO y creible: +1,56 con intervalo del 94% [+0,84, +2,25]. Leido de
+  forma literal significa que a mayor puntaje SABER 11, mayor riesgo academico.
+  Es sustantivamente imposible.
+
+  COMO SE MIDIO
+  icfes_total tiene VIF = 6,66 y R2 = 0,850 al regresarla sobre sus tres areas
+  (matematicas, lectura, naturales). Su correlacion con la suma de las tres es
+  0,920. El modelo no esta estimando un efecto: esta estimando el contraste
+  entre el total y sus partes. Es supresion por colinealidad de manual.
+
+  ALCANCE REAL
+  A Random Forest NO le afecta: retirar icfes_total deja AUC-PR 0,721 frente a
+  0,742, empate estadistico (p = 0,126). El modelo en produccion no esta
+  comprometido.
+
+  PERO: cualquier lectura de coeficientes, de importancias individuales o de
+  valores SHAP dentro del bloque SABER 11 es INVALIDA mientras el total conviva
+  con sus areas. Esto afecta a la interpretacion que el informe final quiera
+  hacer de esas variables.
+
+  >>> PENDIENTE: decidir si se conserva el total y se retiran las tres areas, o
+      al reves. Hay que hacerlo ANTES de interpretar nada en el informe.
+
+--------------------------------------------------------------------------------
+P17. LAS PROBABILIDADES QUE MUESTRA LA APLICACION NO ESTAN CALIBRADAS [RC-043]
+--------------------------------------------------------------------------------
+
+  QUE SE ENCONTRO
+  La aplicacion Streamlit muestra al usuario una "probabilidad estimada" en
+  porcentaje. Ese numero no significa lo que dice.
+
+  COMO SE MIDIO
+  Dos vias independientes coinciden:
+
+    (a) Calibracion empirica por tramos (16-09):
+          tramo mostrado   n    dice      pasa realmente   sesgo
+          0,20 - 0,30      15   23,7 %    6,7 %            +0,171
+          0,30 - 0,40       2   35,0 %    0,0 %            +0,350
+          0,60 - 1,00      12   71,7 %    91,7 %           -0,200
+        Brier 0,111 frente a 0,181 de la prediccion trivial: el modelo aporta,
+        pero el numero concreto no es interpretable como probabilidad.
+
+    (b) Incertidumbre bayesiana por caso (29-09): la anchura mediana del
+        intervalo creible del 94 % es 0,359, y en 43 de 80 estudiantes (54 %)
+        supera 0,30. Para mas de la mitad de la poblacion el modelo no esta en
+        condiciones de emitir un numero.
+
+  QUE SI ES SOLIDO
+  El ORDENAMIENTO de riesgo es estable: correlacion de Spearman 0,894 entre
+  repeticiones, y cada estudiante se mueve en promedio 6,2 puestos de 80.
+
+  >>> PENDIENTE: o se calibra (isotonica o Platt, dentro del pliegue externo) o
+      la app deja de mostrar el porcentaje y muestra nivel de alerta y puesto
+      relativo. Hoy esta publicando un numero que el modelo no puede sostener.
+
+--------------------------------------------------------------------------------
+P18. NO EXISTE VALIDACION EXTERNA NI TEMPORAL              [limitacion central]
+--------------------------------------------------------------------------------
+
+  QUE SE ENCONTRO
+  Todo el desempeño reportado proviene de remuestreo (validacion cruzada
+  repetida) sobre UNA sola muestra de 80 estudiantes de dos cohortes contiguas.
+  No hay conjunto de prueba externo, ni cohorte posterior, ni validacion
+  temporal.
+
+  POR QUE IMPORTA
+  Es la limitacion mas seria del trabajo y ninguna tecnica la resuelve: hace
+  falta otra cohorte. Con 19 positivos, los intervalos son anchos por
+  construccion. El estudio es exploratorio y bien hecho, no una validacion.
+
+  ESTADO
+  El asesor solicito cohortes nuevas a la Oficina de Sistemas el 29-09-2026.
+  Si llegan, esta es la primera tarea a ejecutar, por delante de cualquier
+  mejora del modelo.
+
+  >>> PENDIENTE: ejecutar la validacion externa en cuanto haya datos nuevos.
+
+--------------------------------------------------------------------------------
+P19. EL 42 % DE LOS EVENTOS ES SIMULTANEO, NO PREDICHO
+--------------------------------------------------------------------------------
+
+  QUE SE ENCONTRO
+  De los 19 positivos de Sistemas, 8 activan el articulo 19 en el PRIMER
+  semestre: el 42 %. En esos casos prom_sem1 -la variable dominante- es
+  contemporanea al evento, no anterior. Para ellos el modelo no predice: detecta.
+
+  OJO CON LA CIFRA: el 42 % es de Sistemas (8 de 19). En el conjunto de la FCBI
+  son 26 de 59, el 44 %, con proporciones muy parecidas en los tres programas
+  (42 %, 48 %, 41 %). Es un patron ESTRUCTURAL, no una peculiaridad de Sistemas.
+  No confundir ambas cifras.
+
+  COMO SE MIDIO
+  Restringiendo a los casos genuinamente predictivos (evento en semestre >= 2),
+  el AUC-PR cae de 0,745 a 0,473. El lift sobre el azar se mantiene en 3,10x,
+  que es el dato que sostiene la utilidad.
+
+  POR QUE NO ES UN ERROR
+  El modelo sigue siendo util: incluso detectar en el mismo periodo permite
+  activar el acompañamiento del articulo 23. Pero la memoria NO puede afirmar
+  "prediccion temprana" sin este matiz, y un jurado atento lo vera.
+
+  >>> PENDIENTE: declarar esta distincion explicitamente en el informe y
+      reportar ambas cifras (0,745 global y 0,473 restringido).
+
+--------------------------------------------------------------------------------
+P20. ANOMALIAS EN EL EXTRACTO DE DATOS ENTREGADO
+--------------------------------------------------------------------------------
+
+  Dos hallazgos que solo la institucion puede resolver:
+
+  (a) FALTA ACTIVIDAD ACADEMICA EN EL EXTRACTO
+      El estudiante 160004036 figura con estado final "RETIRO DEFINITIVO DEL
+      PROGRAMA CON BAJO RENDIMIENTO" pero no tiene NI UNA sola nota reprobada en
+      los datos entregados: sus unicas observaciones son dos homologaciones
+      aprobadas (3,7 y 3,4). Ademas arrastra un estado "BAJO RENDIMIENTO" en
+      2018-1, anterior a todo el bloque de registros de 2019-0 que si aparece.
+      La lectura mas simple es que el extracto no contiene toda su actividad.
+      Si eso ocurre en un caso, puede ocurrir en otros: algunas etiquetas
+      podrian estar mal puestas.
+
+  (b) HOMOLOGACIONES POR DEBAJO DEL MINIMO NORMATIVO
+      El articulo 46 exige nota >= 3,5 para homologar. 11 de 25 registros de
+      homologacion la incumplen (aparecen notas de 3,0, 3,1 y 3,4).
+      O son errores de registro, o son excepciones autorizadas. No se puede
+      saber desde los datos.
+
+  EFECTO COLATERAL YA VERIFICADO
+  Los 10 estudiantes excluidos de la poblacion n=80 (todos cohorte 2017-2, solo
+  observaciones homologadas, todos en el periodo 2019-0) tienen un
+  PROMEDIO_CARRERA medio de 3,71 frente al 3,01 de los 80 expuestos, porque ese
+  promedio deriva de notas externas homologadas y NO es comparable. Con el
+  target antiguo (PROMEDIO_CARRERA < 3,0) ninguno de los 10 habria sido marcado
+  como bajo rendimiento: confirmacion independiente de P4.
+
+  >>> PENDIENTE: consultar ambos puntos con la Oficina de Sistemas, idealmente
+      en la misma peticion de las cohortes nuevas.
+
+--------------------------------------------------------------------------------
+P21. EL TECHO LO IMPONE LA INFORMACION, NO EL TAMAÑO MUESTRAL       [RC-044]
+--------------------------------------------------------------------------------
+
+  QUE SE ENCONTRO
+  La curva de tamaño muestral (submuestreando solo el pliegue de entrenamiento)
+  se ajusta a AUC-PR(n) = 0,838 - 8,843 * n^(-1,107) con R2 = 0,994.
+
+    n total    AUC-PR proyectado   ganancia
+    80 (hoy)   0,749               -
+    160        0,797               +0,048
+    240        0,811               +0,062
+    320        0,819               +0,070
+
+  LECTURA
+  Duplicar la muestra compra unos +0,05; cuadruplicarla, +0,07. La curva satura
+  pronto: el techo estimado es 0,838 y lo impone la INFORMACION DISPONIBLE, no
+  el numero de filas.
+
+  CONSECUENCIA PARA LA PETICION DE DATOS
+  Las cohortes nuevas son muy valiosas -sobre todo porque habilitan la
+  validacion externa de P18- pero si ademas se pudieran incorporar ASISTENCIA
+  (obligatoria por el articulo 58, luego debe registrarse), FECHAS DE PAGO y
+  CREDITOS INSCRITOS VS CANCELADOS, subiria el techo mismo.
+  Mas filas mejoran la estimacion; mas variables mueven el limite.
+
+  CAUTELA REGISTRADA
+  Extrapolar desde 64 casos de entrenamiento hasta 320 es una proyeccion de
+  orden de magnitud, no una prediccion. Y si las cohortes nuevas caen bajo el
+  reglamento vigente desde 2022 mientras las actuales caen bajo el Acuerdo 015
+  de 2003, el supuesto se rompe (ver P6).
+
+
+================================================================================
+NOTA METODOLOGICA - DOS TECNICAS QUE SE PIDIERON Y NO HACEN LO QUE PARECE
+================================================================================
+
+  Se documentan porque es probable que vuelvan a proponerse.
+
+  PCA PARA VALIDAR LA SELECCION DE VARIABLES                      [RC-042]
+  El PCA es NO SUPERVISADO: busca varianza en X sin mirar nunca a y. Por
+  construccion no puede demostrar que unas variables sean las mejores para
+  predecir. En estos datos la demostracion es brutal: la variable mas predictiva
+  del estudio -el promedio del primer semestre, 40,4 % de la importancia- tiene
+  su carga maxima en el componente CP3, que explica el 8,3 % de la varianza.
+  Seleccionar por varianza explicada la habria descartado.
+  Medido bajo el mismo protocolo, el PCA no es que no ayude: DESTRUYE la señal
+  (AUC-PR 0,372 frente a 0,742; p < 0,0001).
+  Si sirve como (a) diagnostico de redundancia y (b) representacion alternativa
+  que se puede comparar en capacidad predictiva. Asi se uso.
+
+  ONE-SHOT / FEW-SHOT LEARNING                                    [RC-044]
+  En sentido estricto sirve para reconocer CLASES NUEVAS con uno o pocos
+  ejemplos, y descansa en dos cosas que aqui no existen: un corpus grande de
+  preentrenamiento del que transferir una representacion, y una estructura por
+  episodios con clases no vistas en entrenamiento. Este problema es tabular,
+  binario y con ambas clases presentes desde el inicio.
+  Si se traslado el MECANISMO (metrica aprendida + prototipos de clase, que es
+  ProtoNet sin la red). Resultado instructivo: aprender la metrica con NCA
+  EMPEORA los prototipos (0,356 frente a 0,437). Con 19 positivos, NCA
+  sobreajusta la metrica. Sin corpus del que transferir, no hay atajo.
+
+
+================================================================================
+CINCO PUNTOS QUE REQUIEREN DECISION DE LA DIRECCION
+================================================================================
+
+  1. TARGET MULTICLASE (P7)
+     El entregable E2 especifica un modelo de trayectoria multiclase. La regla de
+     viabilidad pre-registrada demuestra que no es construible con la ventana de
+     observacion disponible. Se propone adoptar el target binario de graduacion y
+     documentar el ajuste como resultado de la iteracion CRISP-DM.
+
+  2. ALCANCE DEL MODELO POR PROGRAMA (P15)
+     Se propone entregar tres modelos separados (un algoritmo, tres instancias
+     ajustadas) en lugar de un modelo unico para la FCBI, con la justificacion
+     empirica correspondiente.
+
+
+  3. REGIMEN NORMATIVO DE LAS ETIQUETAS (P6)
+     Las cohortes 2017-2 y 2018-1 cursaron bajo el Acuerdo 015 de 2003, pero se
+     etiquetan con el articulo 19 del reglamento vigente desde 2022. Hay que
+     decidir si se defiende como definicion operativa actual aplicada de forma
+     retrospectiva, o si se etiqueta con la norma que les aplicaba. Es el punto
+     mas atacable en sustentacion.
+
+  4. TRATAMIENTO DE LA COLINEALIDAD SABER 11 (P16)
+     Conservar el total o conservar las tres areas. Hay que resolverlo antes de
+     interpretar coeficientes o importancias en el informe.
+
+  5. QUE MUESTRA LA APLICACION (P17)
+     Calibrar las probabilidades, o retirar el porcentaje y mostrar nivel de
+     alerta y puesto relativo.
+
+
+================================================================================
+DOCUMENTACION DE RESPALDO
+================================================================================
+
+  REGISTRO_CIENTIFICO.md ....... Bitacora completa, entradas RC-001 a RC-044
+  AUDITORIA_2026-09.md ......... Analisis metodologico extendido
+  MARCO_NORMATIVO.md ........... Reglamento Estudiantil aplicado al modelo
+  Fase 2/08_verificacion_fcbi.md  Verificacion de los tres programas
+  PLAN_MEJORAS.md .............. Propuesta priorizada de mejoras
+  bitacora/CONSOLIDADO_RESULTADOS.xlsx  Todas las tablas y comparativas
+
+  Todos los resultados son reproducibles ejecutando los scripts de src/ con
+  SEED = 42.
+
+================================================================================

@@ -1,0 +1,5 @@
+lider,rival,delta,p,empate
+SVM (RBF),Random Forest,0.02,0.3943,True
+SVM (RBF),XGBoost,0.0732,0.0184,False
+SVM (RBF),Árbol de Decisión,0.092,0.0336,False
+SVM (RBF),Regresión Logística (L2),0.1105,0.0101,False

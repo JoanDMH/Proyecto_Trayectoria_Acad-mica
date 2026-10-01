@@ -1,0 +1,7 @@
+modelo_a,modelo_b,diferencia,p_valor,significativo,relevante,veredicto
+SVM (RBF),Random Forest,0.004,0.7303,False,False,EMPATE: sin evidencia de diferencia (p=0.730). Elegir el modelo más simple.
+SVM (RBF),Regresión Logística (L2),0.025,0.0355,True,False,EMPATE TÉCNICO: la diferencia es significativa (p=0.036) pero de magnitud irrelevante (|Δ|=0.025 < 0.03). Elegir el modelo más simple.
+Random Forest,Regresión Logística (L2),0.021,0.0543,False,False,EMPATE: sin evidencia de diferencia (p=0.054). Elegir el modelo más simple.
+Random Forest,XGBoost,0.041,0.0016,True,True,Random Forest es mejor (diferencia significativa y relevante)
+SVM (RBF),XGBoost,0.045,0.0007,True,True,SVM (RBF) es mejor (diferencia significativa y relevante)
+Random Forest,Árbol de Decisión,0.106,0.0,True,True,Random Forest es mejor (diferencia significativa y relevante)

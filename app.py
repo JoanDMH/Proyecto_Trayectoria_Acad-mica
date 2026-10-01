@@ -130,28 +130,26 @@ def cargar_modelos():
     umbral    = joblib.load("src/umbral_optimo.pkl")
     resultados= joblib.load("src/resultados_completos.pkl")
     pruebas   = joblib.load("src/pruebas_estadisticas.pkl")
-    mat_mods  = joblib.load("src/modelos_materias.pkl")
-    return modelo, features, umbral, resultados, pruebas, mat_mods
+    # I-4 (RC-022): los modelos de reprobación por asignatura fueron retirados por
+    # fuga temporal (RC-013). Se conserva únicamente el índice de criticidad,
+    # que es descriptivo y no está afectado.
+    return modelo, features, umbral, resultados, pruebas
 
 @st.cache_data
 def cargar_metricas():
-    comp_rb = pd.read_csv("src/comparativa_rendimiento_bajo.csv").set_index("Modelo")
+    comp_rb = pd.read_csv("src/comparativa_bajo_rendimiento_art19.csv").set_index("Modelo")
     comp_gr = pd.read_csv("src/comparativa_graduado.csv").set_index("Modelo")
-    try:
-        mat_met = pd.read_csv("src/metricas_materias.csv").set_index("MATERIA")
-    except FileNotFoundError:
-        mat_met = None
     mc = pd.read_csv("src/materias_criticas.csv").sort_values("indice", ascending=False).head(5)
     materias = {
         r["materia"]: {"indice": float(r["indice"]), "tasa_rep": float(r["tasa_reprobacion"]),
                        "rep_media": float(r["repitencia_media"]), "N": int(r["N"])}
         for _, r in mc.iterrows()
     }
-    return comp_rb, comp_gr, mat_met, materias
+    return comp_rb, comp_gr, materias
 
 df                               = cargar_datos()
-modelo, FEATURES, UMBRAL, res, pruebas, mat_mods = cargar_modelos()
-comp_rb, comp_gr, mat_met, MATERIAS_CRITICAS = cargar_metricas()
+modelo, FEATURES, UMBRAL, res, pruebas = cargar_modelos()
+comp_rb, comp_gr, MATERIAS_CRITICAS = cargar_metricas()
 
 # ── Utilidades ────────────────────────────────────────────────────────────────
 NIVEL_EDU_LABELS = {
@@ -188,8 +186,11 @@ with st.sidebar:
     ])
     st.markdown("---")
     st.markdown("**Metodología:** CRISP-DM")
-    st.markdown("**Modelo Principal:** Random Forest · Umbral 0.29")
-    st.markdown(f"**n =** {len(df)} estudiantes")
+    st.markdown("**Modelo Principal:** Random Forest")
+    st.markdown("**Target:** Bajo rendimiento (Art. 19)")
+    st.markdown("**Umbral:** seleccionable en el Predictor")
+    st.markdown(f"**n =** {int((df['tiene_actividad_academica'] == 1).sum())} expuestos "
+                f"/ {len(df)} totales")
     st.markdown("---")
     st.markdown("**Desarrollado por:**")
     st.markdown("Joan Martínez")
@@ -218,7 +219,8 @@ if seccion == "Inicio":
     c1, c2, c3, c4 = st.columns(4)
     with c1: st.markdown(kpi(f"{len(df)}", "Estudiantes analizados"), unsafe_allow_html=True)
     with c2: st.markdown(kpi(f"{df['graduado'].sum()}", "Graduados", "verde"), unsafe_allow_html=True)
-    with c3: st.markdown(kpi(f"{df['rendimiento_bajo'].sum()}", "Con bajo rendimiento", "rojo"), unsafe_allow_html=True)
+    _exp = df[df["tiene_actividad_academica"] == 1]
+    with c3: st.markdown(kpi(f"{int(_exp['bajo_rendimiento_art19'].sum())}", "Bajo rendimiento (art. 19)", "rojo"), unsafe_allow_html=True)
     with c4: st.markdown(kpi(f"{df['PROMEDIO_CARRERA'].mean():.2f}", "Promedio acumulado"), unsafe_allow_html=True)
 
     st.markdown("---")
@@ -257,7 +259,7 @@ if seccion == "Inicio":
 
         _rf = comp_rb.loc["Random Forest"]
 
-        # Gauge de desempeño general (Recall+ CV5, leído de comparativa_rendimiento_bajo.csv)
+        # Gauge de desempeño general (Recall+ CV5, leído de comparativa_bajo_rendimiento_art19.csv)
         fig = go.Figure(go.Indicator(
             mode="gauge+number",
             value=round(float(_rf["Recall+"]) * 100, 1),
@@ -418,8 +420,8 @@ elif seccion == "Perfil Estudiantil":
             f"({int(_rm.sum())} de {len(df)}). "
             "Aunque la prueba estadística no es significativa por el tamaño muestral, "
             "el análisis descriptivo muestra que quienes repitieron tienen una tasa de "
-            f"bajo rendimiento del <strong>{df[_rm]['rendimiento_bajo'].mean():.1%}</strong> vs "
-            f"<strong>{df[~_rm]['rendimiento_bajo'].mean():.1%}</strong> de quienes no repitieron. "
+            f"bajo rendimiento del <strong>{df[_rm]['bajo_rendimiento_art19'].mean():.1%}</strong> vs "
+            f"<strong>{df[~_rm]['bajo_rendimiento_art19'].mean():.1%}</strong> de quienes no repitieron. "
             f"La diferencia en graduación es más marcada: <strong>{df[_rm]['graduado'].mean():.1%}</strong> vs "
             f"<strong>{df[~_rm]['graduado'].mean():.1%}</strong>.",
             "alerta"
@@ -437,11 +439,13 @@ elif seccion == "Rendimiento Académico":
     # KPIs
     c1, c2, c3, c4 = st.columns(4)
     pct_grad = df["graduado"].mean()
-    pct_rb   = df["rendimiento_bajo"].mean()
+    # El target vigente es el del art. 19 y se mide sobre los EXPUESTOS (n=80),
+    # no sobre los 90: los 10 sin actividad propia no pueden activar el articulo.
+    pct_rb   = df.loc[df["tiene_actividad_academica"] == 1, "bajo_rendimiento_art19"].mean()
     with c1: st.markdown(kpi(f"{df['PROMEDIO_CARRERA'].mean():.2f}", "Promedio carrera"), unsafe_allow_html=True)
     with c2: st.markdown(kpi(f"{df['PROMEDIO_CARRERA'].median():.2f}", "Mediana"), unsafe_allow_html=True)
     with c3: st.markdown(kpi(f"{pct_grad:.0%}", "Tasa de graduación", "verde"), unsafe_allow_html=True)
-    with c4: st.markdown(kpi(f"{pct_rb:.0%}", "Bajo rendimiento (<3.0)", "rojo"), unsafe_allow_html=True)
+    with c4: st.markdown(kpi(f"{pct_rb:.0%}", "Bajo rendimiento (art. 19)", "rojo"), unsafe_allow_html=True)
 
     st.markdown("---")
 
@@ -533,7 +537,7 @@ elif seccion == "Rendimiento Académico":
     ), unsafe_allow_html=True)
 
     df_scatter = df.dropna(subset=["PROMEDIO_CARRERA"]).copy()
-    df_scatter["Grupo"] = df_scatter["rendimiento_bajo"].map(
+    df_scatter["Grupo"] = df_scatter["bajo_rendimiento_art19"].map(
         {0: "Rendimiento normal", 1: "Bajo rendimiento"})
 
     fig = px.scatter(
@@ -665,8 +669,8 @@ elif seccion == "Factores Predictivos":
             grupos = ["Repitió (n=15)", "No repitió (n=74)"]
             metricas_rep = {
                 "Bajo rendimiento": [
-                    df[df["repitio_escolar"]==1]["rendimiento_bajo"].mean()*100,
-                    df[df["repitio_escolar"]==0]["rendimiento_bajo"].mean()*100
+                    df[df["repitio_escolar"]==1]["bajo_rendimiento_art19"].mean()*100,
+                    df[df["repitio_escolar"]==0]["bajo_rendimiento_art19"].mean()*100
                 ],
                 "Graduado": [
                     df[df["repitio_escolar"]==1]["graduado"].mean()*100,
@@ -816,42 +820,22 @@ elif seccion == "Materias Críticas":
                       showlegend=False)
     st.plotly_chart(fig, use_container_width=True)
 
-    st.markdown("---")
-    # Modelos predictivos por materia
-    st.markdown("#### Modelos de predicción de reprobación por materia")
-    st.markdown('<div class="section-subtitle">¿Es posible predecir qué estudiante reprobará una materia crítica?</div>', unsafe_allow_html=True)
-
-    mat_resultados = mat_met.to_dict("index") if mat_met is not None else {
-        "MATEMATICAS II":   {"F1-mac": 0.741, "AUC": 0.865, "N": 54, "rep": 0.31},
-        "FISICA I":         {"F1-mac": 0.807, "AUC": 0.884, "N": 54, "rep": 0.28},
-        "ALGEBRA LINEAL":   {"F1-mac": 0.889, "AUC": 0.939, "N": 72, "rep": 0.29},
-        "MATEMATICAS I":    {"F1-mac": 0.902, "AUC": 0.928, "N": 73, "rep": 0.26},
-        "FUNDAMENTOS DE PROGRAMACION": {"F1-mac": 0.886, "AUC": 0.923, "N": 72, "rep": 0.21},
-    }
-
-    cols = st.columns(len(mat_resultados))
-    for (mat, vals), col in zip(mat_resultados.items(), cols):
-        color_borde = VERDE if vals["AUC"] >= 0.90 else (NARANJA if vals["AUC"] >= 0.75 else ROJO)
-        with col:
-            st.markdown(f"""
-            <div style="background:white; border-radius:12px; padding:18px;
-                        border-top:4px solid {color_borde};
-                        box-shadow:0 2px 12px rgba(0,0,0,0.08); text-align:center;">
-                <p style="font-size:1.0rem; font-weight:700; color:#1A1A2E; margin:0 0 10px 0;">{mat}</p>
-                <p style="font-size:2.0rem; font-weight:800; color:{color_borde}; margin:0;">AUC {vals['AUC']:.3f}</p>
-                <p style="font-size:0.95rem; color:#7F8C8D; margin:4px 0;">F1-mac: {vals['F1-mac']:.3f}</p>
-                <p style="font-size:0.95rem; color:#7F8C8D; margin:0;">N={vals['N']} · Rep={vals['rep']:.0%}</p>
-            </div>""", unsafe_allow_html=True)
-
     st.markdown(insight(
-        "Con los datos recodificados (que incorporan cursos intersemestrales y registros "
-        "sin observación que el extracto original ocultaba), las 5 materias críticas se "
-        "predicen bien en validación cruzada (AUC 0.86–0.94). <strong>Matemáticas II</strong> "
-        "sigue siendo la más crítica (31% de reprobación, repitencia 1.6), pero su historial "
-        "más completo la volvió tan predecible como las demás."
+        "Las cinco asignaturas de mayor criticidad se concentran en los primeros "
+        "semestres y pertenecen al componente de ciencias básicas. "
+        "<strong>Matemáticas II</strong> encabeza el ranking (31,5 % de reprobación, "
+        "repitencia media 1,6). La depuración de los registros cambió estos "
+        "indicadores de forma sustancial: antes de corregir la codificación, la tasa "
+        "de reprobación aparente de Matemáticas II era del 44 %."
     ), unsafe_allow_html=True)
 
-    st.markdown("<p style='font-size:0.75rem; color:#7F8C8D; text-align:center; margin-top:12px;'>Nota metodológica: las 5 materias críticas tienen un modelo de reprobación (Random Forest). Las métricas son por validación cruzada (CV-5, out-of-fold): estiman el desempeño sobre estudiantes no vistos en el entrenamiento.</p>", unsafe_allow_html=True)
+    st.markdown(
+        "<p style='font-size:0.75rem; color:#7F8C8D; text-align:center; margin-top:12px;'>"
+        "Nota metodológica: el índice de criticidad es un <strong>indicador descriptivo</strong>, "
+        "no un modelo predictivo. Ordena las 52 asignaturas cursadas por al menos 20 estudiantes "
+        "según la tasa de reprobación (peso 0,70) y la repitencia media (peso 0,30), ambas "
+        "normalizadas entre 0 y 1. No estima probabilidades ni predice resultados individuales."
+        "</p>", unsafe_allow_html=True)
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -982,12 +966,69 @@ elif seccion == "Predictor Interactivo":
             "icfes_lec":            icfes_lec,
             "icfes_nat":            icfes_nat,
             "prom_sem1":            prom_sem1_input,
+            "sin_primer_semestre":  0,   # corrige KeyError (REVISION_FASES_2_3.md, R7)
             "cohorte_encoded":      1 if cohorte_input == "2018-1" else 0,
         }
 
         X_input = np.array([[feature_values[f] for f in FEATURES]])
         probabilidad = modelo.predict_proba(X_input)[0][1]
-        prediccion   = int(probabilidad >= UMBRAL)
+
+        st.markdown("---")
+        st.markdown("### Nivel de alerta")
+
+        # ── Selector de umbral (RC-034) ───────────────────────────────────────
+        # No existe un umbral "correcto": depende de a cuántos estudiantes puede
+        # atender la universidad. Se ofrecen tres puntos de operación medidos
+        # sobre las cohortes 2017-2 y 2018-1 (n=80, 19 casos reales).
+        NIVELES = {
+            "Confirmado — máxima certeza": {
+                "u": 0.62, "detecta": 0.579, "precision": 1.000,
+                "alertas": 11, "casos": "11 de 19",
+                "desc": "Sin falsas alarmas. Todo estudiante marcado tuvo bajo rendimiento real.",
+                "uso": "Intervención personalizada inmediata.",
+                "color": ROJO,
+            },
+            "Equilibrado — cobertura media": {
+                "u": 0.12, "detecta": 0.842, "precision": 0.308,
+                "alertas": 52, "casos": "16 de 19",
+                "desc": "Detecta 8 de cada 10 casos. Cerca de 2 de cada 3 alertas son falsas.",
+                "uso": "Seguimiento grupal con revisión docente.",
+                "color": NARANJA,
+            },
+            "Cobertura total — no se escapa nadie": {
+                "u": 0.06, "detecta": 1.000, "precision": 0.288,
+                "alertas": 66, "casos": "19 de 19",
+                "desc": "Detecta todos los casos, pero alerta sobre el 83 % de la cohorte.",
+                "uso": "Cribado inicial cuando el costo de no detectar es muy alto.",
+                "color": AZUL,
+            },
+        }
+
+        nivel = st.radio(
+            "¿Cuántos estudiantes puede atender el programa de acompañamiento?",
+            list(NIVELES), horizontal=True, key="nivel_alerta")
+        cfg = NIVELES[nivel]
+        UMBRAL_SEL = cfg["u"]
+        prediccion = int(probabilidad >= UMBRAL_SEL)
+
+        c1, c2, c3, c4 = st.columns(4)
+        for col, (lab, val) in zip(
+                [c1, c2, c3, c4],
+                [("Umbral", f"{cfg['u']:.0%}"),
+                 ("Detecta", f"{cfg['detecta']:.0%}"),
+                 ("De cada 100 alertas, aciertan", f"{cfg['precision']*100:.0f}"),
+                 ("Estudiantes alertados", f"{cfg['alertas']} de 80")]):
+            with col:
+                st.markdown(kpi(val, lab), unsafe_allow_html=True)
+
+        st.markdown(insight(
+            f"<strong>{nivel}</strong> — {cfg['desc']} Detecta {cfg['casos']} casos reales. "
+            f"<br><em>Uso sugerido:</em> {cfg['uso']}"
+            "<br><br><strong>El intercambio:</strong> bajar el umbral detecta más casos pero "
+            "genera más falsas alarmas. No hay un valor «correcto»: depende de la capacidad "
+            "real de atención. El modelo detecta; la decisión de a cuántos acompañar es "
+            "institucional (art. 23 del Reglamento Estudiantil)."
+        ), unsafe_allow_html=True)
 
         st.markdown("---")
         st.markdown("### Resultado de la predicción")
@@ -1005,14 +1046,15 @@ elif seccion == "Predictor Interactivo":
                     "axis": {"range": [0, 100]},
                     "bar": {"color": color_gauge},
                     "steps": [
-                        {"range": [0, 29],  "color": "#D5F5E3"},
-                        {"range": [29, 60], "color": "#FDEBD0"},
-                        {"range": [60, 100],"color": "#FADBD8"},
+                        {"range": [0, 6],   "color": "#EAF2F8"},
+                        {"range": [6, 12],  "color": "#D5F5E3"},
+                        {"range": [12, 62], "color": "#FDEBD0"},
+                        {"range": [62, 100],"color": "#FADBD8"},
                     ],
                     "threshold": {
                         "line": {"color": "black", "width": 3},
                         "thickness": 0.8,
-                        "value": UMBRAL * 100
+                        "value": UMBRAL_SEL * 100
                     }
                 }
             ))
@@ -1020,19 +1062,20 @@ elif seccion == "Predictor Interactivo":
             st.plotly_chart(fig, use_container_width=True)
             st.markdown(f"""
             <p style="text-align:center; font-size:0.78rem; color:#7F8C8D;">
-            Umbral de decisión: {UMBRAL*100:.0f}%<br>
-            (optimizado para maximizar detección de riesgo)
+            Umbral seleccionado: {UMBRAL_SEL*100:.0f}%<br>
+            Las bandas marcan los tres niveles de alerta
             </p>""", unsafe_allow_html=True)
 
         with col_resultado:
             if prediccion == 1:
                 st.markdown(f"""
                 <div class="pred-resultado pred-riesgo">
-                    <strong>RIESGO DE BAJO RENDIMIENTO DETECTADO</strong><br><br>
-                    El perfil del estudiante es compatible con el de estudiantes que
-                    obtuvieron un promedio acumulado <strong>por debajo de 3.0</strong>
-                    en cohortes anteriores.<br><br>
+                    <strong>ALERTA — nivel «{nivel.split(chr(8212))[0].strip()}»</strong><br><br>
+                    El perfil es compatible con el de estudiantes que incurrieron en
+                    <strong>bajo rendimiento académico según el art. 19</strong> del
+                    Reglamento Estudiantil en cohortes anteriores.<br><br>
                     Probabilidad estimada: <strong>{probabilidad:.1%}</strong>
+                    (umbral {UMBRAL_SEL:.0%})
                 </div>""", unsafe_allow_html=True)
 
                 st.markdown("**Factores de riesgo identificados:**")

@@ -1,0 +1,8 @@
+subconjunto,n_features,RF_AUC_PR,RF_sd,LR_AUC_PR,LR_sd
+S6 · mínimo (top-5 por permutación),5,0.8263,0.0122,0.7039,0.0251
+S3 · solo académicas,6,0.7457,0.0193,0.6182,0.0785
+"S2 · S1 + primer semestre  [= set completo, 19]",19,0.741,0.0397,0.568,0.0479
+S5 · sin redundancias estructurales (17),17,0.7257,0.0209,0.5537,0.0459
+S7 · solo prom_sem1 (referencia),1,0.6109,0.0194,0.5705,0.0097
+S1 · solo ingreso (socioec. + SABER 11),17,0.4423,0.0411,0.3762,0.0331
+S4 · solo socioeconómicas,11,0.3439,0.0343,0.4003,0.036

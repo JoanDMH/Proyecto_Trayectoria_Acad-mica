@@ -1,0 +1,4 @@
+t_segundos,evento
+0.1,n=80 positivos=19 (23.8%) baseline AUC-PR=0.2375
+0.1,SVM (RBF): rejilla de 20 combinaciones
+32.5,SVM (RBF): AUC-PR 0.7136 ± 0.0368

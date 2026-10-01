@@ -1,0 +1,7 @@
+modelo,AUC_PR_train,AUC_PR_validacion,brecha,sd_validacion
+Random Forest,1.0,0.7723,0.2277,0.1599
+Árbol de Decisión,0.836,0.6002,0.2358,0.1682
+Regresión Logística (L2),0.9134,0.6299,0.2835,0.1766
+XGBoost (rejilla vieja),1.0,0.6914,0.3086,0.1926
+XGBoost (regularizado),0.7647,0.3966,0.3681,0.1434
+SVM (RBF),0.9648,0.5908,0.374,0.1938

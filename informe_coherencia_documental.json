@@ -1,0 +1,146 @@
+[
+ {
+  "documento": "BORRADOR_INFORME.md",
+  "linea": 263,
+  "regla": "TARGET-OBSOLETO",
+  "texto": "| **D13** | **Target derivado del art. 19** del Reglamento vigente, no `PROMEDIO_CARRERA<3.0` | Definición institucional, verdad de campo, sin circula",
+  "porque": "El target \"promedio de carrera < 3,0\" se descarto por tautologico (RC-012/RC-017)",
+  "arreglo": "Sustituir por el target del art. 19, o marcar explicitamente como historico"
+ },
+ {
+  "documento": "BORRADOR_INFORME.md",
+  "linea": 369,
+  "regla": "METRICA-VIEJA",
+  "texto": "> el Recall+ 0,816 y el AUC 0,752 de Random Forest **no son las cifras vigentes**: la",
+  "porque": "Recall+ 0,816 es del target antiguo",
+  "arreglo": "El vigente es AUC-PR 0,745 sobre el art. 19"
+ },
+ {
+  "documento": "BORRADOR_INFORME.md",
+  "linea": 369,
+  "regla": "METRICA-VIEJA",
+  "texto": "> el Recall+ 0,816 y el AUC 0,752 de Random Forest **no son las cifras vigentes**: la",
+  "porque": "AUC 0,752 es del target antiguo",
+  "arreglo": "El vigente es AUC-PR 0,745 / AUC-ROC 0,794"
+ },
+ {
+  "documento": "BORRADOR_INFORME.md",
+  "linea": 201,
+  "regla": "MATERIAS-RETIRADAS",
+  "texto": "| **1 · Temporal**, en las variables | `prom_global` era el promedio del estudiante en el *resto de la carrera*; entre el 70 % y el 83 % procedía de s",
+  "porque": "Metricas de los modelos de reprobacion por asignatura, retirados en RC-022",
+  "arreglo": "Retirar; solo sobrevive el indice descriptivo de criticidad"
+ },
+ {
+  "documento": "Fase 2/04_hallazgos_eda.md",
+  "linea": 91,
+  "regla": "DESERCION",
+  "texto": "| Desertores | 59 | 62.1 % |",
+  "porque": "La cifra de desercion vigente en el paper es 63 %",
+  "arreglo": "Unificar con la cifra reportada"
+ },
+ {
+  "documento": "Fase 2/04_hallazgos_eda.md",
+  "linea": 96,
+  "regla": "DESERCION",
+  "texto": "La **deserción real (62.1 %)** es muy superior a los 30 retiros con acta formal: 29 de los 59 desertores abandonaron sin acta (ver 4.3). La tasa de gr",
+  "porque": "La cifra de desercion vigente en el paper es 63 %",
+  "arreglo": "Unificar con la cifra reportada"
+ },
+ {
+  "documento": "Fase 2/04_hallazgos_eda.md",
+  "linea": 98,
+  "regla": "DESERCION",
+  "texto": "> ### Nota de lectura — por qué aquí se lee 62,1 % y en el paper 63 %",
+  "porque": "La cifra de desercion vigente en el paper es 63 %",
+  "arreglo": "Unificar con la cifra reportada"
+ },
+ {
+  "documento": "Fase 2/04_hallazgos_eda.md",
+  "linea": 103,
+  "regla": "DESERCION",
+  "texto": "> | **62,1 %** (este documento) | **Deserción** en sentido estricto: no se graduó **y** no sigue activo | 59 desertores / 95 |",
+  "porque": "La cifra de desercion vigente en el paper es 63 %",
+  "arreglo": "Unificar con la cifra reportada"
+ },
+ {
+  "documento": "Fase 2/04_hallazgos_eda.md",
+  "linea": 106,
+  "regla": "DESERCION",
+  "texto": "> La diferencia es exactamente **el único estudiante en formación**, que no se graduó pero tampoco desertó: entra en el 63 % de no graduación y queda ",
+  "porque": "La cifra de desercion vigente en el paper es 63 %",
+  "arreglo": "Unificar con la cifra reportada"
+ },
+ {
+  "documento": "Fase 2/04_hallazgos_eda.md",
+  "linea": 108,
+  "regla": "DESERCION",
+  "texto": "> **Regla de uso:** al citar la cifra hay que nombrar el indicador, no solo el porcentaje. Si se habla de *deserción*, es 62,1 %; si se habla de *no g",
+  "porque": "La cifra de desercion vigente en el paper es 63 %",
+  "arreglo": "Unificar con la cifra reportada"
+ },
+ {
+  "documento": "MARCO_NORMATIVO.md",
+  "linea": 93,
+  "regla": "TARGET-OBSOLETO",
+  "texto": "**Se descarta** `PROMEDIO_CARRERA < 3.0` (definición *ad hoc*, tautológica — ver `AUDITORIA_2026-09.md` §1).",
+  "porque": "El target \"promedio de carrera < 3,0\" se descarto por tautologico (RC-012/RC-017)",
+  "arreglo": "Sustituir por el target del art. 19, o marcar explicitamente como historico"
+ },
+ {
+  "documento": "PROBLEMAS_DETECTADOS.txt",
+  "linea": 114,
+  "regla": "TARGET-OBSOLETO",
+  "texto": "\"rendimiento_bajo\" se definia como PROMEDIO_CARRERA < 3,0. Pero el promedio de",
+  "porque": "El target \"promedio de carrera < 3,0\" se descarto por tautologico (RC-012/RC-017)",
+  "arreglo": "Sustituir por el target del art. 19, o marcar explicitamente como historico"
+ },
+ {
+  "documento": "PROBLEMAS_DETECTADOS.txt",
+  "linea": 141,
+  "regla": "TARGET-OBSOLETO",
+  "texto": "El proyecto usaba un umbral propio (PROMEDIO_CARRERA < 3,0) que es solo la mitad",
+  "porque": "El target \"promedio de carrera < 3,0\" se descarto por tautologico (RC-012/RC-017)",
+  "arreglo": "Sustituir por el target del art. 19, o marcar explicitamente como historico"
+ },
+ {
+  "documento": "PROBLEMAS_DETECTADOS.txt",
+  "linea": 114,
+  "regla": "TARGET-OBSOLETO",
+  "texto": "\"rendimiento_bajo\" se definia como PROMEDIO_CARRERA < 3,0. Pero el promedio de",
+  "porque": "Nombre del target antiguo",
+  "arreglo": "Usar bajo_rendimiento_art19, o marcar como obsoleto"
+ },
+ {
+  "documento": "PROBLEMAS_DETECTADOS.txt",
+  "linea": 43,
+  "regla": "MATERIAS-RETIRADAS",
+  "texto": "AUC reportado con la fuga : 0,865 - 0,939",
+  "porque": "Metricas de los modelos de reprobacion por asignatura, retirados en RC-022",
+  "arreglo": "Retirar; solo sobrevive el indice descriptivo de criticidad"
+ },
+ {
+  "documento": "RESUMEN_ASESOR_2026-09.md",
+  "linea": 19,
+  "regla": "TARGET-OBSOLETO",
+  "texto": "`rendimiento_bajo` se definía como `PROMEDIO_CARRERA < 3,0`, pero el promedio de carrera **incluye el primer semestre**, que era justamente la variabl",
+  "porque": "El target \"promedio de carrera < 3,0\" se descarto por tautologico (RC-012/RC-017)",
+  "arreglo": "Sustituir por el target del art. 19, o marcar explicitamente como historico"
+ },
+ {
+  "documento": "RESUMEN_ASESOR_2026-09.md",
+  "linea": 19,
+  "regla": "TARGET-OBSOLETO",
+  "texto": "`rendimiento_bajo` se definía como `PROMEDIO_CARRERA < 3,0`, pero el promedio de carrera **incluye el primer semestre**, que era justamente la variabl",
+  "porque": "Nombre del target antiguo",
+  "arreglo": "Usar bajo_rendimiento_art19, o marcar como obsoleto"
+ },
+ {
+  "documento": "RESUMEN_ASESOR_2026-09.md",
+  "linea": 29,
+  "regla": "MATERIAS-RETIRADAS",
+  "texto": "Al reconstruir un modelo temporalmente válido (predecir la reprobación de segundo semestre con información del primero), el desempeño real es **AUC 0,",
+  "porque": "Metricas de los modelos de reprobacion por asignatura, retirados en RC-022",
+  "arreglo": "Retirar; solo sobrevive el indice descriptivo de criticidad"
+ }
+]

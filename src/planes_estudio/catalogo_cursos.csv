@@ -1,0 +1,108 @@
+plan,programa,codigo,nombre,semestre,creditos,tipo,area,institucional,requisitos,fuente
+IS-2011,INGENIERIA DE SISTEMAS,602101,Fundamentos de Programación,1,4,TP,Ps,0,,Acuerdo Académico 008 de 2011
+IS-2011,INGENIERIA DE SISTEMAS,602102,Introducción a la Ingeniería de Sistemas,1,3,TP,Ps,0,,Acuerdo Académico 008 de 2011
+IS-2011,INGENIERIA DE SISTEMAS,602103,Matemáticas I,1,4,T,Ba,0,,Acuerdo Académico 008 de 2011
+IS-2011,INGENIERIA DE SISTEMAS,602104,Álgebra Lineal,1,3,T,Ba,0,,Acuerdo Académico 008 de 2011
+IS-2011,INGENIERIA DE SISTEMAS,602105,Procesos Comunicativos,1,2,T,Ba,1,,Acuerdo Académico 008 de 2011
+IS-2011,INGENIERIA DE SISTEMAS,602106,Pensamiento Lógico Matemático,1,2,T,Ba,1,,Acuerdo Académico 008 de 2011
+IS-2011,INGENIERIA DE SISTEMAS,602201,Programación,2,4,TP,Ps,0,602101,Acuerdo Académico 008 de 2011
+IS-2011,INGENIERIA DE SISTEMAS,602202,Matemática Discreta,2,3,T,Ba,0,,Acuerdo Académico 008 de 2011
+IS-2011,INGENIERIA DE SISTEMAS,602203,Matemáticas II,2,4,T,Ba,0,602103,Acuerdo Académico 008 de 2011
+IS-2011,INGENIERIA DE SISTEMAS,602204,Física I,2,4,TP,Ba,0,602103,Acuerdo Académico 008 de 2011
+IS-2011,INGENIERIA DE SISTEMAS,602205,Cátedra Orinoquia,2,2,T,Co,1,,Acuerdo Académico 008 de 2011
+IS-2011,INGENIERIA DE SISTEMAS,602301,Estructuras de Datos,3,3,TP,Ps,0,602201,Acuerdo Académico 008 de 2011
+IS-2011,INGENIERIA DE SISTEMAS,602302,Matemáticas III,3,4,T,Ba,0,602203,Acuerdo Académico 008 de 2011
+IS-2011,INGENIERIA DE SISTEMAS,602303,Ecuaciones Diferenciales y en Diferencia,3,4,T,Ba,0,602203,Acuerdo Académico 008 de 2011
+IS-2011,INGENIERIA DE SISTEMAS,602304,Física II,3,4,TP,Ba,0,602204,Acuerdo Académico 008 de 2011
+IS-2011,INGENIERIA DE SISTEMAS,602305,Electrónica Básica,3,3,TP,Ps,0,602202,Acuerdo Académico 008 de 2011
+IS-2011,INGENIERIA DE SISTEMAS,602401,Teoría General de Sistemas,4,2,TP,Ps,0,,Acuerdo Académico 008 de 2011
+IS-2011,INGENIERIA DE SISTEMAS,602402,Bases de Datos,4,4,TP,Ps,0,602301,Acuerdo Académico 008 de 2011
+IS-2011,INGENIERIA DE SISTEMAS,602403,Arquitectura de Computadores,4,3,TP,Ps,0,602305,Acuerdo Académico 008 de 2011
+IS-2011,INGENIERIA DE SISTEMAS,602404,Matemáticas Especiales,4,4,T,Ba,0,602302,Acuerdo Académico 008 de 2011
+IS-2011,INGENIERIA DE SISTEMAS,602405,Física III,4,3,TP,Ba,0,602304,Acuerdo Académico 008 de 2011
+IS-2011,INGENIERIA DE SISTEMAS,602406,"Ciencia, Tecnología y Desarrollo",4,2,T,Co,1,,Acuerdo Académico 008 de 2011
+IS-2011,INGENIERIA DE SISTEMAS,602501,Sistemas Operativos,5,4,TP,Ps,0,602403,Acuerdo Académico 008 de 2011
+IS-2011,INGENIERIA DE SISTEMAS,602502,Análisis de Señales,5,3,TP,Ps,0,602404,Acuerdo Académico 008 de 2011
+IS-2011,INGENIERIA DE SISTEMAS,602503,Fundamentos de Ingeniería de Software,5,4,TP,Ps,0,602402,Acuerdo Académico 008 de 2011
+IS-2011,INGENIERIA DE SISTEMAS,602504,Probabilidad y Estadística,5,3,T,Ba,0,,Acuerdo Académico 008 de 2011
+IS-2011,INGENIERIA DE SISTEMAS,602505,Métodos Numéricos,5,3,TP,Ps,0,,Acuerdo Académico 008 de 2011
+IS-2011,INGENIERIA DE SISTEMAS,602601,Ingeniería de Software,6,3,TP,Ps,0,602503,Acuerdo Académico 008 de 2011
+IS-2011,INGENIERIA DE SISTEMAS,602602,Sistemas de Comunicación,6,4,TP,Ps,0,602502,Acuerdo Académico 008 de 2011
+IS-2011,INGENIERIA DE SISTEMAS,602603,Modelamiento de Sistemas,6,3,TP,Ps,0,,Acuerdo Académico 008 de 2011
+IS-2011,INGENIERIA DE SISTEMAS,602604,Sistemas Distribuidos,6,3,TP,Ps,0,602501,Acuerdo Académico 008 de 2011
+IS-2011,INGENIERIA DE SISTEMAS,602605,"Cátedra, Democracia y Paz",6,2,T,Co,1,,Acuerdo Académico 008 de 2011
+IS-2011,INGENIERIA DE SISTEMAS,602606,Electiva Profesional I,6,3,TP,Ps,0,,Acuerdo Académico 008 de 2011
+IS-2011,INGENIERIA DE SISTEMAS,602701,Seminario de Investigación,7,3,T,Co,0,,Acuerdo Académico 008 de 2011
+IS-2011,INGENIERIA DE SISTEMAS,602702,Redes de Computadores,7,4,TP,Ps,0,602602,Acuerdo Académico 008 de 2011
+IS-2011,INGENIERIA DE SISTEMAS,602703,Control Análogo,7,3,T,Ps,0,602603,Acuerdo Académico 008 de 2011
+IS-2011,INGENIERIA DE SISTEMAS,602704,Optimización,7,3,TP,Ps,0,602504,Acuerdo Académico 008 de 2011
+IS-2011,INGENIERIA DE SISTEMAS,602705,Electiva Profesional II,7,3,TP,Ps,0,,Acuerdo Académico 008 de 2011
+IS-2011,INGENIERIA DE SISTEMAS,602706,Economía,7,2,T,Co,0,,Acuerdo Académico 008 de 2011
+IS-2011,INGENIERIA DE SISTEMAS,602801,Curso de Profundización I,8,4,TP,Pz,0,602701,Acuerdo Académico 008 de 2011
+IS-2011,INGENIERIA DE SISTEMAS,602802,Algoritmia Avanzada,8,3,TP,Ps,0,,Acuerdo Académico 008 de 2011
+IS-2011,INGENIERIA DE SISTEMAS,602803,Electiva Profesional III,8,4,TP,Ps,0,,Acuerdo Académico 008 de 2011
+IS-2011,INGENIERIA DE SISTEMAS,602804,Procesos Estocásticos,8,3,TP,Ps,0,602704,Acuerdo Académico 008 de 2011
+IS-2011,INGENIERIA DE SISTEMAS,602805,Gestión de Proyectos y Empresarial,8,3,TP,Co,0,,Acuerdo Académico 008 de 2011
+IS-2011,INGENIERIA DE SISTEMAS,602901,Curso de Profundización II,9,4,TP,Pz,0,,Acuerdo Académico 008 de 2011
+IS-2011,INGENIERIA DE SISTEMAS,602902,Sistemas y Organizaciones,9,3,T,Ps,0,,Acuerdo Académico 008 de 2011
+IS-2011,INGENIERIA DE SISTEMAS,602903,Electiva Profesional IV,9,4,TP,Ps,0,,Acuerdo Académico 008 de 2011
+IS-2011,INGENIERIA DE SISTEMAS,602904,Simulación Computacional,9,3,TP,Ps,0,602804,Acuerdo Académico 008 de 2011
+IS-2011,INGENIERIA DE SISTEMAS,602905,Electiva Complementaria I,9,2,T,Co,0,,Acuerdo Académico 008 de 2011
+IS-2011,INGENIERIA DE SISTEMAS,602001,Curso de Profundización III,10,4,TP,Pz,0,,Acuerdo Académico 008 de 2011
+IS-2011,INGENIERIA DE SISTEMAS,602002,Electiva Profesional V,10,4,TP,Ps,0,,Acuerdo Académico 008 de 2011
+IS-2011,INGENIERIA DE SISTEMAS,602003,Electiva Complementaria II,10,2,T,Co,0,,Acuerdo Académico 008 de 2011
+IS-2011,INGENIERIA DE SISTEMAS,602999,Trámite de grado,10,0,ADM,ADM,0,,Registro administrativo SIIF (no es curso del plan)
+IS-2018,INGENIERIA DE SISTEMAS,603101,Algoritmia y programación,1,4,TP,Ps,0,,Acuerdo Académico 001 de 2017
+IS-2018,INGENIERIA DE SISTEMAS,603102,Introducción a la Ingeniería de Sistemas,1,4,TP,Ps,0,,Acuerdo Académico 001 de 2017
+IS-2018,INGENIERIA DE SISTEMAS,603103,Cálculo diferencial,1,4,T,Ba,0,,Acuerdo Académico 001 de 2017
+IS-2018,INGENIERIA DE SISTEMAS,603104,Procesos Comunicativos,1,2,T,Ba,1,,Acuerdo Académico 001 de 2017
+IS-2018,INGENIERIA DE SISTEMAS,603105,Desarrollo del Pensamiento Lógico Matemático,1,2,T,Ba,1,,Acuerdo Académico 001 de 2017
+IS-2018,INGENIERIA DE SISTEMAS,603201,Programación orientada a objetos,2,4,TP,Ps,0,603101,Acuerdo Académico 001 de 2017
+IS-2018,INGENIERIA DE SISTEMAS,603202,Sistemas digitales,2,3,TP,Ps,0,,Acuerdo Académico 001 de 2017
+IS-2018,INGENIERIA DE SISTEMAS,603203,Cálculo integral,2,4,T,Ba,0,603103,Acuerdo Académico 001 de 2017
+IS-2018,INGENIERIA DE SISTEMAS,603204,Álgebra lineal,2,3,T,Ba,0,,Acuerdo Académico 001 de 2017
+IS-2018,INGENIERIA DE SISTEMAS,603205,Física mecánica,2,4,TP,Ba,0,603103,Acuerdo Académico 001 de 2017
+IS-2018,INGENIERIA DE SISTEMAS,603301,Estructuras de Datos,3,4,TP,Ps,0,603201,Acuerdo Académico 001 de 2017
+IS-2018,INGENIERIA DE SISTEMAS,603302,Máquinas digitales,3,3,TP,Ps,0,603202,Acuerdo Académico 001 de 2017
+IS-2018,INGENIERIA DE SISTEMAS,603303,Cálculo multivariado,3,4,T,Ba,0,603203;603204,Acuerdo Académico 001 de 2017
+IS-2018,INGENIERIA DE SISTEMAS,603304,Electricidad y magnetismo,3,4,TP,Ba,0,603205,Acuerdo Académico 001 de 2017
+IS-2018,INGENIERIA DE SISTEMAS,603305,Democracia y paz,3,2,T,Co,1,,Acuerdo Académico 001 de 2017
+IS-2018,INGENIERIA DE SISTEMAS,603401,Bases de datos,4,4,TP,Ps,0,603301,Acuerdo Académico 001 de 2017
+IS-2018,INGENIERIA DE SISTEMAS,603402,Sistemas operativos,4,4,TP,Ps,0,603301;603302,Acuerdo Académico 001 de 2017
+IS-2018,INGENIERIA DE SISTEMAS,603403,Ecuaciones diferenciales y Modelado Matemático,4,3,T,Ba,0,603303,Acuerdo Académico 001 de 2017
+IS-2018,INGENIERIA DE SISTEMAS,603404,Estadística y probabilidad,4,4,T,Ba,0,603303,Acuerdo Académico 001 de 2017
+IS-2018,INGENIERIA DE SISTEMAS,603405,Oscilaciones y ondas,4,3,TP,Ba,0,603304,Acuerdo Académico 001 de 2017
+IS-2018,INGENIERIA DE SISTEMAS,603501,Ingeniería de software I,5,4,TP,Ps,0,603401,Acuerdo Académico 001 de 2017
+IS-2018,INGENIERIA DE SISTEMAS,603502,Pensamiento Sistémico,5,3,T,Ps,0,,Acuerdo Académico 001 de 2017
+IS-2018,INGENIERIA DE SISTEMAS,603503,Matemáticas especiales,5,3,T,Ba,0,603403,Acuerdo Académico 001 de 2017
+IS-2018,INGENIERIA DE SISTEMAS,603504,Procesos estocásticos,5,3,TP,Ps,0,603404,Acuerdo Académico 001 de 2017
+IS-2018,INGENIERIA DE SISTEMAS,603505,Sistemas de comunicaciones,5,3,TP,Ps,0,603405,Acuerdo Académico 001 de 2017
+IS-2018,INGENIERIA DE SISTEMAS,603506,"Ciencia, Tecnología y Desarrollo",5,2,T,Co,1,,Acuerdo Académico 001 de 2017
+IS-2018,INGENIERIA DE SISTEMAS,603601,Ingeniería de Software II,6,3,TP,Ps,0,603501,Acuerdo Académico 001 de 2017
+IS-2018,INGENIERIA DE SISTEMAS,603602,Métodos numéricos,6,3,TP,Ps,0,603503,Acuerdo Académico 001 de 2017
+IS-2018,INGENIERIA DE SISTEMAS,603603,Procesamiento de señales e imágenes,6,3,TP,Ps,0,603503,Acuerdo Académico 001 de 2017
+IS-2018,INGENIERIA DE SISTEMAS,603604,Optimización,6,3,TP,Ps,0,603504,Acuerdo Académico 001 de 2017
+IS-2018,INGENIERIA DE SISTEMAS,603605,Redes de computadores,6,4,TP,Ps,0,603505,Acuerdo Académico 001 de 2017
+IS-2018,INGENIERIA DE SISTEMAS,603606,Administración financiera para Ingeniería,6,2,T,Co,0,,Acuerdo Académico 001 de 2017
+IS-2018,INGENIERIA DE SISTEMAS,603701,Metodología de Investigación,7,3,TP,Ps,0,603502,Acuerdo Académico 001 de 2017
+IS-2018,INGENIERIA DE SISTEMAS,603702,Tecnologías avanzadas,7,3,TP,Ps,0,603601,Acuerdo Académico 001 de 2017
+IS-2018,INGENIERIA DE SISTEMAS,603703,Ética y Humanística,7,2,T,Co,0,,Acuerdo Académico 001 de 2017
+IS-2018,INGENIERIA DE SISTEMAS,603704,Sistemas distribuidos,7,3,TP,Ps,0,603605,Acuerdo Académico 001 de 2017
+IS-2018,INGENIERIA DE SISTEMAS,603705,Seguridad de la información,7,3,TP,Ps,0,603605,Acuerdo Académico 001 de 2017
+IS-2018,INGENIERIA DE SISTEMAS,603706,Formulación y gestión de proyectos TI,7,3,T,Co,0,603606,Acuerdo Académico 001 de 2017
+IS-2018,INGENIERIA DE SISTEMAS,603801,Curso 1 profundización,8,3,TP,Pz,0,,Acuerdo Académico 001 de 2017
+IS-2018,INGENIERIA DE SISTEMAS,603802,Electiva profesional 1,8,3,TP,Ps,0,,Acuerdo Académico 001 de 2017
+IS-2018,INGENIERIA DE SISTEMAS,603803,Simulación computacional,8,3,TP,Ps,0,603502,Acuerdo Académico 001 de 2017
+IS-2018,INGENIERIA DE SISTEMAS,603804,Arquitectura empresarial,8,3,TP,Ps,0,,Acuerdo Académico 001 de 2017
+IS-2018,INGENIERIA DE SISTEMAS,603805,Trabajo de grado 1,8,2,TP,Ps,0,603701,Acuerdo Académico 001 de 2017
+IS-2018,INGENIERIA DE SISTEMAS,603806,Cátedra de la Orinoquia,8,2,T,Co,1,,Acuerdo Académico 001 de 2017
+IS-2018,INGENIERIA DE SISTEMAS,603901,Curso 2 profundización,9,3,TP,Pz,0,,Acuerdo Académico 001 de 2017
+IS-2018,INGENIERIA DE SISTEMAS,603902,Electiva profesional 2,9,3,TP,Ps,0,,Acuerdo Académico 001 de 2017
+IS-2018,INGENIERIA DE SISTEMAS,603903,Electiva profesional 3,9,3,TP,Ps,0,,Acuerdo Académico 001 de 2017
+IS-2018,INGENIERIA DE SISTEMAS,603904,Lenguajes de programación,9,3,TP,Ps,0,,Acuerdo Académico 001 de 2017
+IS-2018,INGENIERIA DE SISTEMAS,603905,Electiva profesional 4,9,3,TP,Ps,0,,Acuerdo Académico 001 de 2017
+IS-2018,INGENIERIA DE SISTEMAS,603001,Curso 3 profundización,10,3,TP,Pz,0,,Acuerdo Académico 001 de 2017
+IS-2018,INGENIERIA DE SISTEMAS,603002,Electiva profesional 5,10,3,TP,Ps,0,,Acuerdo Académico 001 de 2017
+IS-2018,INGENIERIA DE SISTEMAS,603003,Trabajo de grado 2,10,4,TP,Ps,0,603805,Acuerdo Académico 001 de 2017
+IS-2018,INGENIERIA DE SISTEMAS,603004,Electiva complementaria,10,2,T,Co,0,,Acuerdo Académico 001 de 2017
+IS-2018,INGENIERIA DE SISTEMAS,603999,Trámite de grado,10,0,ADM,ADM,0,,Registro administrativo SIIF (no es curso del plan)

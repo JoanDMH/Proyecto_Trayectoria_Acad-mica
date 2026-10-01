@@ -1,0 +1,427 @@
+{
+ "descriptivo": {
+  "varianza": [
+   {
+    "Componente": "CP1",
+    "Autovalor": 3.6032,
+    "% varianza": 18.73,
+    "% acumulado": 18.73,
+    "Kaiser (autovalor>1)": "sí"
+   },
+   {
+    "Componente": "CP2",
+    "Autovalor": 2.5773,
+    "% varianza": 13.4,
+    "% acumulado": 32.12,
+    "Kaiser (autovalor>1)": "sí"
+   },
+   {
+    "Componente": "CP3",
+    "Autovalor": 1.6053,
+    "% varianza": 8.34,
+    "% acumulado": 40.47,
+    "Kaiser (autovalor>1)": "sí"
+   },
+   {
+    "Componente": "CP4",
+    "Autovalor": 1.4894,
+    "% varianza": 7.74,
+    "% acumulado": 48.21,
+    "Kaiser (autovalor>1)": "sí"
+   },
+   {
+    "Componente": "CP5",
+    "Autovalor": 1.2417,
+    "% varianza": 6.45,
+    "% acumulado": 54.66,
+    "Kaiser (autovalor>1)": "sí"
+   },
+   {
+    "Componente": "CP6",
+    "Autovalor": 1.1588,
+    "% varianza": 6.02,
+    "% acumulado": 60.68,
+    "Kaiser (autovalor>1)": "sí"
+   },
+   {
+    "Componente": "CP7",
+    "Autovalor": 1.0307,
+    "% varianza": 5.36,
+    "% acumulado": 66.04,
+    "Kaiser (autovalor>1)": "sí"
+   },
+   {
+    "Componente": "CP8",
+    "Autovalor": 0.9635,
+    "% varianza": 5.01,
+    "% acumulado": 71.05,
+    "Kaiser (autovalor>1)": "no"
+   },
+   {
+    "Componente": "CP9",
+    "Autovalor": 0.8823,
+    "% varianza": 4.59,
+    "% acumulado": 75.63,
+    "Kaiser (autovalor>1)": "no"
+   },
+   {
+    "Componente": "CP10",
+    "Autovalor": 0.864,
+    "% varianza": 4.49,
+    "% acumulado": 80.12,
+    "Kaiser (autovalor>1)": "no"
+   },
+   {
+    "Componente": "CP11",
+    "Autovalor": 0.7634,
+    "% varianza": 3.97,
+    "% acumulado": 84.09,
+    "Kaiser (autovalor>1)": "no"
+   },
+   {
+    "Componente": "CP12",
+    "Autovalor": 0.7401,
+    "% varianza": 3.85,
+    "% acumulado": 87.94,
+    "Kaiser (autovalor>1)": "no"
+   },
+   {
+    "Componente": "CP13",
+    "Autovalor": 0.5917,
+    "% varianza": 3.08,
+    "% acumulado": 91.01,
+    "Kaiser (autovalor>1)": "no"
+   },
+   {
+    "Componente": "CP14",
+    "Autovalor": 0.5184,
+    "% varianza": 2.69,
+    "% acumulado": 93.71,
+    "Kaiser (autovalor>1)": "no"
+   },
+   {
+    "Componente": "CP15",
+    "Autovalor": 0.4513,
+    "% varianza": 2.35,
+    "% acumulado": 96.05,
+    "Kaiser (autovalor>1)": "no"
+   },
+   {
+    "Componente": "CP16",
+    "Autovalor": 0.3744,
+    "% varianza": 1.95,
+    "% acumulado": 98.0,
+    "Kaiser (autovalor>1)": "no"
+   },
+   {
+    "Componente": "CP17",
+    "Autovalor": 0.239,
+    "% varianza": 1.24,
+    "% acumulado": 99.24,
+    "Kaiser (autovalor>1)": "no"
+   },
+   {
+    "Componente": "CP18",
+    "Autovalor": 0.0744,
+    "% varianza": 0.39,
+    "% acumulado": 99.63,
+    "Kaiser (autovalor>1)": "no"
+   },
+   {
+    "Componente": "CP19",
+    "Autovalor": 0.0715,
+    "% varianza": 0.37,
+    "% acumulado": 100.0,
+    "Kaiser (autovalor>1)": "no"
+   }
+  ],
+  "cargas": [
+   {
+    "Variable": "Sexo",
+    "En S3": "no",
+    "CP1": -0.162,
+    "CP2": -0.063,
+    "CP3": -0.064,
+    "CP4": -0.098,
+    "CP5": -0.106
+   },
+   {
+    "Variable": "Educación del padre",
+    "En S3": "no",
+    "CP1": 0.29,
+    "CP2": -0.26,
+    "CP3": -0.277,
+    "CP4": 0.176,
+    "CP5": 0.059
+   },
+   {
+    "Variable": "Educación de la madre",
+    "En S3": "no",
+    "CP1": 0.365,
+    "CP2": -0.246,
+    "CP3": 0.069,
+    "CP4": 0.257,
+    "CP5": -0.058
+   },
+   {
+    "Variable": "Educación máx. de los padres",
+    "En S3": "no",
+    "CP1": 0.36,
+    "CP2": -0.302,
+    "CP3": -0.133,
+    "CP4": 0.279,
+    "CP5": 0.041
+   },
+   {
+    "Variable": "Repitió año escolar",
+    "En S3": "no",
+    "CP1": -0.032,
+    "CP2": -0.057,
+    "CP3": -0.392,
+    "CP4": -0.345,
+    "CP5": -0.285
+   },
+   {
+    "Variable": "Estrato",
+    "En S3": "no",
+    "CP1": 0.312,
+    "CP2": -0.197,
+    "CP3": 0.176,
+    "CP4": -0.137,
+    "CP5": -0.128
+   },
+   {
+    "Variable": "Log. ingresos familiares",
+    "En S3": "no",
+    "CP1": 0.215,
+    "CP2": -0.096,
+    "CP3": 0.22,
+    "CP4": -0.176,
+    "CP5": 0.101
+   },
+   {
+    "Variable": "Nivel SISBEN",
+    "En S3": "no",
+    "CP1": -0.166,
+    "CP2": 0.099,
+    "CP3": 0.22,
+    "CP4": 0.375,
+    "CP5": -0.241
+   },
+   {
+    "Variable": "Tipo de plantel",
+    "En S3": "no",
+    "CP1": 0.23,
+    "CP2": -0.134,
+    "CP3": 0.14,
+    "CP4": -0.315,
+    "CP5": 0.006
+   },
+   {
+    "Variable": "Zona rural",
+    "En S3": "no",
+    "CP1": -0.136,
+    "CP2": 0.103,
+    "CP3": -0.378,
+    "CP4": 0.352,
+    "CP5": 0.295
+   },
+   {
+    "Variable": "Vive con",
+    "En S3": "no",
+    "CP1": -0.154,
+    "CP2": 0.203,
+    "CP3": -0.023,
+    "CP4": 0.068,
+    "CP5": -0.178
+   },
+   {
+    "Variable": "Situación de los padres",
+    "En S3": "no",
+    "CP1": 0.077,
+    "CP2": 0.118,
+    "CP3": 0.121,
+    "CP4": 0.162,
+    "CP5": 0.613
+   },
+   {
+    "Variable": "SABER 11 · total",
+    "En S3": "sí",
+    "CP1": 0.373,
+    "CP2": 0.382,
+    "CP3": -0.02,
+    "CP4": 0.01,
+    "CP5": -0.197
+   },
+   {
+    "Variable": "SABER 11 · matemáticas",
+    "En S3": "sí",
+    "CP1": 0.172,
+    "CP2": 0.425,
+    "CP3": 0.174,
+    "CP4": -0.062,
+    "CP5": -0.123
+   },
+   {
+    "Variable": "SABER 11 · lectura",
+    "En S3": "sí",
+    "CP1": 0.22,
+    "CP2": 0.323,
+    "CP3": -0.213,
+    "CP4": 0.073,
+    "CP5": -0.024
+   },
+   {
+    "Variable": "SABER 11 · naturales",
+    "En S3": "sí",
+    "CP1": 0.333,
+    "CP2": 0.253,
+    "CP3": -0.109,
+    "CP4": 0.077,
+    "CP5": -0.178
+   },
+   {
+    "Variable": "Cohorte",
+    "En S3": "no",
+    "CP1": 0.153,
+    "CP2": 0.364,
+    "CP3": -0.135,
+    "CP4": -0.14,
+    "CP5": 0.29
+   },
+   {
+    "Variable": "Promedio 1er semestre",
+    "En S3": "sí",
+    "CP1": -0.023,
+    "CP2": 0.058,
+    "CP3": 0.525,
+    "CP4": 0.312,
+    "CP5": -0.117
+   },
+   {
+    "Variable": "Sin primer semestre",
+    "En S3": "sí",
+    "CP1": 0.048,
+    "CP2": 0.038,
+    "CP3": 0.236,
+    "CP4": -0.347,
+    "CP5": 0.368
+   }
+  ],
+  "n_kaiser": 7,
+  "n80": 10,
+  "n90": 13,
+  "n95": 15,
+  "cp_prom_sem1": 3,
+  "var_cp_prom_sem1": 8.34,
+  "s3_cum": [
+   41.98,
+   61.45,
+   77.84,
+   88.51,
+   98.4,
+   100.0
+  ],
+  "s3_n90": 5
+ },
+ "predictivo": {
+  "base": {
+   "nombre": "A0 · S3 (6 variables) · Random Forest",
+   "ap": 0.7418,
+   "de": 0.0105,
+   "roc": 0.794
+  },
+  "tabla": [
+   {
+    "Configuración": "A1 · 19 variables crudas · Random Forest",
+    "AUC-PR": 0.7176,
+    "DE": 0.0441,
+    "AUC-ROC": 0.8082,
+    "Δ vs referencia": -0.0242,
+    "t corregido": -0.85,
+    "p": 0.4176,
+    "Veredicto": "empate estadístico"
+   },
+   {
+    "Configuración": "A2 · PCA(k) sobre 19 vars · Random Forest",
+    "AUC-PR": 0.3715,
+    "DE": 0.0686,
+    "AUC-ROC": 0.6294,
+    "Δ vs referencia": -0.3703,
+    "t corregido": -8.706,
+    "p": 0.0,
+    "Veredicto": "peor (relevante)"
+   },
+   {
+    "Configuración": "A3 · PCA(k) sobre 19 vars · Logística",
+    "AUC-PR": 0.3819,
+    "DE": 0.0455,
+    "AUC-ROC": 0.6085,
+    "Δ vs referencia": -0.3599,
+    "t corregido": -13.791,
+    "p": 0.0,
+    "Veredicto": "peor (relevante)"
+   },
+   {
+    "Configuración": "A4 · PCA(k) sobre S3 · Random Forest",
+    "AUC-PR": 0.6947,
+    "DE": 0.067,
+    "AUC-ROC": 0.8616,
+    "Δ vs referencia": -0.0471,
+    "t corregido": -1.112,
+    "p": 0.2948,
+    "Veredicto": "empate estadístico"
+   },
+   {
+    "Configuración": "A5 · PLS-DA(k) sobre 19 vars (supervisado)",
+    "AUC-PR": 0.4637,
+    "DE": 0.0372,
+    "AUC-ROC": 0.694,
+    "Δ vs referencia": -0.2781,
+    "t corregido": -10.787,
+    "p": 0.0,
+    "Veredicto": "peor (relevante)"
+   },
+   {
+    "Configuración": "A6 · PLS-DA(k) sobre S3 (supervisado)",
+    "AUC-PR": 0.4463,
+    "DE": 0.0562,
+    "AUC-ROC": 0.6394,
+    "Δ vs referencia": -0.2955,
+    "t corregido": -8.125,
+    "p": 0.0,
+    "Veredicto": "peor (relevante)"
+   }
+  ],
+  "k_elegidos": {
+   "A2 · PCA(k) sobre 19 vars · Random Forest": {
+    "6": 18,
+    "8": 18,
+    "4": 10,
+    "2": 4
+   },
+   "A3 · PCA(k) sobre 19 vars · Logística": {
+    "10": 13,
+    "4": 11,
+    "6": 9,
+    "5": 7,
+    "8": 6,
+    "3": 2,
+    "2": 2
+   },
+   "A4 · PCA(k) sobre S3 · Random Forest": {
+    "2": 31,
+    "4": 10,
+    "3": 5,
+    "5": 4
+   },
+   "A5 · PLS-DA(k) sobre 19 vars (supervisado)": {
+    "1": 50
+   },
+   "A6 · PLS-DA(k) sobre S3 (supervisado)": {
+    "1": 50
+   }
+  },
+  "prevalencia": 0.2375
+ }
+}

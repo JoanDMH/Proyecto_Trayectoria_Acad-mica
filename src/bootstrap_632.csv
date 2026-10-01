@@ -1,0 +1,4 @@
+modelo,AUC_PR_aparente,AUC_PR_oob,peso_w,AUC_PR_632plus,n_bootstrap
+Regresión Logística (L2),0.8826,0.5305,0.7908,0.6042,200
+Random Forest,1.0,0.6988,0.7395,0.7773,200
+XGBoost (regularizado),0.8306,0.3708,0.8843,0.424,200

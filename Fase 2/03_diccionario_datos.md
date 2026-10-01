@@ -4,6 +4,11 @@
 > Basado en el formulario SIIF y el sistema académico institucional.
 > Alcance: variables relevantes para el análisis. Se omiten campos de libre ingreso (nombres, direcciones, teléfonos) y columnas con ≥ 95 % de valores nulos para esta cohorte.
 
+
+> ### ⚠️ FE DE ERRATAS (2026-09-30 · REVISION_FASES_2_3.md, R3)
+> El diccionario cubre las cohortes **2017-2 y 2018-1** (no solo 2017-2). Los puntajes SABER 11 por área van de 0 a 100.
+> `homologaciones.xlsx` y la columna `PENSUM` sí aportan información: identifican el ingreso por homologación (R1).
+
 ---
 
 ## 1. `caracterización.xlsx`

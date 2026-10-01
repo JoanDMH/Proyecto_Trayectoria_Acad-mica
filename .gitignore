@@ -21,3 +21,9 @@ env/
 .DS_Store
 Thumbs.db
 
+
+# Cachés y pruebas
+.pytest_cache/
+Claude outputs/
+src/_cache_mvp/
+

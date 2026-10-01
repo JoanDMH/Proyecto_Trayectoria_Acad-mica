@@ -1,0 +1,9 @@
+variable,frecuencia
+prom_sem1,1.0
+icfes_total,0.75
+icfes_mat,0.6
+log_ingresos,0.55
+nivel_edu_padre,0.52
+sin_primer_semestre,0.3
+icfes_nat,0.28
+sisben_nivel,0.25

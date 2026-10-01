@@ -1,0 +1,4 @@
+t_segundos,evento
+0.1,n=80 positivos=19 (23.8%) baseline AUC-PR=0.2375
+0.1,Random Forest: rejilla de 24 combinaciones
+1477.8,Random Forest: AUC-PR 0.7451 ± 0.0252

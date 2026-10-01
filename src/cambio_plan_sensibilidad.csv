@@ -1,0 +1,5 @@
+escenario,n,positivos,linea_base,AUC_PR,sd,AUC_ROC,lift,nota
+A · Referencia S3 (n=80),80,19,0.2375,0.7514,0.0154,0.8148,3.16,hiperparámetros fijos (moda I-3 bis)
+B · Sin ingreso por homologación (PENSUM 603),74,17,0.2297,0.7561,0.0246,0.8348,3.29,sin_primer_semestre queda constante = 0
+C1 · Composición 2018 sin reentrenar,80,19,0.2375,0.7488,0.0144,0.8228,3.15,"entrena con prom_sem1, predice con la variable recompuesta"
+C2 · Composición 2018 reentrenado,80,19,0.2375,0.7397,0.0133,0.8157,3.11,

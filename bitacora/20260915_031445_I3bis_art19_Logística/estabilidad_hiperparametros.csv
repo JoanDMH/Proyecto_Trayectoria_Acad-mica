@@ -1,0 +1,2 @@
+modelo,configuraciones_distintas,config_mas_frecuente,frecuencia_de_la_moda
+Regresión Logística (L2),11,"{""clf__C"": 100.0, ""clf__class_weight"": null}",0.32

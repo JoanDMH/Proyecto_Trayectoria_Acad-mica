@@ -1,0 +1,7 @@
+modelo_a,modelo_b,media_a,media_b,diferencia,t,p_valor,significativo,relevante,veredicto
+S1 · solo ingreso (socioec. + SABER 11),set completo (19),0.44229043747191465,0.7409549724708195,-0.298664534998905,-17.905391698208998,4.790901009243953e-11,True,True,set completo (19) es mejor (diferencia significativa y relevante)
+S3 · solo académicas,set completo (19),0.7457181965274351,0.7409549724708195,0.004763224056615659,0.28196638377883804,0.7820945470128686,False,False,EMPATE: sin evidencia de diferencia (p=0.782). Elegir el modelo más simple.
+S4 · solo socioeconómicas,set completo (19),0.343861912132914,0.7409549724708195,-0.39709306033790565,-13.94291065799062,1.333013699422736e-09,True,True,set completo (19) es mejor (diferencia significativa y relevante)
+S5 · sin redundancias estructurales (17),set completo (19),0.7257214881267385,0.7409549724708195,-0.015233484344080946,-0.6414611733041153,0.5315852679035393,False,False,EMPATE: sin evidencia de diferencia (p=0.532). Elegir el modelo más simple.
+S6 · mínimo (top-5 por permutación),set completo (19),0.8263256022566005,0.7409549724708195,0.08537062978578087,3.862054722140661,0.001726043119854026,True,True,S6 · mínimo (top-5 por permutación) es mejor (diferencia significativa y relevante)
+S7 · solo prom_sem1 (referencia),set completo (19),0.6109086574215692,0.7409549724708195,-0.13004631504925032,-4.689875166967781,0.00034778863544104865,True,True,set completo (19) es mejor (diferencia significativa y relevante)

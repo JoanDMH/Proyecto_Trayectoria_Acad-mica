@@ -1,0 +1,5 @@
+subconjunto,tipo,AUC_PR,sd,delta_vs_completo,p
+set completo (19),a priori,0.7201,0.0468,0.0,
+S3 solo academicas (6),a priori,0.7196,0.0462,-0.0005,0.983
+top-5 CONTAMINADO (RC-028),seleccion no anidada,0.8204,0.0126,0.1003,0.008
+top-5 ANIDADO (honesto),seleccion anidada,0.6705,0.0713,-0.0496,0.179

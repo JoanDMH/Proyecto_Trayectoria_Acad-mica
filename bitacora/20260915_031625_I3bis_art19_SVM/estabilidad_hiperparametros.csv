@@ -1,0 +1,2 @@
+modelo,configuraciones_distintas,config_mas_frecuente,frecuencia_de_la_moda
+SVM (RBF),10,"{""clf__C"": 5.0, ""clf__gamma"": 0.1}",0.22

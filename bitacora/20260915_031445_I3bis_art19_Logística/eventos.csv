@@ -1,0 +1,4 @@
+t_segundos,evento
+0.1,n=80 positivos=19 (23.8%) baseline AUC-PR=0.2375
+0.1,Regresión Logística (L2): rejilla de 16 combinaciones
+40.7,Regresión Logística (L2): AUC-PR 0.5495 ± 0.0877
