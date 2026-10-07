@@ -202,6 +202,10 @@ def variables_s3(mat, ing):
     v = v.assign(num=v['DEFINITIVA'] * v['CREDITOS'])
     s1 = v.groupby('CODIGO_INST').agg(num=('num', 'sum'), cr=('CREDITOS', 'sum'))
     s1 = (s1['num'] / s1['cr']).rename('prom_sem1')
+    # El SIIF reporta el promedio del periodo con un decimal, redondeado hacia arriba desde ,05.
+    # El modelo se entrenó con ese valor oficial: sin este redondeo, los cortes del modelo
+    # (p. ej. 1,55) clasificarían distinto a un mismo estudiante. Coincide en 89 de 90 casos.
+    s1 = np.floor(s1 * 10 + 0.5) / 10
     base = (m.groupby('CODIGO_INST')['COHORTE'].first().astype(str).to_frame()
             .join(s1, how='left'))
     i = ing.copy()
@@ -263,8 +267,10 @@ def leer_csv(archivo):
     """Lee CSV o XLSX con separador , o ; (exportaciones de Excel en español)."""
     nombre = getattr(archivo, 'name', str(archivo))
     if nombre.lower().endswith(('.xlsx', '.xls')):
-        return pd.read_excel(archivo)
+        return pd.read_excel(archivo).rename(columns={'CODIGO_ESTUDIANTIL': 'CODIGO_INST', 'PERIODO_INGRESO': 'COHORTE'})
     df = pd.read_csv(archivo, sep=None, engine='python', encoding='utf-8-sig')
+    # Acepta también los nombres de columna del extracto original del SIIF
+    df = df.rename(columns={'CODIGO_ESTUDIANTIL': 'CODIGO_INST', 'PERIODO_INGRESO': 'COHORTE'})
     for c in ('DEFINITIVA', 'PMATN', 'PCRIN', 'PNATN', 'PINGN', 'PCIUN'):
         if c in df.columns and df[c].dtype == object:
             df[c] = pd.to_numeric(df[c].astype(str).str.replace(',', '.'), errors='coerce')

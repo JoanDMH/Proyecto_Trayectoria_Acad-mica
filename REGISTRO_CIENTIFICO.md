@@ -662,3 +662,25 @@
 ### RC-051 · 2026-09-30 · Integridad · `src/curva_umbrales_art19.csv` no procede de un cálculo
 - **Resultado:** el recall desciende exactamente 0,018 por paso, y su valor inicial (0,95) es imposible con 19 positivos. No coincide con la salida de `entrenar_principal.py` y no lo consumía ninguna pieza del proyecto.
 - **Decisión:** el archivo se movió a `archivo/curva_umbrales_art19_NO_CALCULADA.csv`, con su nota. La cita de RC-023 a este archivo queda sin efecto.
+
+### RC-052 · 2026-10-06 · Fase 3–4 · Variables excluidas de S3: ninguna mejora el modelo (incluida `repitio_escolar`)
+- **Motivación:** los asesores reportaron buenos resultados con `repitio_escolar`. Nunca se había probado S3 + cada variable excluida, ni para el modelo de graduación.
+- **Método:** pre-registro `docs/PREREGISTRO_EXP_VARIABLES_MONOTONIA.md`; script `src/exp_variables_monotonia.py`; resultados en `src/exp_variables_monotonia.csv`.
+  - Etapa 1: cribado de S3 + cada una de las 13 variables, y S3 + las 13, con los hiperparámetros desplegados.
+  - Etapa 2: validación anidada completa (protocolo de I-3 bis) para las variables con Δ ≥ +0,01, y siempre para `repitio_escolar`.
+  - Las referencias anidadas S3 se toman de RC-033 y RC-049; la repetición 0 recalculada coincide al decimal.
+- **Resultado (AUC-PR anidada):**
+  - **Alerta:** S3 0,745; S3 + `repitio_escolar` 0,736 (Δ −0,009; p = 0,73). En el cribado, ninguna de las 13 variables superó a S3, y añadir las 13 juntas empeoró el modelo (−0,023; p Holm = 0,04).
+  - **Graduación:** S3 0,705; + `repitio_escolar` 0,699 (Δ −0,006; p = 0,80); + `estrato` 0,740 (Δ +0,035; p = 0,078; p Holm = 0,23); + `cohorte` 0,728 (Δ +0,023; p = 0,46).
+- **Decisión:** S3 se mantiene en ambos modelos. `repitio_escolar` se asocia en bruto con el desenlace, pero no aporta información sobre el promedio del 1.er semestre. `estrato` para graduación queda como hipótesis para validar con cohortes nuevas: supera el umbral de relevancia, pero no es significativo.
+
+### RC-053 · 2026-10-06 · Fase 4–6 · Monotonía: forzarla en Saber 11 destruye la señal; forzarla solo en el promedio es gratis
+- **Motivación:** en TRAYECTA, un perfil con promedio y Saber 11 altos recibía más riesgo que uno con promedio 1,8. Causa: en la muestra, los 7 estudiantes con Saber total > 350 no se graduaron, y varios perdieron la calidad de estudiante tras buenos primeros semestres (abandono sin cancelar, presumiblemente).
+- **Método:** `monotonic_cst` de scikit-learn 1.8 en Random Forest, con validación anidada completa.
+  - M1: riesgo no creciente en el promedio y en los 4 Saber.
+  - M2: solo en el promedio.
+- **Resultado:**
+  - **M1 pierde mucho:** alerta 0,574 (Δ −0,171) y graduación 0,602 (Δ −0,103). La relación «Saber alto → peor desenlace» contiene señal consistente dentro de la muestra.
+  - **M2 no pierde:** alerta 0,744 (Δ −0,001; p = 0,89); graduación 0,732 (Δ +0,028; p = 0,034 sin corregir).
+  - Con M2 se elimina la subida espuria del riesgo con promedios altos (en la alerta, de 0,08 a 0,01 con promedio ≥ 4,2), pero el perfil de Saber alto sigue en 0,61.
+- **Decisión:** por la regla pre-registrada (no perder más de 0,03), M2 es elegible para sustituir a ambos modelos. **Pendiente de aprobación del autor y posterior al CICI:** las cifras de la ponencia no cambian. La paradoja de Saber 11 no se corrige con restricciones sin perder la señal. Se documenta como hallazgo (posible deserción por traslado de estudiantes de alto rendimiento) y como límite de la herramienta, y se valida con las cohortes nuevas.

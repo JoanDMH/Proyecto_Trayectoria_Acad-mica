@@ -1,0 +1,41 @@
+objetivo,modo,configuracion,AUC_PR,sd,AUC_ROC,delta,p,p_holm
+art19,fijo,S3,0.7514,0.0154,0.8148,0.0,,
+art19,fijo,S3+repitio_escolar,0.7474,0.0176,0.8065,-0.0041,0.567,1.0
+art19,fijo,S3+sexo,0.7511,0.0149,0.8141,-0.0004,0.9293,1.0
+art19,fijo,S3+nivel_edu_padre,0.749,0.0203,0.8174,-0.0024,0.7422,1.0
+art19,fijo,S3+nivel_edu_madre,0.747,0.016,0.8067,-0.0045,0.2546,1.0
+art19,fijo,S3+nivel_edu_max_padres,0.7473,0.0123,0.8042,-0.0042,0.4808,1.0
+art19,fijo,S3+estrato,0.7504,0.0146,0.8123,-0.0011,0.7531,1.0
+art19,fijo,S3+log_ingresos,0.7332,0.0143,0.7868,-0.0182,0.0344,0.4468
+art19,fijo,S3+sisben_nivel,0.7484,0.0149,0.8117,-0.003,0.5895,1.0
+art19,fijo,S3+tipo_plantel,0.7496,0.0135,0.8123,-0.0019,0.6458,1.0
+art19,fijo,S3+zona_rural,0.7518,0.0157,0.8136,0.0004,0.9463,1.0
+art19,fijo,S3+vive_con,0.749,0.0169,0.8113,-0.0025,0.5273,1.0
+art19,fijo,S3+situacion_padres,0.7505,0.0151,0.8144,-0.001,0.8322,1.0
+art19,fijo,S3+cohorte_encoded,0.755,0.0137,0.8214,0.0036,0.3906,1.0
+art19,fijo,S3+todas,0.7282,0.0165,0.7849,-0.0232,0.0031,0.0434
+art19,anidado,S3,0.7451,0.0252,0.8016,0.0,,
+art19,anidado,S3+repitio_escolar,0.736,0.0261,0.7976,-0.0091,0.7263,1.0
+art19,anidado,S3 monotono (promedio y Saber 11),0.5737,0.0175,0.6254,-0.1714,0.0,0.0001
+art19,anidado,S3 monotono (solo promedio),0.744,0.0203,0.8035,-0.001,0.8949,1.0
+grad,fijo,S3,0.7104,0.0253,0.8186,0.0,,
+grad,fijo,S3+repitio_escolar,0.7059,0.0294,0.8161,-0.0046,0.4591,1.0
+grad,fijo,S3+sexo,0.7074,0.0262,0.8154,-0.0031,0.3677,1.0
+grad,fijo,S3+nivel_edu_padre,0.6965,0.0282,0.8117,-0.014,0.1317,1.0
+grad,fijo,S3+nivel_edu_madre,0.6946,0.0297,0.8109,-0.0159,0.0517,0.6724
+grad,fijo,S3+nivel_edu_max_padres,0.6932,0.0301,0.8121,-0.0173,0.0043,0.0597
+grad,fijo,S3+estrato,0.7255,0.0252,0.8244,0.015,0.208,1.0
+grad,fijo,S3+log_ingresos,0.6943,0.0286,0.808,-0.0162,0.2616,1.0
+grad,fijo,S3+sisben_nivel,0.6839,0.0267,0.8134,-0.0266,0.0977,1.0
+grad,fijo,S3+tipo_plantel,0.7026,0.0225,0.8162,-0.0078,0.0915,1.0
+grad,fijo,S3+zona_rural,0.7099,0.0267,0.8144,-0.0006,0.904,1.0
+grad,fijo,S3+vive_con,0.7073,0.0261,0.8131,-0.0031,0.2876,1.0
+grad,fijo,S3+situacion_padres,0.7144,0.0241,0.8145,0.0039,0.6121,1.0
+grad,fijo,S3+cohorte_encoded,0.7371,0.0335,0.8408,0.0267,0.0585,0.702
+grad,fijo,S3+todas,0.7216,0.0299,0.8186,0.0112,0.4712,1.0
+grad,anidado,S3,0.7047,0.0205,0.8117,0.0,,
+grad,anidado,S3+repitio_escolar,0.6986,0.0369,0.8066,-0.0061,0.8043,0.9249
+grad,anidado,S3+estrato,0.74,0.0287,0.8283,0.0353,0.0779,0.2338
+grad,anidado,S3+cohorte_encoded,0.7276,0.0453,0.8311,0.0229,0.4625,0.9249
+grad,anidado,S3 monotono (promedio y Saber 11),0.6017,0.0312,0.7585,-0.103,0.0032,0.0158
+grad,anidado,S3 monotono (solo promedio),0.7322,0.0193,0.8187,0.0275,0.034,0.1358

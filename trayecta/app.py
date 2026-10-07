@@ -20,6 +20,7 @@ from componentes import viz
 
 AQUI = os.path.dirname(os.path.abspath(__file__))
 DEMO = os.path.join(AQUI, 'datos_demo')
+LOCALES = os.path.join(AQUI, 'datos_locales')      # generado por preparar_datos_reales.py; fuera de git
 SRC = motor.SRC
 PAGINAS = ['Panorama', 'Ficha del estudiante', 'Asignaturas críticas', 'Cargar cohorte', 'Simulador']
 ICONOS = {'Panorama': '◉', 'Ficha del estudiante': '◍', 'Asignaturas críticas': '▤',
@@ -54,6 +55,7 @@ h3 { font-size: 1.05rem !important; font-weight: 700 !important; }
 .marca { font-weight: 800; font-size: 26px; letter-spacing: 1.5px; background: linear-gradient(90deg,#A5B4FC,#67E8F9);
          -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 .pill { display:inline-block; font-size:11px; font-weight:700; letter-spacing:.6px; padding:3px 9px; border-radius:999px; }
+.pill.real { background: rgba(52,211,153,.16); color:#6EE7B7 !important; border:1px solid rgba(52,211,153,.4); }
 .pill.demo { background: rgba(251,191,36,.18); color:#FCD34D !important; border:1px solid rgba(251,191,36,.4); }
 /* banda de título de página */
 .banda { display:flex; align-items:baseline; gap:14px; flex-wrap:wrap; margin: 2px 0 10px; }
@@ -134,6 +136,12 @@ def cohorte_demo(cual):
     return pd.concat(mats, ignore_index=True), pd.concat(ings, ignore_index=True)
 
 
+@st.cache_data
+def cohorte_local():
+    return (motor.leer_csv(os.path.join(LOCALES, 'materias.csv')),
+            motor.leer_csv(os.path.join(LOCALES, 'ingreso.csv')))
+
+
 @st.cache_data(show_spinner='Procesando cohorte…')
 def procesar(mat, ing):
     return motor.procesar_cohorte(mat, ing, modelos())
@@ -158,16 +166,24 @@ with st.sidebar:
     st.write('')
     fuentes = {'Cohorte A · 2018-2 · plan 2011': ['A'], 'Cohorte B · 2025-1 · plan 2018': ['B'],
                'Ambas cohortes': ['A', 'B']}
+    if os.path.exists(os.path.join(LOCALES, 'materias.csv')):
+        fuentes = {'Cohortes reales · 2017-2 y 2018-1': 'reales', **fuentes}
     if 'cargada' in st.session_state:
         fuentes = {'Cohorte cargada': None, **fuentes}
     fuente = st.selectbox('Cohorte', list(fuentes))
-    if fuentes[fuente] is not None:
+    if fuentes[fuente] == 'reales':
+        st.markdown('<span class="pill real">DATOS INSTITUCIONALES</span>', unsafe_allow_html=True,
+                    help='Datos reales de la Universidad, leídos solo en este equipo. No los comparta.')
+    elif fuentes[fuente] is not None:
         st.markdown('<span class="pill demo">DATOS SINTÉTICOS</span>', unsafe_allow_html=True,
                     help='Cohortes de demostración: ningún estudiante es real. Sirven para conocer la herramienta '
                          'antes de cargar datos de la Universidad.')
 
 if fuentes[fuente] is None:
     MAT, ING = st.session_state['cargada']
+    sintetico = False
+elif fuentes[fuente] == 'reales':
+    MAT, ING = cohorte_local()
     sintetico = False
 else:
     MAT, ING = cohorte_demo(tuple(fuentes[fuente]))

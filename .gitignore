@@ -17,9 +17,10 @@ env/
 # Streamlit local credentials
 .streamlit/secrets.toml
 
-# OS Files
+# OS Files and temp files
 .DS_Store
 Thumbs.db
+~$*
 
 
 # Cachés y pruebas
@@ -27,3 +28,6 @@ Thumbs.db
 Claude outputs/
 src/_cache_mvp/
 
+
+# Datos institucionales preparados para TRAYECTA (nunca al repositorio)
+trayecta/datos_locales/
